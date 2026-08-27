@@ -1395,7 +1395,7 @@
     }).join("");
 
     var lines = [];
-    lines.push(SIM_DURATION + "s simulation, " + (1 / SIM_DT) + " ticks/sec.");
+    lines.push(SIM_DURATION + "s simulation stepped every " + (SIM_DT * 1000) + "ms (" + Math.round(SIM_DURATION / SIM_DT) + " steps) — this is just the math resolution, not an in-game rate. Poison ticks once per second.");
     lines.push("Mana regen: " + fmt(sim.manaRegenPerSec, 2) + "/sec from Wisdom.");
     if (secItem && !sim.secGated) {
       lines.push(secItem.name + ": cast every " + secItem.castCooldown + "s if mana allows (" + secItem.castManaCost + " mana/cast) -> " + sim.secCastCount + " casts in " + SIM_DURATION + "s.");
