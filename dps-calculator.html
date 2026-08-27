@@ -403,7 +403,7 @@
     { id: "frost_bow", name: "Frost Bow", type: "Bow", dmgMin: 180, dmgMax: 220, fireRate: 1, range: 8.125, scaleStat: "ATK", scaleCost: 0.17, verified: true, notes: "Ice Shuriken: 50% chance extra projectile, 8 dmg per 1 ATK, Slow 2s (needs 50 ATK)." },
     { id: "glass_dagger", name: "Glass Dagger", type: "Dagger", dmgMin: 97, dmgMax: 112, fireRate: 2.5, range: 6.12, verified: true, notes: "Mana Steal: 0.5% of damage dealt returned as mana." },
     { id: "piercers_bow", name: "Piercer's Bow", type: "Bow", dmgMin: 65, dmgMax: 70, fireRate: 3, range: 8.4, scaleStat: "DEX", scaleCost: 0.7143, verified: true, notes: "Pierces." },
-    { id: "crushers_hammer", name: "Crusher's Hammer", type: "Hammer", dmgMin: 215, dmgMax: 235, shots: 2, fireRate: 1.7, range: 8.25, dotDps: 300, verified: true, notes: "Burning on enemies for 5s (300 DPS); pierces, hits the same target twice per swing (Shots 2 vs a dummy)." },
+    { id: "crushers_hammer", name: "Crusher's Hammer", type: "Axe", dmgMin: 215, dmgMax: 235, shots: 2, fireRate: 1.7, range: 8.25, dotDps: 300, verified: true, notes: "Burning on enemies for 5s (300 DPS); pierces, hits the same target twice per swing (Shots 2 vs a dummy)." },
     { id: "mld", name: "Magical Leaf Dagger", type: "Dagger", dmgMin: 65, dmgMax: 75, shots: 2, fireRate: 2.7, range: 6, scaleStat: "WIS", scaleCost: 0.99, verified: true, notes: "2 simultaneous projectiles per attack (spreadsheet base DPS confirms x2). +1.01 dmg/WIS." },
     { id: "cerberus_bow", name: "Cerberus Bow", type: "Bow", dmgMin: 210, dmgMax: 230, fireRate: 2.5, range: 8.75, statMods: { DEX: 3, ATK: 3, SPD: 3 }, secHitDmg: 160, verified: true, notes: "+3 DEX/ATK/SPD on equip. Every shot also fires 2 arrows @70-90 dmg (~160/hit, -10 DEF 3s)." },
     { id: "drako_axe", name: "Drako Axe", type: "Axe", dmgMin: 400, dmgMax: 460, fireRate: 1.5, range: 6.71, secHitDmg: 300, verified: true, notes: "On enemy damaged: 2-tile AOE, 300 dmg, 100% def pen every hit." },
@@ -1554,7 +1554,7 @@
   // "Gun" is not an official weapon type on the wiki (Paintball Gun/AWP/etc are all Bows) --
   // it's a community label some items check for via the tags array. Keep it out of the
   // primary type list but still offer it as a "Requires" option for gear passives.
-  var weaponTypeOptions = ["Sword", "Axe", "Bow", "Dagger", "Hammer", "Staff", "Fan"];
+  var weaponTypeOptions = ["Sword", "Axe", "Bow", "Dagger", "Staff", "Fan"];
   var requiresTypeOptions = weaponTypeOptions.concat(["Gun"]);
   var statOptions = STAT_KEYS;
   var slotOptions = ["secondary", "armor", "accessory"];
