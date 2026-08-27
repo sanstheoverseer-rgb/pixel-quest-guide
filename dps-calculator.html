@@ -408,7 +408,12 @@
     <div>
       <div class="card">
         <h2>Character Stats</h2>
-        <p class="sub">Points you've put into each stat. Derived effects update live below each field.</p>
+        <p class="sub">Stat growth is fixed per level (no discretionary points) — set your level and the 8 fields below fill themselves. Edit any field afterward if you need to override.</p>
+        <div class="field-row">
+          <label for="levelInput">Character level</label>
+          <input type="number" id="levelInput" min="1" max="100" value="1" style="width:110px; background:var(--surface-2); border:1px solid var(--border); border-radius:7px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:1rem; padding:6px 8px;">
+          <div class="derived" id="levelDerived" style="margin-top:6px;"></div>
+        </div>
         <div class="stat-grid" id="statGrid"></div>
       </div>
 
@@ -593,8 +598,26 @@
 
   var db = loadDb();
 
+  // Level-up table is fixed/deterministic in Pixel Quest -- no discretionary points.
+  // Every 2 levels: +5 HP, +1 Mana, +1 SPD. Every 10 levels: +1 DEX, +1 ATK. Every 12 levels: +1 VIT, +1 WIS. DEF never grows from leveling.
+  var LEVEL_BASE = { HP: 200, MANA: 100, VIT: 10, WIS: 15, DEF: 0, DEX: 0, ATK: 0, SPD: 20 };
+  function statsForLevel(L) {
+    L = Math.max(1, Math.min(100, parseInt(L, 10) || 1));
+    var e2 = Math.floor(L / 2), e10 = Math.floor(L / 10), e12 = Math.floor(L / 12);
+    return {
+      HP: LEVEL_BASE.HP + 5 * e2,
+      MANA: LEVEL_BASE.MANA + 1 * e2,
+      SPD: LEVEL_BASE.SPD + 1 * e2,
+      DEX: LEVEL_BASE.DEX + 1 * e10,
+      ATK: LEVEL_BASE.ATK + 1 * e10,
+      VIT: LEVEL_BASE.VIT + 1 * e12,
+      WIS: LEVEL_BASE.WIS + 1 * e12,
+      DEF: LEVEL_BASE.DEF
+    };
+  }
+
   var state = {
-    stats: { ATK: 0, DEX: 0, WIS: 0, VIT: 0, DEF: 0, SPD: 0, HP: 100, MANA: 100 },
+    stats: statsForLevel(1),
     weaponId: db.weapons.length ? db.weapons[0].id : null,
     gearSelected: {},
     awpDistance: 0
@@ -631,6 +654,23 @@
     renderDerived();
     compute();
   });
+
+  var levelInput = document.getElementById("levelInput");
+  var levelDerived = document.getElementById("levelDerived");
+  function applyLevel() {
+    var L = Math.max(1, Math.min(100, parseInt(levelInput.value, 10) || 1));
+    levelInput.value = L;
+    var stats = statsForLevel(L);
+    state.stats = stats;
+    STAT_KEYS.forEach(function (k) {
+      var el = statGrid.querySelector('[data-stat="' + k + '"]');
+      if (el) el.value = stats[k];
+    });
+    levelDerived.textContent = "Level " + L + " base: " + STAT_KEYS.map(function (k) { return k + " " + stats[k]; }).join(" · ");
+    renderDerived();
+    compute();
+  }
+  levelInput.addEventListener("input", applyLevel);
 
   function renderDerived() {
     var eff = effectiveStats();
@@ -1016,8 +1056,7 @@
     renderGearList();
     renderWeaponTable();
     renderGearTable();
-    renderDerived();
-    compute();
+    applyLevel();
   }
 
   renderAll();
