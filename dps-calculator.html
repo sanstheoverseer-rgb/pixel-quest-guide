@@ -413,7 +413,7 @@
     { id: "banana", name: "Banana", type: "Staff", dmgMin: 1, dmgMax: 4, shots: 8, fireRate: 2, range: 6, verified: true, notes: "Joke item, 8 simultaneous projectiles, real but tiny stats. Not tradable." },
     { id: "bent_dagger", name: "Bent Dagger", type: "Dagger", dmgMin: 30, dmgMax: 90, fireRate: 2.7, range: 6.65, verified: true, notes: "Tier 0, many pirate-themed drops." },
     { id: "blazing_hatchet", name: "Blazing Hatchet", type: "Axe", dmgMin: 310, dmgMax: 320, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Boomerang pattern, pierces, multi-hit 2." },
-    { id: "blighted_edge", name: "Blighted Edge", type: "Axe", dmgMin: 270, dmgMax: 300, fireRate: 1.5, range: 13.75, dotDps: 125, dotType: "poison", dotDecay: 40, dotDuration: 2.5, statMods: { VIT: 12 }, verified: true, notes: "Corrupted. VIT+12 on equip. Malware: +1 DEF per hit landed (max +10, 3s); applies Poisoned for 2.5s (125 DPS). Drop: Corrupted Bog Witch." },
+    { id: "blighted_edge", name: "Blighted Edge", type: "Axe", dmgMin: 270, dmgMax: 300, shots: 2, fireRate: 1.5, range: 13.75, dotDps: 132, dotType: "poison", dotDecay: 40, dotDuration: 2.5, dotPerShot: true, statMods: { VIT: 12 }, verified: true, notes: "Corrupted. VIT+12 on equip. Pierces / Max Hits 2 -- hits the same target twice per swing, so it deals damage AND applies poison twice. Poisoned 132 DPS/2.5s (decays -40/tick). Malware: +1 DEF per hit landed (max +10, 3s). Drop: Corrupted Bog Witch. NOTE: base damage 270-300 is spreadsheet-sourced and may be stale." },
     { id: "bloomweaver", name: "Bloomweaver", type: "Sword", dmgMin: 330, dmgMax: 390, fireRate: 1.6, range: 4, scaleStat: "DEF", scaleCost: 0.5, statMods: { DEF: 8, VIT: 20 }, verified: true, notes: "DEF+8/VIT+20 on equip. Pierces." },
     { id: "blossom_axe", name: "Blossom Axe", type: "Axe", dmgMin: 350, dmgMax: 420, fireRate: 1, range: 7, verified: true, notes: "Combo Starter: +1 max HP per kill for 60s (max +100). Drop: Pink Golem." },
     { id: "blossom_heart_bow", name: "Blossom Heart Bow", type: "Bow", dmgMin: 0, dmgMax: 0, fireRate: 2.5, range: 9.375, verified: true, notes: "Healing weapon — heals 30 HP per projectile, not a damage weapon. 0 DPS by design, included for completeness." },
@@ -1266,10 +1266,11 @@
         var ds = dotSources[d];
         if (!ds.dps) continue;
         if (!ds.poison) { ds.acc += ds.dps * SIM_DT; dotDamage += ds.dps * SIM_DT; continue; }
-        // New applications: one per hit, but no more often than an effect cooldown allows.
-        // Only the weapon's MAIN hit applies poison (not extra projectiles), so use
-        // effFireRate here, never effFireRate * shots.
-        var rate = ds.effectCd ? Math.min(effFireRate, 1 / ds.effectCd) : effFireRate;
+        // New applications per second. Normally one per swing; a weapon that hits the same
+        // target multiple times per swing (Blighted Edge, Max Hits 2) procs it once per hit
+        // if dotHits is set. Never more often than an effect cooldown allows.
+        var appPerSwing = ds.hits || 1;
+        var rate = ds.effectCd ? Math.min(effFireRate * appPerSwing, 1 / ds.effectCd) : effFireRate * appPerSwing;
         ds.applyAcc += rate * SIM_DT;
         while (ds.applyAcc >= 1) {
           ds.applyAcc -= 1;
@@ -1349,7 +1350,8 @@
     var dotSources = [];
     if (w.dotDps) {
       dotSources.push({ label: (w.dotType === "poison" ? "Poison" : "Extra") + " — " + w.name,
-        dps: w.dotDps, type: w.dotType || "flat", duration: w.dotDuration, decay: w.dotDecay, effectCd: w.dotEffectCd, maxStacks: w.dotMaxStacks });
+        dps: w.dotDps, type: w.dotType || "flat", duration: w.dotDuration, decay: w.dotDecay, effectCd: w.dotEffectCd, maxStacks: w.dotMaxStacks,
+        hits: w.dotPerShot ? (w.shots || 1) : 1 });
     }
     var apxFireRate = w.fireRate * (1 + (baseEff.DEX || 0) / 100);
     function applyRate(src) { return src.effectCd ? Math.min(apxFireRate, 1 / src.effectCd) : apxFireRate; }
