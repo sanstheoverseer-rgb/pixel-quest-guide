@@ -655,7 +655,7 @@
     { id: "nature_band", name: "Nature Band", slot: "accessory", verified: true, statMods: { HP: 30, MANA: 45, SPD: 9 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "On ability use: +25 WIS for 3s (this is the guide script's 'Nature gives 25 on passive' — not auto-applied here). Drops: Holiday Queen, Fairy Queen." },
     { id: "necklace_of_fangs", name: "Necklace of Fangs", slot: "accessory", verified: true, statMods: { ATK: 12, DEX: 12, HP: -50 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "If Crimson Bow or Coral Bow equipped: inflicts Bleeding (informational). Drop: True Krampus." },
     { id: "necklace_of_protection", name: "Necklace of Protection", slot: "accessory", verified: true, statMods: { HP: 5 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Low tier (T5)." },
-    { id: "necrotoxin", name: "Necrotoxin", slot: "accessory", dotFlatDps: 230, dotRequiresPoison: true, verified: true, statMods: { ATK: 12, DEX: 12, VIT: -12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Only does anything while the target is ALREADY poisoned by something else (e.g. Stygian Plate, a poison staff). Poison explosions every 0.8s (200->160->120 ticks) + a flat 200 DPS -- folded together as ~230 flat, no ATK scaling. Tune this number if you have a clean in-game read. Corrupted, drop Corrupted Ahi." },
+    { id: "necrotoxin", name: "Necrotoxin", slot: "accessory", dotDps: 200, dotType: "poison", dotDuration: 3, dotDecay: 40, dotEffectCd: 0.8, dotRequiresPoison: true, verified: true, statMods: { ATK: 12, DEX: 12, VIT: -12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Inert unless the target is already being poisoned by something else. When it is: each incoming poison application (max 1 per 0.8s) fires an explosion that IS the first tick of its own poison -> 200, then 160, then 120 over 3s. Stacks. No ATK scaling. Corrupted, drop Corrupted Ahi." },
     { id: "novice_belt", name: "Novice Belt", slot: "accessory", verified: true, statMods: { VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
     { id: "novice_boots", name: "Novice Boots", slot: "accessory", verified: true, statMods: { SPD: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
     { id: "novice_bracelet", name: "Novice Bracelet", slot: "accessory", verified: true, statMods: { MANA: 40 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
@@ -1315,14 +1315,27 @@
       dotSources.push({ label: (w.dotType === "poison" ? "Poison" : "Extra") + " — " + w.name,
         dps: w.dotDps, type: w.dotType || "flat", duration: w.dotDuration, decay: w.dotDecay, effectCd: w.dotEffectCd, maxStacks: w.dotMaxStacks });
     }
-    var hasOtherPoison = dotSources.some(function (s) { return s.type === "poison"; }) ||
-      equippedGearList().some(function (g) { return g.dotType === "poison" && !g.dotRequiresPoison && (!g.dotRequiresType || weaponMatchesReq(w, g.dotRequiresType)); });
+    var apxFireRate = w.fireRate * (1 + (baseEff.DEX || 0) / 100);
+    function applyRate(src) { return src.effectCd ? Math.min(apxFireRate, 1 / src.effectCd) : apxFireRate; }
+    // Rate at which SOME poison is being freshly applied to the target (from weapon or a
+    // non-conditional armour poison). Necrotoxin "explodes on poison applied", so this is
+    // how often its explosion fires.
+    var poisonApplyRate = 0;
+    dotSources.forEach(function (s) { if (s.type === "poison") poisonApplyRate = Math.max(poisonApplyRate, applyRate(s)); });
+    equippedGearList().forEach(function (g) {
+      if (g.dotType === "poison" && !g.dotRequiresPoison && (!g.dotRequiresType || weaponMatchesReq(w, g.dotRequiresType))) {
+        poisonApplyRate = Math.max(poisonApplyRate, applyRate({ effectCd: g.dotEffectCd }));
+      }
+    });
     equippedGearList().forEach(function (g) {
       if (g.dotRequiresType && !weaponMatchesReq(w, g.dotRequiresType)) return;
-      if (g.dotRequiresPoison && !hasOtherPoison) return; // Necrotoxin with nothing else poisoning
+      if (g.dotRequiresPoison && poisonApplyRate <= 0) return; // Necrotoxin: nothing else poisoning -> inert
       if (g.dotDps) {
+        // Necrotoxin fires once per incoming poison application, but no faster than its own CD.
+        var eff = g.dotEffectCd;
+        if (g.dotRequiresPoison) eff = 1 / Math.min(poisonApplyRate, g.dotEffectCd ? 1 / g.dotEffectCd : Infinity);
         dotSources.push({ label: (g.dotType === "poison" ? "Poison" : "Burn") + " — " + g.name,
-          dps: g.dotDps, type: g.dotType || "flat", duration: g.dotDuration, decay: g.dotDecay, effectCd: g.dotEffectCd, maxStacks: g.dotMaxStacks });
+          dps: g.dotDps, type: g.dotType || "flat", duration: g.dotDuration, decay: g.dotDecay, effectCd: eff, maxStacks: g.dotMaxStacks });
       }
       if (g.dotFlatDps) {
         dotSources.push({ label: "Flat DOT — " + g.name, dps: g.dotFlatDps, type: "flat" });
