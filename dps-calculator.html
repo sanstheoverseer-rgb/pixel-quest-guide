@@ -574,7 +574,7 @@
     { id: "mushroom_cap", name: "Mushroom Cap", slot: "accessory", verified: true, statMods: { MANA: 50, WIS: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "On ability use: +12 ATK for 3s (not auto-applied). Drops from 7 enemies." },
 
     // --- full wiki catalog pull: accessories ---
-    { id: "absolute_zero", name: "Absolute Zero", slot: "accessory", verified: true, statMods: { ATK: 15, DEF: 10, MANA: 120, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, summonBase: 200, summonPer: 3, summonStat: "DEF", summonMax: 5, notes: "Frigid: up to 5 orbiting ice crystals. Every weapon swing, each crystal also strikes for 200 + 3/DEF (no ATK scaling). Assumed already at 5 crystals (spawn ramp skipped). Drop: Corrupted Arctic Deer." },
+    { id: "absolute_zero", name: "Absolute Zero", slot: "accessory", verified: true, statMods: { ATK: 15, DEF: 10, MANA: 120, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, summonBase: 200, summonPer: 3, summonStat: "DEF", summonMax: 5, summonRegenSec: 1, notes: "Frigid: hold up to 5 ice crystals. On a weapon swing, every crystal you hold strikes for 200 + 3/DEF (no ATK scaling) and is consumed; you regain 1 crystal per second. So it's a 5-crystal opening burst, then ~1 crystal/sec sustained. Drop: Corrupted Arctic Deer." },
     { id: "abyssal_helm", name: "Abyssal Helm", slot: "accessory", verified: true, statMods: { ATK: 12, DEF: 12, HP: 50, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Protector: on negative status, gain Protected (12s CD). Drop: Corrupted Ruins Knight." },
     { id: "adept_belt", name: "Adept Belt", slot: "accessory", verified: true, statMods: { VIT: 18 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 3 starter set." },
     { id: "adept_boots", name: "Adept Boots", slot: "accessory", verified: true, statMods: { SPD: 18 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 3 starter set." },
@@ -1143,14 +1143,15 @@
     var critMult = w.critChance ? (1 + w.critChance * ((w.critMult || 1) - 1)) : 1;
     var secProjDamage = 0;
 
-    // Summons (Absolute Zero ice crystals, etc.): `max` orbiting units, each strikes the
-    // target once per weapon swing for base + per*<stat>. NOT ATK-scaled. We assume they're
-    // already at full count (skip the spawn ramp).
+    // Summons (Absolute Zero ice crystals, etc.): each crystal deals base + per*<stat>
+    // (NOT ATK-scaled) when it strikes, and is then consumed. Crystals regenerate 1 every
+    // `regenSec` seconds up to `max`. Start at full. On a weapon swing, every crystal you
+    // currently hold strikes and is spent -- so once the opening 5 are dumped, throughput
+    // is capped at the regen rate (~1/sec), not the swing rate.
     summons = (summons || []).map(function (u) {
-      var each = (u.base || 0) + (u.per || 0) * (baseEff[u.stat] || 0);
-      return { label: u.label, each: each, count: u.max || 1, perSwing: each * (u.max || 1), acc: 0 };
+      return { label: u.label, each: (u.base || 0) + (u.per || 0) * (baseEff[u.stat] || 0),
+        max: u.max || 1, regenSec: u.regenSec || 1, held: u.max || 1, regenAcc: 0, acc: 0 };
     });
-    var summonPerSwing = summons.reduce(function (a, u) { return a + u.perSwing; }, 0);
     var summonDamage = 0;
 
     // DOT sources. Burn/frost/bleed do NOT stack -- flat DPS while up, so vs a dummy it's a
@@ -1181,8 +1182,17 @@
     var weaponDamage = 0;
     var dotDamage = 0;
     var weaponShotAcc = 0;
+    var swingAcc = 0;
     var weaponStarvedShots = 0;
     var weaponFiredShots = 0;
+
+    // A weapon swing spends every ice crystal currently held (each does its flat, non-ATK dmg).
+    function onSwing() {
+      for (var q = 0; q < summons.length; q++) {
+        var C = summons[q];
+        if (C.held > 0) { var dd = C.held * C.each; C.acc += dd; summonDamage += dd; C.held = 0; }
+      }
+    }
 
     var minManaSeen = mana;
     var steps = Math.round(SIM_DURATION / SIM_DT);
@@ -1219,6 +1229,13 @@
       var atkMult = (1 + atkNow / 100) * gearMult;
       var effFireRate = w.fireRate * (1 + dexNow / 100);
 
+      // Regenerate summoned units (ice crystals) toward their cap.
+      for (var su = 0; su < summons.length; su++) {
+        var S = summons[su];
+        S.regenAcc += SIM_DT / S.regenSec;
+        while (S.regenAcc >= 1 && S.held < S.max) { S.regenAcc -= 1; S.held++; }
+      }
+
       var mainHit = (avgDmg + flatScalingBonus) * shots * critMult;
       if (w.manaCostPerShot) {
         weaponShotAcc += effFireRate * SIM_DT;
@@ -1229,7 +1246,7 @@
             mana += (w.manaStealPerShot || 0);
             weaponDamage += mainHit * atkMult;
             secProjDamage += secHitDmg * atkMult;
-            summonDamage += summonPerSwing; // crystals strike per swing, no ATK scaling
+            onSwing();
             weaponFiredShots++;
           } else {
             weaponStarvedShots++;
@@ -1238,7 +1255,8 @@
       } else {
         weaponDamage += mainHit * atkMult * effFireRate * SIM_DT;
         secProjDamage += secHitDmg * atkMult * effFireRate * SIM_DT;
-        summonDamage += summonPerSwing * effFireRate * SIM_DT;
+        swingAcc += effFireRate * SIM_DT;
+        while (swingAcc >= 1) { swingAcc -= 1; onSwing(); }
       }
 
       // Status DOT. Burn/frost/bleed = flat (non-stacking). Poison = a pile of independent
@@ -1274,13 +1292,12 @@
 
       if (mana < minManaSeen) minManaSeen = mana;
     }
-    if (summonPerSwing) summons[0].acc = summonDamage; // all summon dmg lumped; single source in practice
 
     var grandTotal = weaponDamage + secProjDamage + dotDamage + secDamage + summonDamage;
     return {
       weaponDamage: weaponDamage, secProjDamage: secProjDamage, dotDamage: dotDamage, secDamage: secDamage, summonDamage: summonDamage,
       totalDamage: grandTotal, avgDps: grandTotal / SIM_DURATION,
-      summonBreakdown: summons.map(function (u) { return { label: u.label, total: u.acc, n: u.count, per: u.each }; }),
+      summonBreakdown: summons.map(function (u) { return { label: u.label, total: u.acc, max: u.max, each: u.each, regenSec: u.regenSec }; }),
       endMana: mana, minMana: minManaSeen, manaRegenPerSec: manaRegenPerSec,
       secCastCount: secCastCount, secSkippedCount: secSkippedCount,
       secBuffUptimePct: sec && sec.buffDuration ? (secBuffActiveTime / SIM_DURATION * 100) : null,
@@ -1366,7 +1383,7 @@
     [w].concat(equippedGearList()).forEach(function (it) {
       if (it && it.summonBase != null) {
         summons.push({ label: "Summons — " + it.name, base: it.summonBase, per: it.summonPer || 0,
-          stat: it.summonStat, max: it.summonMax || 1 });
+          stat: it.summonStat, max: it.summonMax || 1, regenSec: it.summonRegenSec || 1 });
       }
     });
 
@@ -1404,7 +1421,7 @@
     });
     (sim.summonBreakdown || []).forEach(function (u) {
       if (!u.total) return;
-      rows.push({ k: u.label + " (" + u.n + " × " + fmt(u.per, 0) + " per swing, DEF-scaled, no ATK)", v: fmt(u.total, 0) });
+      rows.push({ k: u.label + " (" + fmt(u.each, 0) + " each, DEF-scaled no ATK; " + u.max + " to start then 1 back every " + u.regenSec + "s)", v: fmt(u.total, 0) });
     });
     if (secItem) {
       if (sim.secGated) {
