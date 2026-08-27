@@ -347,7 +347,7 @@
     </div>
   </details>
 
-  <p class="footer-note">Base stat formulas (Wis→Mana regen, Vit→HP regen, Def/Atk/Dex%) are creator-sourced, not wiki-documented — the wiki has no central mechanics page. Weapon/gear numbers are pulled from wiki.playpixelquest.com. Damage scaling is additive: a weapon's own scaling stat (if it has one) adds flat damage on top of its base damage, and ATK's universal +1%/point then multiplies that whole total — same for every weapon, whether or not it has its own scaling stat. The DPS number is a real 30-second tick-by-tick simulation: mana starts full and regens from Wisdom, your secondary only fires when its cooldown is up and mana can afford it (otherwise it sits idle and the sim shows how many casts got skipped), flag-type secondaries only grant their stat bonus while actually active between casts, and mana-gated weapons (AWP, Musket line, etc.) can stall their own attacks. The "Shots" column is how many projectiles a weapon fires per attack as its basic pattern (staff twin-shots, 3-arrow bow spreads, boomerang double-hits) — damage is per-projectile and this multiplies it, assuming every one connects (true vs a dummy). Conditional/random extra projectiles (procs, "if Heavy Armor", stat thresholds) stay in the notes. The "Extra dps" column is a catch-all flat DPS added on top, approximated as continuous: status DOT (burn/poison/bleed) plus always-on secondary/AOE projectiles the tick sim doesn't model directly (explosions, homing bursts, "on shoot fire N more"). Where the source only gave a total, that value is reverse-engineered to land near the community spreadsheet's base DPS — a rough estimate, not a measured figure; a few also fold in an expected-value guess for a conditional effect the spreadsheet assumes is active. Health-threshold and status-based armor passives (e.g. "below 25% HP, heal") stay in each item's notes as informational only. Doesn't model target defense.</p>
+  <p class="footer-note">Base stat formulas (Wis→Mana regen, Vit→HP regen, Def/Atk/Dex%) are creator-sourced, not wiki-documented — the wiki has no central mechanics page. Weapon/gear numbers are pulled from wiki.playpixelquest.com. Damage scaling is additive: a weapon's own scaling stat (if it has one) adds flat damage on top of its base damage, and ATK's universal +1%/point then multiplies that whole total — same for every weapon, whether or not it has its own scaling stat. The DPS number is a real 30-second tick-by-tick simulation: mana starts full and regens from Wisdom, your secondary only fires when its cooldown is up and mana can afford it (otherwise it sits idle and the sim shows how many casts got skipped), flag-type secondaries only grant their stat bonus while actually active between casts, and mana-gated weapons (AWP, Musket line, etc.) can stall their own attacks. The "Shots" column is how many projectiles a weapon fires per attack as its basic pattern (staff twin-shots, 3-arrow bow spreads, boomerang double-hits) — damage is per-projectile and this multiplies it, assuming every one connects (true vs a dummy). Conditional/random extra projectiles (procs, "if Heavy Armor", stat thresholds) stay in the notes. The "Extra dps" column is a catch-all: for burn / frost / bleed it's a flat add (those don't stack — re-hitting only refreshes), for poison it's the per-stack DPS and the sim stacks it (every hit adds an instance, so live stacks ramp to fire-rate × duration then hold — the breakdown shows the stack count). It also absorbs always-on secondary/AOE projectiles the tick sim can't model directly (explosions, homing bursts, "on shoot fire N more"); those flat values are reverse-engineered to land near the community spreadsheet's base DPS — rough estimates, not measured. Armor/accessory that inflict a status (Stygian Plate's Sword poison, Necrotoxin) are folded in too, gated by any weapon-type requirement. Health-threshold and status-based armor passives (e.g. "below 25% HP, heal") stay in each item's notes as informational only. Doesn't model target defense.</p>
 </div>
 
 <script>
@@ -401,7 +401,7 @@
     { id: "banana", name: "Banana", type: "Staff", dmgMin: 1, dmgMax: 4, shots: 8, fireRate: 2, range: 6, verified: true, notes: "Joke item, 8 simultaneous projectiles, real but tiny stats. Not tradable." },
     { id: "bent_dagger", name: "Bent Dagger", type: "Dagger", dmgMin: 30, dmgMax: 90, fireRate: 2.7, range: 6.65, verified: true, notes: "Tier 0, many pirate-themed drops." },
     { id: "blazing_hatchet", name: "Blazing Hatchet", type: "Axe", dmgMin: 310, dmgMax: 320, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Boomerang pattern, pierces, multi-hit 2." },
-    { id: "blighted_edge", name: "Blighted Edge", type: "Axe", dmgMin: 270, dmgMax: 300, fireRate: 1.5, range: 13.75, dotDps: 125, verified: true, notes: "Corrupted. VIT+12 on equip. Malware: +1 DEF per hit landed (max +10, 3s); applies Poisoned for 2.5s (125 DPS). Drop: Corrupted Bog Witch." },
+    { id: "blighted_edge", name: "Blighted Edge", type: "Axe", dmgMin: 270, dmgMax: 300, fireRate: 1.5, range: 13.75, dotDps: 125, dotType: "poison", dotDuration: 2.5, verified: true, notes: "Corrupted. VIT+12 on equip. Malware: +1 DEF per hit landed (max +10, 3s); applies Poisoned for 2.5s (125 DPS). Drop: Corrupted Bog Witch." },
     { id: "bloomweaver", name: "Bloomweaver", type: "Sword", dmgMin: 330, dmgMax: 390, fireRate: 1.6, range: 4, scaleStat: "DEF", scaleCost: 0.5, verified: true, notes: "DEF+8/VIT+20 on equip. Pierces." },
     { id: "blossom_axe", name: "Blossom Axe", type: "Axe", dmgMin: 350, dmgMax: 420, fireRate: 1, range: 7, verified: true, notes: "Combo Starter: +1 max HP per kill for 60s (max +100). Drop: Pink Golem." },
     { id: "blossom_heart_bow", name: "Blossom Heart Bow", type: "Bow", dmgMin: 0, dmgMax: 0, fireRate: 2.5, range: 9.375, verified: true, notes: "Healing weapon — heals 30 HP per projectile, not a damage weapon. 0 DPS by design, included for completeness." },
@@ -430,7 +430,7 @@
     { id: "elementary_staff", name: "Elementary Staff", type: "Staff", dmgMin: 25, dmgMax: 35, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj, 40% def pen. Tier 0 starter." },
     { id: "elementary_staff_of_doom", name: "Elementary Staff OF DOOM", type: "Staff", dmgMin: 25, dmgMax: 35, shots: 6, fireRate: 2.5, range: 9.2, scaleStat: "MANA", scaleCost: 5, verified: true, notes: "6 proj. Dungeon Rush only." },
     { id: "ember_staff", name: "Ember Staff", type: "Staff", dmgMin: 40, dmgMax: 55, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "40% def pen, 2 proj, sine pattern." },
-    { id: "emerald_ouroboros", name: "Emerald Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, verified: true, notes: "DEX+8/SPD+8 on equip. On Hit: 70 DPS poison 2s; Serpent: every 4 hits, 40 dmg + 110 DPS poison 3s; 60% def pen. Corrupted." },
+    { id: "emerald_ouroboros", name: "Emerald Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDuration: 2, verified: true, notes: "DEX+8/SPD+8 on equip. On Hit: 70 DPS poison 2s; Serpent: every 4 hits, 40 dmg + 110 DPS poison 3s; 60% def pen. Corrupted." },
     { id: "emerald_sword", name: "Emerald Sword", type: "Sword", dmgMin: 240, dmgMax: 280, fireRate: 1.6, range: 4, verified: true, notes: "DEF+5/VIT+14 on equip. Pierces." },
     { id: "encyclopedia_floral", name: "Encyclopedia (Floral Edition)", type: "Fan", dmgMin: 1300, dmgMax: 1300, fireRate: 2, range: 14.4, scaleStat: "WIS", scaleCost: 1, verified: true, notes: "Summer Shine (stat boost) + Star Barrage (5 proj burst)." },
     { id: "eternal_winter", name: "Eternal Winter", type: "Bow", dmgMin: 94, dmgMax: 102, fireRate: 4, range: 8.75, verified: true, notes: "Corrupted. DEF-10/HP-25 on equip. Multi-Shot: 25% chance +2 proj @100-200 true dmg + Slow; Cold Streak: +1 DEX/hit landed (cap +50); 80% def pen, pierces. Drop: Corrupted Arctic Deer." },
@@ -493,7 +493,7 @@
     { id: "oak_staff", name: "Oak Staff", type: "Staff", dmgMin: 35, dmgMax: 50, fireRate: 2.5, range: 10.4, verified: true, notes: "No pierce, sine pattern." },
     { id: "octosword", name: "Octosword", type: "Sword", dmgMin: 1844, dmgMax: 1888, fireRate: 0.33, range: 4, verified: true, notes: "DEF+8/HP+88 on equip. Octostrike: summons 8 orbiting projectiles, 150-175 dmg each." },
     { id: "omnipotent_staff", name: "Omnipotent Staff", type: "Staff", dmgMin: 130, dmgMax: 155, shots: 2, fireRate: 2.5, range: 6, verified: true, notes: "2 base projectiles + 3 secondary @45-55 (secondary not modeled), 40% def pen, pierces. Identical to its twins 0y0's Omnipotent Staff / Atlantis. Drop: Seer the Corrupted." },
-    { id: "ouroboros", name: "Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, verified: true, notes: "Corrupted. On-hit: 70 DPS poison 2s. Every 10 hits: serpent proj, 125 dmg. 60% def pen. Drop: Corrupted Ahi." },
+    { id: "ouroboros", name: "Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDuration: 2, verified: true, notes: "Corrupted. On-hit: 70 DPS poison 2s. Every 10 hits: serpent proj, 125 dmg. 60% def pen. Drop: Corrupted Ahi." },
     { id: "pantheons_spear", name: "Pantheon's Spear", type: "Dagger", dmgMin: 100, dmgMax: 200, fireRate: 2, range: 6.875, verified: true, notes: "If Helmet equipped: 20% chance +3 proj, 300-400 true dmg. Dungeon Rush exclusive." },
     { id: "peacock_fan", name: "Peacock Fan", type: "Fan", dmgMin: 50, dmgMax: 55, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-targets nearby enemies. 70% def pen, no pierce." },
     { id: "pharaohs_reaper", name: "Pharaoh's Reaper", type: "Staff", dmgMin: 80, dmgMax: 105, shots: 2, fireRate: 4.22, range: 9.625, verified: true, notes: "2 simultaneous projectiles (spreadsheet base DPS confirms x2), sine pattern, no pierce." },
@@ -508,16 +508,16 @@
     { id: "rolling_pin", name: "Rolling Pin", type: "Axe", dmgMin: 310, dmgMax: 350, shots: 2, fireRate: 1, range: 6.6, verified: true, notes: "Boomerang, pierces, multi-hit 2." },
     { id: "royale_fan", name: "Royale Fan", type: "Fan", dmgMin: 50, dmgMax: 55, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-target, 70% def pen." },
     { id: "ruby_fan", name: "Ruby Fan", type: "Fan", dmgMin: 40, dmgMax: 45, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-target, 70% def pen." },
-    { id: "ruby_ouroboros", name: "Ruby Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, verified: true, notes: "HP+80/VIT+6 on equip. On Hit: 70 DPS poison 2s; Serpent: every 16 hits, 300 dmg+burn." },
+    { id: "ruby_ouroboros", name: "Ruby Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDuration: 2, verified: true, notes: "HP+80/VIT+6 on equip. On Hit: 70 DPS poison 2s; Serpent: every 16 hits, 300 dmg+burn." },
     { id: "rubycore_bow", name: "Rubycore Bow", type: "Bow", dmgMin: 60, dmgMax: 75, shots: 3, fireRate: 2.4, range: 8.925, verified: true, notes: "3 proj, pierces, 60% def pen." },
     { id: "rusted_hatchet", name: "Rusted Hatchet", type: "Axe", dmgMin: 65, dmgMax: 75, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Boomerang, pierces, multi-hit 2." },
     { id: "rusty_broadsword", name: "Rusty Broadsword", type: "Sword", dmgMin: 100, dmgMax: 140, fireRate: 1.6, range: 4, verified: true, notes: "DEF+1/VIT+5 on equip. Pierces." },
     { id: "sapphire_fan", name: "Sapphire Fan", type: "Fan", dmgMin: 50, dmgMax: 55, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-target, 70% def pen." },
-    { id: "sapphire_ouroboros", name: "Sapphire Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, scaleStat: "WIS", scaleCost: 1, dotDps: 70, verified: true, notes: "MANA+110/WIS+15 on equip. On Hit: 70 DPS poison 2s; Serpent: every 20 hits, 420 dmg+frost." },
+    { id: "sapphire_ouroboros", name: "Sapphire Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, scaleStat: "WIS", scaleCost: 1, dotDps: 70, dotType: "poison", dotDuration: 2, verified: true, notes: "MANA+110/WIS+15 on equip. On Hit: 70 DPS poison 2s; Serpent: every 20 hits, 420 dmg+frost." },
     { id: "scarlet_veil", name: "Scarlet Veil", type: "Fan", dmgMin: 60, dmgMax: 70, fireRate: 0.8, range: 6.495, scaleStat: "HP", scaleCost: 100, verified: true, notes: "Auto-target; heal-others buffs: +15DEX+60VIT(7s) solo / +50HP+50MANA+15VIT(10s) party, 15s CD. Drop: Butterfly Princess." },
     { id: "scorch_sceptre", name: "Scorch Sceptre", type: "Staff", dmgMin: 70, dmgMax: 90, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj sine, 40% def pen." },
     { id: "scythe_of_the_forsaken", name: "Scythe of the Forsaken", type: "Staff", dmgMin: 75, dmgMax: 95, fireRate: 2.5, range: 10, verified: true, notes: "40% def pen. Executor: +70% dmg to bosses below 33% HP." },
-    { id: "sealed_sensu", name: "Sealed Sensu", type: "Fan", dmgMin: 30, dmgMax: 40, fireRate: 3, range: 6.495, scaleStat: "SPD", scaleCost: 20, dotDps: 10, verified: true, notes: "Auto-target; heal-buffs +13ATK(7s) solo / +7ATK+7VIT+7WIS(10s) party; Poisoned ~10 DPS/1s (rough), 70% def pen." },
+    { id: "sealed_sensu", name: "Sealed Sensu", type: "Fan", dmgMin: 30, dmgMax: 40, fireRate: 3, range: 6.495, scaleStat: "SPD", scaleCost: 20, dotDps: 10, dotType: "poison", dotDuration: 1, verified: true, notes: "Auto-target; heal-buffs +13ATK(7s) solo / +7ATK+7VIT+7WIS(10s) party; Poisoned ~10 DPS/1s (rough), 70% def pen." },
     { id: "selfie_stick", name: "Selfie Stick", type: "Staff", dmgMin: 35, dmgMax: 50, shots: 12, fireRate: 2.5, range: 4.2, verified: true, notes: "WIS+10 on equip. Summer Shine: +3ATK/+3DEX, 12 projectiles. Real weapon despite the joke name." },
     { id: "shadow_dagger", name: "Shadow Dagger", type: "Dagger", dmgMin: 60, dmgMax: 120, fireRate: 2.7, range: 6.65, verified: true, notes: "No passive." },
     { id: "skysteel_axe", name: "Skysteel Axe", type: "Axe", dmgMin: 240, dmgMax: 250, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Boomerang, pierces, multi-hit 2." },
@@ -535,19 +535,19 @@
     { id: "sylvan_staff", name: "Sylvan Staff", type: "Staff", dmgMin: 35, dmgMax: 50, shots: 8, fireRate: 2.5, range: 4.2, verified: true, notes: "8 simultaneous projectiles (spreadsheet base DPS confirms x8). WIS+5 on equip. (Dropped a uniform WIS/1 scaling the spreadsheet does not list.)" },
     { id: "sylvan_staff_of_doom", name: "Sylvan Staff OF DOOM", type: "Staff", dmgMin: 80, dmgMax: 100, shots: 16, fireRate: 2.6, range: 4.2, scaleStat: "WIS", scaleCost: 3, verified: true, notes: "WIS+5 on equip. 16 projectiles. Dungeon Rush exclusive." },
     { id: "the_plague", name: "The Plague", type: "Dagger", dmgMin: 190, dmgMax: 250, fireRate: 3.75, range: 6, dotDps: 338, verified: true, notes: "Corrupted. Torment: emits a 90-dmg slashing projectile (100% def pen, pierce) with each attack, folded into ~338 extra DPS (matches the spreadsheet ~1163 avg base)." },
-    { id: "topaz_ouroboros", name: "Topaz Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, verified: true, notes: "DEF+6/SPD+12 on equip. Poison 70dps/2s on hit; Serpent: every 6th hit fires 100 dmg + bleed 3s." },
+    { id: "topaz_ouroboros", name: "Topaz Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDuration: 2, verified: true, notes: "DEF+6/SPD+12 on equip. Poison 70dps/2s on hit; Serpent: every 6th hit fires 100 dmg + bleed 3s." },
     { id: "toy_hammer", name: "Toy Hammer", type: "Axe", dmgMin: 215, dmgMax: 235, shots: 2, fireRate: 1.7, range: 8.25, dotDps: 300, verified: true, notes: "ATK+3/DEX+3 on equip. Pierces, hits the same target twice per swing (Shots 2 vs a dummy). Burning on enemies for 5s (300 DPS) - twin of Crusher's Hammer." },
     { id: "toy_sword", name: "Toy Sword", type: "Sword", dmgMin: 230, dmgMax: 280, fireRate: 2, range: 4.55, scaleStat: "DEX", scaleCost: 1.3333, verified: true, notes: "DEF+8/VIT+22 on equip. Pierces. Seasonal." },
     { id: "toy_sword_of_doom", name: "Toy Sword OF DOOM", type: "Sword", dmgMin: 240, dmgMax: 300, shots: 3, fireRate: 2, range: 4.55, scaleStat: "DEF", scaleCost: 0.3333, verified: true, notes: "DEF+10/VIT+25 on equip. 3 proj, pierces. Dungeon Rush exclusive." },
     { id: "travelers_sword", name: "Traveler's Sword", type: "Sword", dmgMin: 160, dmgMax: 200, fireRate: 1.6, range: 4, verified: true, notes: "DEF+3/VIT+10 on equip. Pierces." },
     { id: "twinsplitter", name: "Twinsplitter", type: "Dagger", dmgMin: 120, dmgMax: 180, fireRate: 2.7, range: 6.65, verified: true, notes: "No passive." },
-    { id: "unsealed_sensu", name: "Unsealed Sensu", type: "Fan", dmgMin: 99, dmgMax: 132, fireRate: 6, range: 6.495, dotDps: 45, verified: true, notes: "Auto-target; healing others grants +15 DEX 7s (self) or +12 DEX/+6 DEF 10s (party, 15s CD); Poisoned for 2s (45 DPS, corrected from spreadsheet)." },
+    { id: "unsealed_sensu", name: "Unsealed Sensu", type: "Fan", dmgMin: 99, dmgMax: 132, fireRate: 6, range: 6.495, dotDps: 45, dotType: "poison", dotDuration: 2, verified: true, notes: "Auto-target; healing others grants +15 DEX 7s (self) or +12 DEX/+6 DEF 10s (party, 15s CD); Poisoned for 2s (45 DPS, corrected from spreadsheet)." },
     { id: "venomfang", name: "Venomfang", type: "Dagger", dmgMin: 40, dmgMax: 50, fireRate: 5, range: 6.4, verified: true, notes: "Multi-Shot: +2 proj, 10-20 true dmg. Drop: Swamp Trap." },
     { id: "verdant_axe", name: "Verdant Axe", type: "Axe", dmgMin: 205, dmgMax: 215, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Pierces, multi-hit 2." },
     { id: "verdent_fan", name: "Verdent Fan", type: "Fan", dmgMin: 35, dmgMax: 40, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-target, 70% def pen." },
     { id: "warped_axe", name: "Warped Axe", type: "Axe", dmgMin: 160, dmgMax: 180, shots: 2, fireRate: 1.25, range: 5.5, verified: true, notes: "Pierces, hits the same target twice per throw (Shots 2 vs a dummy). Combo Starter: +2 DEF/kill, cap +20 (not DPS-relevant)." },
     { id: "water_gun", name: "Water Gun", type: "Bow", tags: ["Gun"], dmgMin: 230, dmgMax: 250, fireRate: 3, range: 8.8, verified: true, notes: "ATK+3/DEX+3 on equip (Summer Shine, not auto-applied — same as other weapons' on-equip bonuses). Splash: 50% chance colored water-balloon status proc. Drop: Tyler." },
-    { id: "worm_staff", name: "Worm Staff", type: "Staff", dmgMin: 65, dmgMax: 75, shots: 2, fireRate: 2.5, range: 10.4, dotDps: 150, verified: true, notes: "Mana+30/WIS+10 on equip. 2 projectiles. Extra ~150 DPS = 30 poison + serpent proc (every 10 hits), reverse-engineered to match the spreadsheet ~500 base. 40% def pen. Drop: Worm Hole." },
+    { id: "worm_staff", name: "Worm Staff", type: "Staff", dmgMin: 65, dmgMax: 75, shots: 2, fireRate: 2.5, range: 10.4, dotDps: 30, dotType: "poison", dotDuration: 1, verified: true, notes: "Mana+30/WIS+10 on equip. 2 projectiles. Poisoned 30 DPS/1s per stack (stacks per hit). Every 10 hits also fires a serpent projectile (~125 dmg, not modeled). 40% def pen. Drop: Worm Hole." },
     { id: "worm_staff_of_doom", name: "Worm Staff OF DOOM", type: "Staff", dmgMin: 75, dmgMax: 100, fireRate: 2.5, range: 10.4, scaleStat: "WIS", scaleCost: 3, verified: true, notes: "Mana+40/WIS+20 on equip. Poison DoT, 40% def pen. Dungeon Rush exclusive, not tradable." },
     { id: "worn_longsword", name: "Worn Longsword", type: "Sword", dmgMin: 120, dmgMax: 160, fireRate: 1.6, range: 4, verified: true, notes: "DEF+2/VIT+8 on equip. Pierces. Tier 1." },
     { id: "zstrats_leaf_dagger", name: "ZStrat's Leaf Dagger", type: "Dagger", dmgMin: 65, dmgMax: 75, shots: 2, fireRate: 2.7, range: 6, scaleStat: "WIS", scaleCost: 0.99, verified: true, notes: "2 projectiles/attack. Stat-identical to Magical Leaf Dagger." }
@@ -647,7 +647,7 @@
     { id: "nature_band", name: "Nature Band", slot: "accessory", verified: true, statMods: { HP: 30, MANA: 45, SPD: 9 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "On ability use: +25 WIS for 3s (this is the guide script's 'Nature gives 25 on passive' — not auto-applied here). Drops: Holiday Queen, Fairy Queen." },
     { id: "necklace_of_fangs", name: "Necklace of Fangs", slot: "accessory", verified: true, statMods: { ATK: 12, DEX: 12, HP: -50 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "If Crimson Bow or Coral Bow equipped: inflicts Bleeding (informational). Drop: True Krampus." },
     { id: "necklace_of_protection", name: "Necklace of Protection", slot: "accessory", verified: true, statMods: { HP: 5 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Low tier (T5)." },
-    { id: "necrotoxin", name: "Necrotoxin", slot: "accessory", verified: true, statMods: { ATK: 12, DEX: 12, VIT: -12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Poison explosions: 200 DPS, 0.8s CD (not folded into weapon DPS — separate poison tick). Corrupted tier, drop Corrupted Ahi." },
+    { id: "necrotoxin", name: "Necrotoxin", slot: "accessory", dotDps: 200, verified: true, statMods: { ATK: 12, DEX: 12, VIT: -12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Poison explosions ~200 DPS, 0.8s CD -- folded in as a flat 200 (treated as recurring AOE, not a stacking DoT; verify in-game). Corrupted tier, drop Corrupted Ahi." },
     { id: "novice_belt", name: "Novice Belt", slot: "accessory", verified: true, statMods: { VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
     { id: "novice_boots", name: "Novice Boots", slot: "accessory", verified: true, statMods: { SPD: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
     { id: "novice_bracelet", name: "Novice Bracelet", slot: "accessory", verified: true, statMods: { MANA: 40 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
@@ -770,7 +770,7 @@
     { id: "scouts_leathers", name: "Scout's Leathers", slot: "armor", verified: true, statMods: { DEF: 4, DEX: 2, SPD: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 1." },
     { id: "scuba_suit", name: "Scuba Suit", slot: "armor", verified: true, statMods: { ATK: 12, DEF: 6, MANA: 60, WIS: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine + Wisdom Booster (if Staff, +12 WIS)." },
     { id: "silver_chainmail", name: "Silver Chainmail", slot: "armor", verified: true, statMods: { DEF: 8, HP: 20, VIT: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 3." },
-    { id: "stygian_plate", name: "Stygian Plate", slot: "armor", verified: true, statMods: { ATK: 15, DEF: 20, HP: 80, VIT: 22 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Sword", notes: "Corrupted. Smoldering: Sword shots inflict Poisoned, 1s effect CD (informational). Drop: Corrupted Ruins Knight." },
+    { id: "stygian_plate", name: "Stygian Plate", slot: "armor", dotDps: 220, dotType: "poison", dotDuration: 3, dotEffectCd: 1, dotRequiresType: "Sword", verified: true, statMods: { ATK: 15, DEF: 20, HP: 80, VIT: 22 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Sword", notes: "Corrupted. Smoldering: Sword shots inflict Poisoned on enemies for 3s (220 DPS/stack), 1s effect cooldown -> stacks to ~3x (~660 DPS) with a Sword equipped. Now folded into the DPS number. Drop: Corrupted Ruins Knight." },
     { id: "sun_sorcerers_robe", name: "Sun Sorcerer's Robe", slot: "armor", verified: true, statMods: { ATK: 21, DEF: 5, WIS: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 5." },
     { id: "towel_robe", name: "Towel Robe", slot: "armor", verified: true, statMods: { ATK: 23, MANA: 50, WIS: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine + Resistance (Sick 50% effective). Drops: Golden Bat, Worm Hole." },
     { id: "tricksters_vest_of_doom", name: "Trickster's Vest OF DOOM", slot: "armor", verified: true, statMods: { DEF: 14, DEX: 26, SPD: 15, WIS: 17 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Second Chance: <10% HP, 50% chance full heal. Dungeon Rush exclusive — a genuinely upgraded tier, not a cosmetic reskin." },
@@ -1080,13 +1080,29 @@
   // it sits idle -- exactly the "runs out of mana, stops using it" behavior asked for), flag
   // buffs only contribute their stat bonus while actually active between casts (downtime
   // modeled), and AWP's per-shot mana cost can stall its own attacks if mana runs dry.
-  function simulateDPS(w, baseEff, sec, gearMult) {
+  function simulateDPS(w, baseEff, sec, gearMult, dotSources) {
     var mana = baseEff.MANA || 0;
     var manaRegenPerSec = (baseEff.WIS || 0) / 10;
     var avgDmg = (w.dmgMin + w.dmgMax) / 2;
     var shots = w.shots || 1;
     var scaleStat = w.scaleStat || null;
     var scaleCost = w.scaleCost || 1;
+
+    // DOT sources: burn/frost/bleed do NOT stack (flat DPS for their duration, re-hitting
+    // only refreshes) -- so vs a dummy that's just a flat add. Poison DOES stack: every
+    // application adds an independent instance, so effective DPS = perStackDps * liveStacks,
+    // where liveStacks ramps to (applicationRate * duration) then holds. applicationRate is
+    // one-per-hit unless the source has an effectCd gate (e.g. Stygian Plate, 1s).
+    dotSources = (dotSources || []).map(function (d) {
+      return {
+        label: d.label, dps: d.dps || 0,
+        stacks: d.type === "poison",
+        duration: d.duration || 3,
+        effectCd: d.effectCd || 0,
+        maxStacks: d.maxStacks || 0,
+        acc: 0, lastStacks: 0
+      };
+    });
 
     var secCooldown = 0;
     var secBuffRemaining = 0;
@@ -1154,10 +1170,21 @@
         weaponDamage += (avgDmg + flatScalingBonus) * atkMult * shots * effFireRate * SIM_DT;
       }
 
-      // Status DOT (burn/poison/etc): added as a flat DPS on top once a weapon has dotDps
-      // set. Approximation -- assumes the status is applied and refreshed continuously
-      // rather than modeling individual proc chances or stacking/refresh timing.
-      if (w.dotDps) dotDamage += w.dotDps * SIM_DT;
+      // Status DOT. Burn/frost/bleed = flat (non-stacking). Poison = stacking: liveStacks
+      // ramps at applicationRate to a steady state of rate*duration, then holds.
+      var elapsed = i * SIM_DT;
+      for (var d = 0; d < dotSources.length; d++) {
+        var ds = dotSources[d];
+        if (!ds.dps) continue;
+        if (!ds.stacks) { ds.acc += ds.dps * SIM_DT; dotDamage += ds.dps * SIM_DT; continue; }
+        var rate = ds.effectCd ? (1 / ds.effectCd) : effFireRate; // applications per second
+        var live = rate * Math.min(elapsed, ds.duration);
+        if (ds.maxStacks) live = Math.min(live, ds.maxStacks);
+        ds.lastStacks = live;
+        var tickDmg = ds.dps * live * SIM_DT;
+        ds.acc += tickDmg;
+        dotDamage += tickDmg;
+      }
 
       if (mana < minManaSeen) minManaSeen = mana;
     }
@@ -1169,7 +1196,10 @@
       secCastCount: secCastCount, secSkippedCount: secSkippedCount,
       secBuffUptimePct: sec && sec.buffDuration ? (secBuffActiveTime / SIM_DURATION * 100) : null,
       secGated: secGated,
-      weaponStarvedShots: weaponStarvedShots, weaponFiredShots: weaponFiredShots
+      weaponStarvedShots: weaponStarvedShots, weaponFiredShots: weaponFiredShots,
+      dotBreakdown: dotSources.map(function (d) {
+        return { label: d.label, total: d.acc, stacks: d.stacks ? d.lastStacks : null, dps: d.dps };
+      })
     };
   }
 
@@ -1202,7 +1232,21 @@
 
     var secItem = equippedGearList().find(function (g) { return g.slot === "secondary"; }) || null;
 
-    var sim = simulateDPS(w, baseEff, secItem, gearMult);
+    // Collect DOT sources: the weapon's own dotDps, plus any equipped armor/accessory that
+    // applies burn/poison (gated by dotRequiresType, e.g. Stygian Plate needs a Sword).
+    var dotSources = [];
+    if (w.dotDps) {
+      dotSources.push({ label: (w.dotType === "poison" ? "Poison" : "Extra") + " — " + w.name,
+        dps: w.dotDps, type: w.dotType || "flat", duration: w.dotDuration, effectCd: w.dotEffectCd, maxStacks: w.dotMaxStacks });
+    }
+    equippedGearList().forEach(function (g) {
+      if (!g.dotDps) return;
+      if (g.dotRequiresType && !weaponMatchesReq(w, g.dotRequiresType)) return;
+      dotSources.push({ label: (g.dotType === "poison" ? "Poison" : "Burn") + " — " + g.name,
+        dps: g.dotDps, type: g.dotType || "flat", duration: g.dotDuration, effectCd: g.dotEffectCd, maxStacks: g.dotMaxStacks });
+    });
+
+    var sim = simulateDPS(w, baseEff, secItem, gearMult, dotSources);
 
     dpsOut.textContent = fmt(sim.avgDps, 0);
     dpsSub.textContent = w.name + " · " + SIM_DURATION + "s simulated fight · " + fmt(sim.totalDamage, 0) + " total damage";
@@ -1210,13 +1254,19 @@
     weaponInfo.innerHTML =
       '<b>' + w.name + '</b> (' + w.type + ')<br>' +
       "Base damage " + w.dmgMin + "–" + w.dmgMax + (w.shots && w.shots > 1 ? " × " + w.shots + " simultaneous shots" : "") + " · base fire rate " + w.fireRate + "/s · range " + w.range + "<br>" +
-      "ATK: +1% dmg/point (universal)" + (w.scaleStat ? " · also scales off <b>" + STAT_LABELS[w.scaleStat] + "</b>: +1 flat dmg per " + fmt(w.scaleCost || 1, 4) + " pts" : "") + (w.manaCostPerShot ? " · " + w.manaCostPerShot + " mana/shot, steals " + (w.manaStealPerShot || 0) : "") + (w.dotDps ? " · +" + w.dotDps + " extra DPS (approx: DOT / secondary)" : "") + "<br>" +
+      "ATK: +1% dmg/point (universal)" + (w.scaleStat ? " · also scales off <b>" + STAT_LABELS[w.scaleStat] + "</b>: +1 flat dmg per " + fmt(w.scaleCost || 1, 4) + " pts" : "") + (w.manaCostPerShot ? " · " + w.manaCostPerShot + " mana/shot, steals " + (w.manaStealPerShot || 0) : "") + (w.dotDps ? " · " + (w.dotType === "poison" ? w.dotDps + "/s poison per stack (stacks per hit)" : "+" + w.dotDps + " extra DPS (approx: DOT / secondary)") : "") + "<br>" +
       '<span style="display:block; margin-top:6px;">' + (w.notes || "") + '</span>';
 
     var rows = [
       { k: "Weapon damage (30s)", v: fmt(sim.weaponDamage, 0) }
     ];
-    if (w.dotDps) rows.push({ k: "Extra DPS (" + w.dotDps + "/s, approx — status DOT and/or unmodeled secondary projectiles)", v: fmt(sim.dotDamage, 0) });
+    (sim.dotBreakdown || []).forEach(function (d) {
+      if (!d.total) return;
+      var k = d.stacks != null
+        ? d.label + " (" + fmt(d.stacks, 1) + " stacks × " + d.dps + "/s)"
+        : d.label + " (" + d.dps + "/s flat, approx)";
+      rows.push({ k: k, v: fmt(d.total, 0) });
+    });
     if (secItem) {
       if (sim.secGated) {
         rows.push({ k: secItem.name + " damage", v: "0 — gated, needs " + Object.keys(secItem.procRequiresStat).map(function (k) { return secItem.procRequiresStat[k] + " " + k; }).join("/"), inactive: true });
