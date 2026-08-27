@@ -74,8 +74,9 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
+    max-width: 760px;
   }
-  @media (max-width: 560px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
 
   .stat-field { border: 1px solid var(--border); padding: 6px 8px; }
 
@@ -241,19 +242,19 @@
   <h1>Pixel Quest DPS Calculator</h1>
   <p class="tagline">Enter your stats with no gear equipped, pick a weapon and equipment, see your average DPS from a simulated 30-second fight against a dummy — mana, cooldowns, and flag/buff downtime all tracked tick by tick.</p>
 
+  <div class="card" style="margin-bottom:16px;">
+    <h2>Character Stats</h2>
+    <div class="sub" style="display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline;">
+      <span>Input mode:</span>
+      <label><input type="radio" name="statMode" value="base" checked> unequipped (calc adds gear + weapon bonuses)</label>
+      <label><input type="radio" name="statMode" value="final"> fully equipped (use my numbers as-is)</label>
+    </div>
+    <p class="sub" id="statModeHint">Enter what you'd have with nothing equipped. The <b>bold number</b> under each field is your actual stat after armour / accessory / weapon bonuses — that's what the simulation uses.</p>
+    <div class="stat-grid" id="statGrid"></div>
+  </div>
+
   <div class="layout">
     <div>
-      <div class="card">
-        <h2>Character Stats</h2>
-        <div class="sub" style="display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline;">
-          <span>Input mode:</span>
-          <label><input type="radio" name="statMode" value="base" checked> unequipped (calc adds gear + weapon bonuses)</label>
-          <label><input type="radio" name="statMode" value="final"> fully equipped (use my numbers as-is)</label>
-        </div>
-        <p class="sub" id="statModeHint">Enter what you'd have with nothing equipped. The <b>bold number</b> under each field is your actual stat after armour / accessory / weapon bonuses — that's what the simulation uses.</p>
-        <div class="stat-grid" id="statGrid"></div>
-      </div>
-
       <div class="card">
         <h2>Weapon</h2>
         <p class="sub">Base damage &amp; fire rate from the wiki — each weapon scales off its own stat.</p>
