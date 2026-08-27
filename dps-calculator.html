@@ -571,7 +571,7 @@
     { id: "mushroom_cap", name: "Mushroom Cap", slot: "accessory", verified: true, statMods: { MANA: 50, WIS: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "On ability use: +12 ATK for 3s (not auto-applied). Drops from 7 enemies." },
 
     // --- full wiki catalog pull: accessories ---
-    { id: "absolute_zero", name: "Absolute Zero", slot: "accessory", verified: true, statMods: { ATK: 15, DEF: 10, MANA: 120, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, summonBase: 200, summonPer: 3, summonStat: "DEF", summonMax: 5, summonRampPer: 1, notes: "Frigid: summons 1 ice crystal/sec (max 5). Each crystal does 200 + 3/DEF damage, does NOT scale with ATK. Modeled as: crystals ramp 1→5 over 5s, then each deals that per second on the dummy (they break on contact and respawn). Ramping/steady DPS -- tune the numbers vs an in-game read. Drop: Corrupted Arctic Deer." },
+    { id: "absolute_zero", name: "Absolute Zero", slot: "accessory", verified: true, statMods: { ATK: 15, DEF: 10, MANA: 120, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, summonBase: 200, summonPer: 3, summonStat: "DEF", summonMax: 5, notes: "Frigid: up to 5 orbiting ice crystals. Every weapon swing, each crystal also strikes for 200 + 3/DEF (no ATK scaling). Assumed already at 5 crystals (spawn ramp skipped). Drop: Corrupted Arctic Deer." },
     { id: "abyssal_helm", name: "Abyssal Helm", slot: "accessory", verified: true, statMods: { ATK: 12, DEF: 12, HP: 50, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Protector: on negative status, gain Protected (12s CD). Drop: Corrupted Ruins Knight." },
     { id: "adept_belt", name: "Adept Belt", slot: "accessory", verified: true, statMods: { VIT: 18 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 3 starter set." },
     { id: "adept_boots", name: "Adept Boots", slot: "accessory", verified: true, statMods: { SPD: 18 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 3 starter set." },
@@ -1140,12 +1140,14 @@
     var critMult = w.critChance ? (1 + w.critChance * ((w.critMult || 1) - 1)) : 1;
     var secProjDamage = 0;
 
-    // Summons (Absolute Zero ice crystals, etc.): N units spawn 1 per `rampPer` seconds up
-    // to `max`; each does base + scalePer*<stat> per second while alive. NOT ATK-scaled.
+    // Summons (Absolute Zero ice crystals, etc.): `max` orbiting units, each strikes the
+    // target once per weapon swing for base + per*<stat>. NOT ATK-scaled. We assume they're
+    // already at full count (skip the spawn ramp).
     summons = (summons || []).map(function (u) {
-      return { label: u.label, base: u.base || 0, per: u.per || 0,
-        stat: (baseEff[u.stat] || 0), max: u.max || 1, rampPer: u.rampPer || 1, acc: 0, lastN: 0 };
+      var each = (u.base || 0) + (u.per || 0) * (baseEff[u.stat] || 0);
+      return { label: u.label, each: each, count: u.max || 1, perSwing: each * (u.max || 1), acc: 0 };
     });
+    var summonPerSwing = summons.reduce(function (a, u) { return a + u.perSwing; }, 0);
     var summonDamage = 0;
 
     // DOT sources. Burn/frost/bleed do NOT stack -- flat DPS while up, so vs a dummy it's a
@@ -1224,6 +1226,7 @@
             mana += (w.manaStealPerShot || 0);
             weaponDamage += mainHit * atkMult;
             secProjDamage += secHitDmg * atkMult;
+            summonDamage += summonPerSwing; // crystals strike per swing, no ATK scaling
             weaponFiredShots++;
           } else {
             weaponStarvedShots++;
@@ -1232,6 +1235,7 @@
       } else {
         weaponDamage += mainHit * atkMult * effFireRate * SIM_DT;
         secProjDamage += secHitDmg * atkMult * effFireRate * SIM_DT;
+        summonDamage += summonPerSwing * effFireRate * SIM_DT;
       }
 
       // Status DOT. Burn/frost/bleed = flat (non-stacking). Poison = a pile of independent
@@ -1265,23 +1269,15 @@
         ds.lastStacks = ds.instances.length;
       }
 
-      for (var u = 0; u < summons.length; u++) {
-        var su = summons[u];
-        var n = Math.min(su.max, Math.floor(elapsed / su.rampPer) + 1);
-        su.lastN = n;
-        var dmg = n * (su.base + su.per * su.stat) * SIM_DT;
-        su.acc += dmg;
-        summonDamage += dmg;
-      }
-
       if (mana < minManaSeen) minManaSeen = mana;
     }
+    if (summonPerSwing) summons[0].acc = summonDamage; // all summon dmg lumped; single source in practice
 
     var grandTotal = weaponDamage + secProjDamage + dotDamage + secDamage + summonDamage;
     return {
       weaponDamage: weaponDamage, secProjDamage: secProjDamage, dotDamage: dotDamage, secDamage: secDamage, summonDamage: summonDamage,
       totalDamage: grandTotal, avgDps: grandTotal / SIM_DURATION,
-      summonBreakdown: summons.map(function (u) { return { label: u.label, total: u.acc, n: u.lastN, per: u.base + u.per * u.stat }; }),
+      summonBreakdown: summons.map(function (u) { return { label: u.label, total: u.acc, n: u.count, per: u.each }; }),
       endMana: mana, minMana: minManaSeen, manaRegenPerSec: manaRegenPerSec,
       secCastCount: secCastCount, secSkippedCount: secSkippedCount,
       secBuffUptimePct: sec && sec.buffDuration ? (secBuffActiveTime / SIM_DURATION * 100) : null,
@@ -1367,7 +1363,7 @@
     [w].concat(equippedGearList()).forEach(function (it) {
       if (it && it.summonBase != null) {
         summons.push({ label: "Summons — " + it.name, base: it.summonBase, per: it.summonPer || 0,
-          stat: it.summonStat, max: it.summonMax || 1, rampPer: it.summonRampPer || 1 });
+          stat: it.summonStat, max: it.summonMax || 1 });
       }
     });
 
@@ -1405,7 +1401,7 @@
     });
     (sim.summonBreakdown || []).forEach(function (u) {
       if (!u.total) return;
-      rows.push({ k: u.label + " (ramps to " + u.n + " × ~" + fmt(u.per, 0) + "/s, stat-scaled, no ATK)", v: fmt(u.total, 0) });
+      rows.push({ k: u.label + " (" + u.n + " × " + fmt(u.per, 0) + " per swing, DEF-scaled, no ATK)", v: fmt(u.total, 0) });
     });
     if (secItem) {
       if (sim.secGated) {
