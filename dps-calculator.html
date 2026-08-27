@@ -775,7 +775,7 @@
     { id: "scouts_leathers", name: "Scout's Leathers", slot: "armor", verified: true, statMods: { DEF: 4, DEX: 2, SPD: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 1." },
     { id: "scuba_suit", name: "Scuba Suit", slot: "armor", verified: true, statMods: { ATK: 12, DEF: 6, MANA: 60, WIS: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine + Wisdom Booster (if Staff, +12 WIS)." },
     { id: "silver_chainmail", name: "Silver Chainmail", slot: "armor", verified: true, statMods: { DEF: 8, HP: 20, VIT: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 3." },
-    { id: "stygian_plate", name: "Stygian Plate", slot: "armor", dotDps: 220, dotType: "poison", dotDuration: 3, dotEffectCd: 1, dotRequiresType: "Sword", verified: true, statMods: { ATK: 15, DEF: 20, HP: 80, VIT: 22 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Sword", notes: "Corrupted. Smoldering: Sword shots inflict Poisoned on enemies for 3s (220 DPS/stack), 1s effect cooldown -> stacks to ~3x (~660 DPS) with a Sword equipped. Now folded into the DPS number. Drop: Corrupted Ruins Knight." },
+    { id: "stygian_plate", name: "Stygian Plate", slot: "armor", dotDps: 220, dotType: "poison", dotDuration: 3, dotDecay: 40, dotEffectCd: 1, dotRequiresType: "Sword", verified: true, statMods: { ATK: 15, DEF: 20, HP: 80, VIT: 22 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Sword", notes: "Corrupted. Smoldering: a Sword's main hits inflict Poisoned, 1s effect cooldown. Each poison instance ticks 3x over 3s and decays: 220 -> 180 -> 140 (540 total). Stacks, so with a Sword equipped steady state is ~540 DPS. Drop: Corrupted Ruins Knight." },
     { id: "sun_sorcerers_robe", name: "Sun Sorcerer's Robe", slot: "armor", verified: true, statMods: { ATK: 21, DEF: 5, WIS: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 5." },
     { id: "towel_robe", name: "Towel Robe", slot: "armor", verified: true, statMods: { ATK: 23, MANA: 50, WIS: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine + Resistance (Sick 50% effective). Drops: Golden Bat, Worm Hole." },
     { id: "tricksters_vest_of_doom", name: "Trickster's Vest OF DOOM", slot: "armor", verified: true, statMods: { DEF: 14, DEX: 26, SPD: 15, WIS: 17 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Second Chance: <10% HP, 50% chance full heal. Dungeon Rush exclusive — a genuinely upgraded tier, not a cosmetic reskin." },
@@ -1133,19 +1133,20 @@
     var critMult = w.critChance ? (1 + w.critChance * ((w.critMult || 1) - 1)) : 1;
     var secProjDamage = 0;
 
-    // DOT sources: burn/frost/bleed do NOT stack (flat DPS for their duration, re-hitting
-    // only refreshes) -- so vs a dummy that's just a flat add. Poison DOES stack: every
-    // application adds an independent instance, so effective DPS = perStackDps * liveStacks,
-    // where liveStacks ramps to (applicationRate * duration) then holds. applicationRate is
-    // one-per-hit unless the source has an effectCd gate (e.g. Stygian Plate, 1s).
+    // DOT sources. Burn/frost/bleed do NOT stack -- flat DPS while up, so vs a dummy it's a
+    // flat add. Poison DOES stack: every application is an independent instance that ticks
+    // once per second for `duration` ticks, and each instance's damage decays by `decay`
+    // per tick after its first (Stygian: 220 -> 180 -> 140). Applications land one-per-hit
+    // unless an effectCd gates them (Stygian: 1s).
     dotSources = (dotSources || []).map(function (d) {
       return {
         label: d.label, dps: d.dps || 0,
-        stacks: d.type === "poison",
-        duration: d.duration || 3,
+        poison: d.type === "poison",
+        duration: Math.max(1, Math.round(d.duration || 3)), // ticks (= seconds)
+        decay: d.decay || 0,
         effectCd: d.effectCd || 0,
         maxStacks: d.maxStacks || 0,
-        acc: 0, lastStacks: 0
+        acc: 0, lastStacks: 0, applyAcc: 0, instances: []
       };
     });
 
@@ -1218,23 +1219,35 @@
         secProjDamage += secHitDmg * atkMult * effFireRate * SIM_DT;
       }
 
-      // Status DOT. Burn/frost/bleed = flat (non-stacking). Poison = stacking: liveStacks
-      // ramps at applicationRate to a steady state of rate*duration, then holds.
+      // Status DOT. Burn/frost/bleed = flat (non-stacking). Poison = a pile of independent
+      // instances, each ticking once/sec for `duration` ticks with per-tick decay.
       var elapsed = i * SIM_DT;
       for (var d = 0; d < dotSources.length; d++) {
         var ds = dotSources[d];
         if (!ds.dps) continue;
-        if (!ds.stacks) { ds.acc += ds.dps * SIM_DT; dotDamage += ds.dps * SIM_DT; continue; }
-        // Applications per second: one per hit, but never more often than an effect
-        // cooldown allows. Only the weapon's main hit applies it (not extra projectiles),
-        // so this is effFireRate, not effFireRate * shots.
+        if (!ds.poison) { ds.acc += ds.dps * SIM_DT; dotDamage += ds.dps * SIM_DT; continue; }
+        // New applications: one per hit, but no more often than an effect cooldown allows.
+        // Only the weapon's MAIN hit applies poison (not extra projectiles), so use
+        // effFireRate here, never effFireRate * shots.
         var rate = ds.effectCd ? Math.min(effFireRate, 1 / ds.effectCd) : effFireRate;
-        var live = rate * Math.min(elapsed, ds.duration);
-        if (ds.maxStacks) live = Math.min(live, ds.maxStacks);
-        ds.lastStacks = live;
-        var tickDmg = ds.dps * live * SIM_DT;
-        ds.acc += tickDmg;
-        dotDamage += tickDmg;
+        ds.applyAcc += rate * SIM_DT;
+        while (ds.applyAcc >= 1) {
+          ds.applyAcc -= 1;
+          if (!ds.maxStacks || ds.instances.length < ds.maxStacks) ds.instances.push({ next: elapsed, done: 0 });
+        }
+        var stepDmg = 0;
+        for (var k = ds.instances.length - 1; k >= 0; k--) {
+          var inst = ds.instances[k];
+          while (inst.next <= elapsed + 1e-9 && inst.done < ds.duration) {
+            stepDmg += Math.max(0, ds.dps - ds.decay * inst.done);
+            inst.done++;
+            inst.next += 1;
+          }
+          if (inst.done >= ds.duration) ds.instances.splice(k, 1);
+        }
+        ds.acc += stepDmg;
+        dotDamage += stepDmg;
+        ds.lastStacks = ds.instances.length;
       }
 
       if (mana < minManaSeen) minManaSeen = mana;
@@ -1250,7 +1263,8 @@
       secGated: secGated,
       weaponStarvedShots: weaponStarvedShots, weaponFiredShots: weaponFiredShots,
       dotBreakdown: dotSources.map(function (d) {
-        return { label: d.label, total: d.acc, stacks: d.stacks ? d.lastStacks : null, dps: d.dps };
+        return { label: d.label, total: d.acc, poison: d.poison, stacks: d.poison ? d.lastStacks : null,
+          dps: d.dps, decay: d.decay, duration: d.duration };
       })
     };
   }
@@ -1289,13 +1303,13 @@
     var dotSources = [];
     if (w.dotDps) {
       dotSources.push({ label: (w.dotType === "poison" ? "Poison" : "Extra") + " — " + w.name,
-        dps: w.dotDps, type: w.dotType || "flat", duration: w.dotDuration, effectCd: w.dotEffectCd, maxStacks: w.dotMaxStacks });
+        dps: w.dotDps, type: w.dotType || "flat", duration: w.dotDuration, decay: w.dotDecay, effectCd: w.dotEffectCd, maxStacks: w.dotMaxStacks });
     }
     equippedGearList().forEach(function (g) {
       if (!g.dotDps) return;
       if (g.dotRequiresType && !weaponMatchesReq(w, g.dotRequiresType)) return;
       dotSources.push({ label: (g.dotType === "poison" ? "Poison" : "Burn") + " — " + g.name,
-        dps: g.dotDps, type: g.dotType || "flat", duration: g.dotDuration, effectCd: g.dotEffectCd, maxStacks: g.dotMaxStacks });
+        dps: g.dotDps, type: g.dotType || "flat", duration: g.dotDuration, decay: g.dotDecay, effectCd: g.dotEffectCd, maxStacks: g.dotMaxStacks });
     });
 
     var sim = simulateDPS(w, baseEff, secItem, gearMult, dotSources);
@@ -1315,9 +1329,16 @@
     if (sim.secProjDamage) rows.push({ k: "Secondary projectiles — " + w.name + " (" + (w.secHitDmg) + "/hit, ATK-scaled)", v: fmt(sim.secProjDamage, 0) });
     (sim.dotBreakdown || []).forEach(function (d) {
       if (!d.total) return;
-      var k = d.stacks != null
-        ? d.label + " (" + fmt(d.stacks, 1) + " stacks × " + d.dps + "/s)"
-        : d.label + " (" + d.dps + "/s flat, approx)";
+      var k;
+      if (!d.poison) {
+        k = d.label + " (" + d.dps + "/s flat, approx)";
+      } else if (d.decay) {
+        var pattern = [];
+        for (var t = 0; t < d.duration; t++) pattern.push(Math.max(0, d.dps - d.decay * t));
+        k = d.label + " (~" + fmt(d.stacks, 0) + " stacks, each ticks " + pattern.join("→") + " over " + d.duration + "s)";
+      } else {
+        k = d.label + " (~" + fmt(d.stacks, 0) + " stacks × " + d.dps + "/s, " + d.duration + "s each)";
+      }
       rows.push({ k: k, v: fmt(d.total, 0) });
     });
     if (secItem) {
@@ -1428,7 +1449,7 @@
     if (!w) return;
     var f = e.target.getAttribute("data-f");
     var val = e.target.value;
-    if (["dmgMin", "dmgMax", "shots", "fireRate", "range", "scaleCost", "dotDps", "secHitDmg", "critChance", "critMult", "dotDuration", "dotEffectCd"].indexOf(f) > -1) val = parseFloat(val) || 0;
+    if (["dmgMin", "dmgMax", "shots", "fireRate", "range", "scaleCost", "dotDps", "secHitDmg", "critChance", "critMult", "dotDuration", "dotEffectCd", "dotDecay"].indexOf(f) > -1) val = parseFloat(val) || 0;
     w[f] = val;
     w.verified = false;
     saveDb();
