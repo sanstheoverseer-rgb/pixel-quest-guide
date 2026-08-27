@@ -895,13 +895,13 @@
   };
 
   // ---------- STAT PANEL ----------
-  // Ordered to match the in-game stat screen: VIT DEX WIS / DEF ATK SPD, then HP MP.
+  // Ordered to match the in-game stat screen: VIT DEX WIS / ATK DEF SPD, then HP MP.
   var statMeta = [
     { key: "VIT", desc: function (v) { return "+" + (v / 10).toFixed(1) + " HP regen/sec (inferred, unconfirmed on wiki)"; } },
     { key: "DEX", desc: function (v) { return "+" + v + "% fire rate"; } },
     { key: "WIS", desc: function (v) { return "+" + (v / 10).toFixed(1) + " Mana regen/sec (10 Wis = 1 Mana/s)"; } },
-    { key: "DEF", desc: function (v) { return "-" + Math.min(v, 70) + "% damage taken" + (v > 70 ? " (capped at 70%)" : ""); } },
     { key: "ATK", desc: function (v) { return "+" + v + "% weapon damage (default scaling; some weapons use a different stat)"; } },
+    { key: "DEF", desc: function (v) { return "-" + Math.min(v, 70) + "% damage taken" + (v > 70 ? " (capped at 70%)" : ""); } },
     { key: "SPD", desc: function (v) { return "+" + v + "% (exact effect unconfirmed — used by some weapons as a damage-scaling stat, e.g. Cutlass)"; } },
     { key: "HP", desc: function () { return "flat HP pool"; } },
     { key: "MANA", desc: function () { return "flat Mana pool"; } }
