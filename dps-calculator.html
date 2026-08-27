@@ -244,7 +244,7 @@
     <div>
       <div class="card">
         <h2>Character Stats</h2>
-        <p class="sub">What you'd have with nothing equipped. Derived effects shown under each field.</p>
+        <p class="sub">Enter what you'd have with nothing equipped. The <b>bold number</b> under each field is your actual stat after armour / accessory / ability bonuses — that's what the simulation uses.</p>
         <div class="stat-grid" id="statGrid"></div>
       </div>
 
@@ -914,9 +914,20 @@
 
   function renderDerived() {
     var eff = effectiveStats();
+    // How much more a flag-type secondary would add on top (only while its buff is up).
+    var flagAdd = {};
+    var flagSec = equippedGearList().find(function (g) { return g.isFlagBuff && g.statMods; });
+    if (flagSec) Object.keys(flagSec.statMods).forEach(function (k) { flagAdd[k] = flagSec.statMods[k]; });
+
     statMeta.forEach(function (m) {
       var el = statGrid.querySelector('[data-derived="' + m.key + '"]');
-      if (el) el.textContent = m.desc(eff[m.key]);
+      if (!el) return;
+      var b = state.stats[m.key] || 0, e = eff[m.key] || 0, d = e - b;
+      var head = d !== 0
+        ? '<b>' + e + '</b> <span style="color:var(--text-dim)">(' + b + (d >= 0 ? ' +' + d : ' ' + d) + ' gear)</span>'
+        : '<b>' + e + '</b>';
+      if (flagAdd[m.key]) head += ' <span style="color:var(--text-dim)">→ ' + (e + flagAdd[m.key]) + ' while flag up</span>';
+      el.innerHTML = head + ' &nbsp;·&nbsp; ' + m.desc(e);
     });
   }
 
@@ -1177,7 +1188,10 @@
         var ds = dotSources[d];
         if (!ds.dps) continue;
         if (!ds.stacks) { ds.acc += ds.dps * SIM_DT; dotDamage += ds.dps * SIM_DT; continue; }
-        var rate = ds.effectCd ? (1 / ds.effectCd) : effFireRate; // applications per second
+        // Applications per second: one per hit, but never more often than an effect
+        // cooldown allows. Only the weapon's main hit applies it (not extra projectiles),
+        // so this is effFireRate, not effFireRate * shots.
+        var rate = ds.effectCd ? Math.min(effFireRate, 1 / ds.effectCd) : effFireRate;
         var live = rate * Math.min(elapsed, ds.duration);
         if (ds.maxStacks) live = Math.min(live, ds.maxStacks);
         ds.lastStacks = live;
