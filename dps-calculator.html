@@ -55,6 +55,8 @@
     gap: 16px;
     align-items: start;
   }
+  /* without this, a wide child (the formula box) blows the column past 1fr and crushes the other side */
+  .layout > div { min-width: 0; }
 
   @media (max-width: 800px) {
     .layout { grid-template-columns: 1fr; }
@@ -126,6 +128,7 @@
     border: 1px solid var(--border);
     font-size: 0.8rem;
     color: var(--text-dim);
+    overflow-wrap: anywhere;
   }
   .weapon-info b { color: var(--text); }
   .equip-line { padding: 4px 0; border-top: 1px solid var(--border); }
@@ -155,8 +158,8 @@
     border-bottom: 1px solid var(--border);
     font-size: 0.82rem;
   }
-  .b-row .k { color: var(--text-dim); }
-  .b-row .v { font-variant-numeric: tabular-nums; }
+  .b-row .k { color: var(--text-dim); min-width: 0; overflow-wrap: anywhere; }
+  .b-row .v { font-variant-numeric: tabular-nums; flex-shrink: 0; }
   .b-row.total .k, .b-row.total .v { font-weight: 700; }
   .b-row.inactive .k, .b-row.inactive .v { color: var(--text-dim); font-style: italic; }
 
@@ -169,7 +172,8 @@
     font-size: 0.75rem;
     color: var(--text-dim);
     overflow-x: auto;
-    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
   details.db { margin-top: 16px; }
