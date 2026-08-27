@@ -530,7 +530,7 @@
     { id: "mythril_sabre", name: "Mythril Sabre", type: "Sword", dmgMin: 280, dmgMax: 320, fireRate: 1.6, range: 4, statMods: { DEF: 6, VIT: 16 }, verified: true, notes: "DEF+6/VIT+16 on equip. Pierces." },
     { id: "necrophase_sword", name: "Necrophase Sword", type: "Sword", dmgMin: 155, dmgMax: 170, fireRate: 1.6, range: 4, scaleStat: "HP", scaleCost: 7, statMods: { ATK: 5, VIT: 8 }, secHitDmg: 125, verified: true, notes: "ATK+5/VIT+8 on equip. If Heavy Armor: +5 proj @20-30 dmg (~125/hit). Base hit only without Heavy Armor. Pixelween event." },
     { id: "oak_staff", name: "Oak Staff", type: "Staff", dmgMin: 35, dmgMax: 50, fireRate: 2.5, range: 10.4, verified: true, notes: "No pierce, sine pattern." },
-    { id: "octosword", name: "Octosword", type: "Sword", dmgMin: 1844, dmgMax: 1888, fireRate: 0.33, range: 4, statMods: { DEF: 8, HP: 88 }, verified: true, notes: "DEF+8/HP+88 on equip. Octostrike: summons 8 orbiting projectiles, 150-175 dmg each." },
+    { id: "octosword", name: "Octosword", type: "Sword", dmgMin: 1844, dmgMax: 1888, fireRate: 0.33, range: 4, orbitDps: 2600, statMods: { DEF: 8, HP: 88 }, verified: true, notes: "DEF+8/HP+88 on equip. Octostrike: 8 projectiles orbit you at 150-175 dmg each, pierce, continuously renewed (0.28s lifetime). All 8 assumed hitting the dummy; orbitDps (2600 base, ATK-scaled) is a GUESS for how often they connect -- give an in-game DPS to calibrate. Tier LG." },
     { id: "omnipotent_staff", name: "Omnipotent Staff", type: "Staff", dmgMin: 130, dmgMax: 155, shots: 2, fireRate: 2.5, range: 6, verified: true, notes: "2 base projectiles + 3 secondary @45-55 (secondary not modeled), 40% def pen, pierces. Identical to its twins 0y0's Omnipotent Staff / Atlantis. Drop: Seer the Corrupted." },
     { id: "ouroboros", name: "Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDecay: 40, dotDuration: 2, verified: true, notes: "Corrupted. On-hit: 70 DPS poison 2s. Every 10 hits: serpent proj, 125 dmg. 60% def pen. Drop: Corrupted Ahi." },
     { id: "pantheons_spear", name: "Pantheon's Spear", type: "Dagger", dmgMin: 100, dmgMax: 200, fireRate: 2, range: 6.875, verified: true, notes: "If Helmet equipped: 20% chance +3 proj, 300-400 true dmg. Dungeon Rush exclusive." },
@@ -1269,6 +1269,11 @@
     });
     var summonDamage = 0;
 
+    // Orbiting projectiles (Octosword): a persistent ring that hits the dummy continuously.
+    // orbitDps is the total at 0 ATK; it scales with ATK% like normal damage.
+    var orbitDps0 = w.orbitDps || 0;
+    var orbitDamage = 0;
+
     // DOT sources. Burn/frost/bleed do NOT stack -- flat DPS while up, so vs a dummy it's a
     // flat add. Poison DOES stack: every application is an independent instance that ticks
     // once per second for `duration` ticks, and each instance's damage decays by `decay`
@@ -1374,6 +1379,7 @@
         swingAcc += effFireRate * SIM_DT;
         while (swingAcc >= 1) { swingAcc -= 1; onSwing(); }
       }
+      if (orbitDps0) orbitDamage += orbitDps0 * atkMult * SIM_DT;
 
       // Status DOT. Burn/frost/bleed = flat (non-stacking). Poison = a pile of independent
       // instances, each ticking once/sec for `duration` ticks with per-tick decay.
@@ -1410,9 +1416,9 @@
       if (mana < minManaSeen) minManaSeen = mana;
     }
 
-    var grandTotal = weaponDamage + secProjDamage + dotDamage + secDamage + summonDamage;
+    var grandTotal = weaponDamage + secProjDamage + dotDamage + secDamage + summonDamage + orbitDamage;
     return {
-      weaponDamage: weaponDamage, secProjDamage: secProjDamage, dotDamage: dotDamage, secDamage: secDamage, summonDamage: summonDamage,
+      weaponDamage: weaponDamage, secProjDamage: secProjDamage, dotDamage: dotDamage, secDamage: secDamage, summonDamage: summonDamage, orbitDamage: orbitDamage,
       totalDamage: grandTotal, avgDps: grandTotal / SIM_DURATION,
       summonBreakdown: summons.map(function (u) { return { label: u.label, total: u.acc, max: u.max, each: u.each, regenSec: u.regenSec }; }),
       endMana: mana, minMana: minManaSeen, manaRegenPerSec: manaRegenPerSec,
@@ -1545,6 +1551,10 @@
       if (!u.total) return;
       rows.push({ k: u.label + " (" + fmt(u.each, 0) + " each, DEF-scaled no ATK; " + u.max + " to start then 1 back every " + u.regenSec + "s)", v: fmt(u.total, 0) });
     });
+    if (sim.orbitDamage) {
+      var oAtk = (1 + (baseEff.ATK || 0) / 100) * gearMult;
+      rows.push({ k: "Orbiting projectiles — " + w.name + " (" + w.orbitDps + "/s base pre-ATK → ~" + fmt(w.orbitDps * oAtk, 0) + "/s at your ATK, all 8 assumed hitting)", v: fmt(sim.orbitDamage, 0) });
+    }
     if (secItem) {
       if (sim.secGated) {
         rows.push({ k: secItem.name + " damage", v: "0 — gated, needs " + Object.keys(secItem.procRequiresStat).map(function (k) { return secItem.procRequiresStat[k] + " " + k; }).join("/"), inactive: true });
@@ -1653,7 +1663,7 @@
     if (!w) return;
     var f = e.target.getAttribute("data-f");
     var val = e.target.value;
-    if (["dmgMin", "dmgMax", "shots", "fireRate", "range", "scaleCost", "dotDps", "secHitDmg", "critChance", "critMult", "dotDuration", "dotEffectCd", "dotDecay", "dotFlatDps"].indexOf(f) > -1) val = parseFloat(val) || 0;
+    if (["dmgMin", "dmgMax", "shots", "fireRate", "range", "scaleCost", "dotDps", "secHitDmg", "critChance", "critMult", "dotDuration", "dotEffectCd", "dotDecay", "dotFlatDps", "orbitDps"].indexOf(f) > -1) val = parseFloat(val) || 0;
     w[f] = val;
     w.verified = false;
     saveDb();
