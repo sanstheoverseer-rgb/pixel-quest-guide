@@ -1006,29 +1006,31 @@
     // In "final" mode the typed numbers already include every always-on item bonus, so we
     // use them verbatim. (Flag-buff bonuses are still layered on during their uptime by the
     // sim, since those toggle on and off.) In "base" mode we add the always-on bonuses here.
+    var wpn = getWeapon();
     if (state.statMode !== "final") {
-      var wpn = getWeapon();
+      // Pass 1: every always-on bonus (weapon + non-flag gear).
       if (wpn && wpn.statMods) Object.keys(wpn.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + wpn.statMods[k]; });
       equippedGearList().forEach(function (g) {
-        if (g.isFlagBuff) return;
-        if (g.statMods) Object.keys(g.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.statMods[k]; });
-        // "if a <weapon type>/<named piece> is equipped" -> +N STAT. Some have a per-shot
-        // proc layer (Pixelween Hat: 25% chance on shoot, lasts 3s) -> apply at its
-        // expected uptime = 1 - (1-chance)^(shots per proc-window).
-        if (g.condMods && condMet(g)) {
-          var upt = 1;
-          if (g.condProcChance) {
-            var frNow = wpn ? wpn.fireRate * (1 + (state.stats.DEX || 0) / 100) : 0;
-            var shotsWin = frNow * (g.condProcDuration || 3);
-            upt = shotsWin > 0 ? (1 - Math.pow(1 - g.condProcChance, shotsWin)) : 0;
-          }
-          Object.keys(g.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.condMods[k] * upt; });
+        if (g.isFlagBuff || !g.statMods) return;
+        Object.keys(g.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.statMods[k]; });
+      });
+      // Pass 2: conditional "if a <weapon type>/<named piece> is equipped" bonuses. Run after
+      // pass 1 so the fire-rate used for proc-uptime already includes your DEX gear.
+      var dexForRate = eff.DEX || 0;
+      equippedGearList().forEach(function (g) {
+        if (g.isFlagBuff || !g.condMods || !condMet(g)) return;
+        var upt = 1;
+        if (g.condProcChance) {
+          // Per-shot proc (Pixelween Hat: 25%/shot, 3s). uptime = 1-(1-p)^(shots per window).
+          var frNow = wpn ? wpn.fireRate * (1 + dexForRate / 100) : 0;
+          var shotsWin = frNow * (g.condProcDuration || 3);
+          upt = shotsWin > 0 ? (1 - Math.pow(1 - g.condProcChance, shotsWin)) : 0;
         }
+        Object.keys(g.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.condMods[k] * upt; });
       });
     }
     // Conditional weapon passive (Armageddon's "Focus", etc.) -- opt-in, applies in either mode.
-    var cw = getWeapon();
-    if (state.applyCond && cw && cw.condMods) Object.keys(cw.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + cw.condMods[k]; });
+    if (state.applyCond && wpn && wpn.condMods) Object.keys(wpn.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + wpn.condMods[k]; });
     return eff;
   }
 
@@ -1117,6 +1119,7 @@
     var el = document.getElementById("equipInfo");
     if (!items.length) { el.innerHTML = '<span style="color:var(--text-dim)">No equipment selected.</span>'; return; }
     var curType = w ? (w.type + (w.tags ? "/" + w.tags.join("/") : "")) : "none";
+    var effDex = effectiveStats().DEX || 0;
     var anyPoison = (w && w.dotType === "poison") || equippedGearList().some(function (x) {
       return x.dotType === "poison" && !x.dotRequiresPoison && (!x.dotRequiresType || weaponMatchesReq(w, x.dotRequiresType));
     });
@@ -1143,7 +1146,7 @@
         var need = g.condReqType || g.condReqGearName;
         var uptTxt = "";
         if (cok && g.condProcChance) {
-          var frN = w ? w.fireRate * (1 + (state.stats.DEX || 0) / 100) : 0;
+          var frN = w ? w.fireRate * (1 + effDex / 100) : 0;
           var up = frN > 0 ? Math.round((1 - Math.pow(1 - g.condProcChance, frN * (g.condProcDuration || 3))) * 100) : 0;
           uptTxt = " ~" + up + "% uptime";
         }
