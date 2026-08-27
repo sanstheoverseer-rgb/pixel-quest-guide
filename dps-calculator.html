@@ -316,7 +316,7 @@
         <div class="table-scroll">
           <table id="weaponTable">
             <thead><tr>
-              <th>Name</th><th>Type</th><th>Dmg Min</th><th>Dmg Max</th><th>Fire Rate/s</th><th>Range</th><th>Scales off</th><th>Cost/1pt</th><th>DOT dps</th><th>Src</th><th></th>
+              <th>Name</th><th>Type</th><th>Dmg Min</th><th>Dmg Max</th><th>Shots</th><th>Fire Rate/s</th><th>Range</th><th>Scales off</th><th>Cost/1pt</th><th>DOT dps</th><th>Src</th><th></th>
             </tr></thead>
             <tbody></tbody>
           </table>
@@ -357,14 +357,14 @@
   var STORAGE_KEY = "pq_dps_calc_db_v2";
 
   var DEFAULT_WEAPONS = [
-    { id: "cutlass", name: "Cutlass", type: "Sword", dmgMin: 200, dmgMax: 230, fireRate: 1.6, range: 4, scaleStat: "SPD", scaleCost: 2, verified: true, notes: "Beach starter sword." },
-    { id: "captains_axe", name: "Captain's Axe", type: "Axe", dmgMin: 165, dmgMax: 180, fireRate: 1.8, range: 6.325, verified: true, notes: "Vitality Booster: bomb throws, 100% chance +10 VIT for 2s." },
+    { id: "cutlass", name: "Cutlass", type: "Sword", dmgMin: 230, dmgMax: 260, fireRate: 1.6, range: 4, scaleStat: "SPD", scaleCost: 2, verified: true, notes: "Beach starter sword. Base damage corrected to 230-260 per spreadsheet." },
+    { id: "captains_axe", name: "Captain's Axe", type: "Axe", dmgMin: 175, dmgMax: 190, fireRate: 1.8, range: 6.325, dotDps: 90, verified: true, notes: "Vitality Booster: bomb throws, 100% chance +10 VIT for 2s. Inflicts Burning for 3s (90 DPS). Base damage corrected to 175-190." },
     { id: "crustacean_cracker", name: "Crustacean Cracker", type: "Bow", dmgMin: 50, dmgMax: 75, fireRate: 2, range: 8, verified: true, notes: "+3 ATK/+3 DEF on equip. Pincer Strike: 10% chance 1.5x dmg, 3 projectiles, 60% def pen." },
     { id: "fire_claymore", name: "Fire Claymore", type: "Sword", dmgMin: 145, dmgMax: 165, fireRate: 1.6, range: 4, scaleStat: "HP", scaleCost: 7, verified: true, notes: "If Heavy Armor equipped: +5 extra projectiles, 20-30 dmg each." },
     { id: "frost_bow", name: "Frost Bow", type: "Bow", dmgMin: 180, dmgMax: 220, fireRate: 1, range: 8.125, scaleStat: "ATK", scaleCost: 0.17, verified: true, notes: "Ice Shuriken: 50% chance extra projectile, 8 dmg per 1 ATK, Slow 2s (needs 50 ATK)." },
     { id: "glass_dagger", name: "Glass Dagger", type: "Dagger", dmgMin: 97, dmgMax: 112, fireRate: 2.5, range: 6.12, verified: true, notes: "Mana Steal: 0.5% of damage dealt returned as mana." },
     { id: "piercers_bow", name: "Piercer's Bow", type: "Bow", dmgMin: 65, dmgMax: 70, fireRate: 3, range: 8.4, scaleStat: "DEX", scaleCost: 0.7143, verified: true, notes: "Pierces." },
-    { id: "crushers_hammer", name: "Crusher's Hammer", type: "Hammer", dmgMin: 215, dmgMax: 235, fireRate: 1.7, range: 8.25, verified: true, notes: "Burning (300 intensity, 5s); pierces, hits twice." },
+    { id: "crushers_hammer", name: "Crusher's Hammer", type: "Hammer", dmgMin: 215, dmgMax: 235, fireRate: 1.7, range: 8.25, dotDps: 300, verified: true, notes: "Burning on enemies for 5s (300 DPS); pierces, hits twice." },
     { id: "mld", name: "Magical Leaf Dagger", type: "Dagger", dmgMin: 65, dmgMax: 75, fireRate: 2.7, range: 6, scaleStat: "WIS", scaleCost: 0.99, verified: true, notes: "2 projectiles per attack." },
     { id: "cerberus_bow", name: "Cerberus Bow", type: "Bow", dmgMin: 210, dmgMax: 230, fireRate: 2.5, range: 8.75, verified: true, notes: "+3 DEX/ATK/SPD on equip. Multi-Shot: 2 extra projectiles, 70-90 dmg, -10 DEF 3s." },
     { id: "drako_axe", name: "Drako Axe", type: "Axe", dmgMin: 400, dmgMax: 460, fireRate: 1.5, range: 6.71, verified: true, notes: "Explosion on projectile hit." },
@@ -375,25 +375,25 @@
     { id: "crimson_bow", name: "Crimson Bow", type: "Bow", dmgMin: 1222, dmgMax: 1666, fireRate: 0.5, range: 8.125, verified: true, notes: "Krampus drop. Pierces." },
     { id: "paintball_gun", name: "Paintball Gun", type: "Bow", tags: ["Gun"], dmgMin: 230, dmgMax: 250, fireRate: 3, range: 8.8, verified: true, notes: "Official wiki type is Bow — \"Gun\" is a community label some items (Guest 666's Hat) check for. 50% chance colored paintball: Blue=+10MP steal, Red=+10HP steal, Green=Poison, Yellow=Exposed." },
     { id: "azazels_penlight", name: "Azazel's Penlight", type: "Staff", dmgMin: 135, dmgMax: 145, fireRate: 2.5, range: 10, verified: true, notes: "Ashen Pulse + Hell's Grasp: 8 landed projectiles summons a demonic hand." },
-    { id: "mizumis_musket", name: "Mizumi's Musket", type: "Bow", tags: ["Gun"], dmgMin: 50, dmgMax: 150, fireRate: 3, range: 8.8, scaleStat: "MANA", scaleCost: 2, manaCostPerShot: 5, verified: true, notes: "Mana+50 on equip. Costs 5 mana/shot, stops firing if mana runs out." },
+    { id: "mizumis_musket", name: "Mizumi's Musket", type: "Bow", tags: ["Gun"], dmgMin: 50, dmgMax: 150, fireRate: 3, range: 8.8, scaleStat: "MANA", scaleCost: 2.5, manaCostPerShot: 8, verified: true, notes: "Mana+50 on equip. Costs 8 mana/shot (not 5 — corrected from spreadsheet), stops firing if mana runs out. Scaling corrected to +0.40 dmg/Mana." },
     { id: "musket", name: "Musket", type: "Bow", tags: ["Gun"], dmgMin: 50, dmgMax: 150, fireRate: 3, range: 8.8, scaleStat: "MANA", scaleCost: 3, manaCostPerShot: 8, verified: true, notes: "Mana+25 on equip. Costs 8 mana/shot, stops firing if mana runs out." },
     { id: "musket_of_doom", name: "Musket OF DOOM", type: "Bow", tags: ["Gun"], dmgMin: 70, dmgMax: 90, fireRate: 2.4, range: 8.925, scaleStat: "MANA", scaleCost: 2, manaCostPerShot: 3, verified: true, notes: "Mana+25 on equip. Costs 3 mana/shot. 60% def pen. Dungeon Rush exclusive, non-tradable." },
     { id: "nutcrackers_pistol", name: "Nutcracker's Pistol", type: "Bow", tags: ["Gun"], dmgMin: 800, dmgMax: 900, fireRate: 2, range: 8.8, manaCostPerShot: 40, verified: true, notes: "Costs 40 mana/shot, very high base dmg but stops firing without mana." },
     { id: "lazer_pistol", name: "Lazer Pistol", type: "Bow", tags: ["Gun"], dmgMin: 444, dmgMax: 444, fireRate: 2.25, range: 8.4, manaCostPerShot: 15, verified: true, notes: "Corrupted. Mana+25 on equip. Costs 15 mana/shot (landed shots reduce cost by 1 for 5s, not modeled). Do NOT recommend using this, it's genuinely bad — see script notes." },
     { id: "void_staff", name: "Void Staff", type: "Staff", dmgMin: 100, dmgMax: 130, fireRate: 2.5, range: 9.2, verified: true, notes: "Enter the Void: 10 consecutive hits -> +30 WIS for 20s." },
     { id: "coldfront", name: "Coldfront", type: "Bow", dmgMin: 50, dmgMax: 60, fireRate: 1.5, range: 6.495, scaleStat: "WIS", scaleCost: 15, verified: true, notes: "Support/heal-buff kit; every 12th hit: 5 projectiles, 100 true dmg, Slow 4s." },
-    { id: "venom_spell", name: "Venom Spell", type: "Staff", dmgMin: 52, dmgMax: 60, fireRate: 2, range: 14.4, scaleStat: "MANA", scaleCost: 3, verified: true, notes: "Passive burst: 8 projectiles / 0.5s cooldown, 65 mana cost." },
+    { id: "venom_spell", name: "Venom Spell", type: "Staff", dmgMin: 42, dmgMax: 50, shots: 8, fireRate: 2, range: 14, scaleStat: "MANA", scaleCost: 3.03, verified: true, notes: "Fires 8 simultaneous projectiles per attack (corrected — was missing the shot multiplier). Shots pass through solids. Damage corrected to 42-50 per spreadsheet." },
     { id: "awp", name: "AWP", type: "Bow", tags: ["Gun"], dmgMin: 1600, dmgMax: 1800, fireRate: 0.3, range: 10.4, manaCostPerShot: 45, manaStealPerShot: 60, verified: true, notes: "Official wiki type is Bow, not Sniper — \"Gun\" is a community label. Sniper passive: +6% dmg per tile of distance, capped +100%. Costs 45 mana/shot, steals 60 mana (net mana-positive)." },
 
     // --- full wiki catalog pull below ---
-    { id: "0y0s_omnipotent_staff", name: "0y0's Omnipotent Staff", type: "Staff", dmgMin: 130, dmgMax: 155, fireRate: 2.5, range: 6, verified: true, notes: "5 proj, 0.85s lifetime, 40% def pen, pierces. Near-identical twin of Atlantis." },
-    { id: "adventurers_dirk", name: "Adventurer's Dirk", type: "Dagger", dmgMin: 140, dmgMax: 160, fireRate: 2.7, range: 6.4, verified: true, notes: "Multi-Shot: +1 proj, 50-70 true dmg (needs 70 SPD)." },
+    { id: "0y0s_omnipotent_staff", name: "0y0's Omnipotent Staff", type: "Staff", dmgMin: 130, dmgMax: 155, shots: 2, fireRate: 2.5, range: 6, verified: true, notes: "2 base projectiles (corrected — was missing shot multiplier), 0.85s lifetime, 40% def pen, pierces. Secondary Projectiles add 3 more @45-55 dmg, not modeled. Near-identical twin of Atlantis." },
+    { id: "adventurers_dirk", name: "Adventurer's Dirk", type: "Dagger", dmgMin: 130, dmgMax: 150, fireRate: 2.7, range: 6.4, verified: true, notes: "Multi-Shot: +1 proj, 40-60 true dmg (needs 70 SPD). Base damage corrected to 130-150 per spreadsheet." },
     { id: "ahis_reaper", name: "Ahi's Reaper", type: "Staff", dmgMin: 55, dmgMax: 65, fireRate: 2.5, range: 12.5, verified: true, notes: "SPD+8 on equip. Multi-Shot: +1 proj, 20-25 true dmg. Drop: Ahi the Wyrmm." },
     { id: "amethyst_fan", name: "Amethyst Fan", type: "Fan", dmgMin: 45, dmgMax: 50, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-targets nearby enemies, 70% def pen." },
     { id: "aqua_claymore", name: "Aqua Claymore", type: "Sword", dmgMin: 145, dmgMax: 165, fireRate: 1.6, range: 4, scaleStat: "HP", scaleCost: 7, verified: true, notes: "ATK+5/VIT+8 on equip. Summer Shine +3ATK/+3DEX; Fireball: if Heavy Armor, +7 proj 20-30 dmg." },
     { id: "armageddon", name: "Armageddon", type: "Bow", dmgMin: 350, dmgMax: 400, fireRate: 1.5, range: 8.007, verified: true, notes: "Corrupted. DEF+5/VIT+6 on equip. Explosion on hit; Focus: standing still 1s+ grants +20ATK/+20DEX/+13DEF. Drop: Corrupted Ezebel." },
     { id: "ashen_war_horn", name: "Ashen War Horn", type: "Staff", dmgMin: 170, dmgMax: 200, fireRate: 2.5, range: 7, verified: true, notes: "ATK+6/DEF+6 on equip. Every 1500 dmg dealt, summon Ashen Warrior. Drop: Depraved Demon Idol." },
-    { id: "atlantis", name: "Atlantis", type: "Staff", dmgMin: 130, dmgMax: 155, fireRate: 2.5, range: 6, verified: true, notes: "Summer Shine +3ATK/+3DEX, 5 proj, 0.85s, 40% def pen, pierces. Near-twin of 0y0's Omnipotent Staff." },
+    { id: "atlantis", name: "Atlantis", type: "Staff", dmgMin: 130, dmgMax: 155, shots: 2, fireRate: 2.5, range: 6, verified: true, notes: "Summer Shine +3ATK/+3DEX, 2 base projectiles (corrected), 0.85s, 40% def pen, pierces. Near-twin of 0y0's Omnipotent Staff." },
     { id: "axe_of_the_hollows", name: "Axe of the Hollows", type: "Axe", dmgMin: 180, dmgMax: 230, fireRate: 1.8, range: 6.325, verified: true, notes: "Hollow Execution: +34% dmg below 25% MP. Drop: The True Hollow." },
     { id: "azure_shards", name: "Azure Shards", type: "Dagger", dmgMin: 200, dmgMax: 255, fireRate: 1.5, range: 6.975, verified: true, notes: "Mana Steal 1% of dmg dealt, 2 proj, pierces." },
     { id: "azure_shards_of_doom", name: "Azure Shards OF DOOM", type: "Dagger", dmgMin: 75, dmgMax: 115, fireRate: 5, range: 11.625, scaleStat: "SPD", scaleCost: 3, verified: true, notes: "Mana Steal 1%, pierces. Dungeon Rush exclusive, non-tradable." },
@@ -401,7 +401,7 @@
     { id: "banana", name: "Banana", type: "Staff", dmgMin: 1, dmgMax: 4, fireRate: 2, range: 6, verified: true, notes: "Joke item, 8 projectiles, real but tiny stats. Not tradable." },
     { id: "bent_dagger", name: "Bent Dagger", type: "Dagger", dmgMin: 30, dmgMax: 90, fireRate: 2.7, range: 6.65, verified: true, notes: "Tier 0, many pirate-themed drops." },
     { id: "blazing_hatchet", name: "Blazing Hatchet", type: "Axe", dmgMin: 310, dmgMax: 320, fireRate: 1, range: 7, verified: true, notes: "Boomerang pattern, pierces, multi-hit 2." },
-    { id: "blighted_edge", name: "Blighted Edge", type: "Axe", dmgMin: 270, dmgMax: 300, fireRate: 1.5, range: 13.75, verified: true, notes: "Corrupted. VIT+12 on equip. Malware: +1 DEF per hit landed (max +10, 3s); applies Poison. Drop: Corrupted Bog Witch." },
+    { id: "blighted_edge", name: "Blighted Edge", type: "Axe", dmgMin: 270, dmgMax: 300, fireRate: 1.5, range: 13.75, dotDps: 125, verified: true, notes: "Corrupted. VIT+12 on equip. Malware: +1 DEF per hit landed (max +10, 3s); applies Poisoned for 2.5s (125 DPS). Drop: Corrupted Bog Witch." },
     { id: "bloomweaver", name: "Bloomweaver", type: "Sword", dmgMin: 330, dmgMax: 390, fireRate: 1.6, range: 4, scaleStat: "DEF", scaleCost: 0.5, verified: true, notes: "DEF+8/VIT+20 on equip. Pierces." },
     { id: "blossom_axe", name: "Blossom Axe", type: "Axe", dmgMin: 350, dmgMax: 420, fireRate: 1, range: 7, verified: true, notes: "Combo Starter: +1 max HP per kill for 60s (max +100). Drop: Pink Golem." },
     { id: "blossom_heart_bow", name: "Blossom Heart Bow", type: "Bow", dmgMin: 0, dmgMax: 0, fireRate: 2.5, range: 9.375, verified: true, notes: "Healing weapon — heals 30 HP per projectile, not a damage weapon. 0 DPS by design, included for completeness." },
@@ -437,7 +437,7 @@
     { id: "executioners_staff", name: "Executioner's Staff", type: "Staff", dmgMin: 45, dmgMax: 60, fireRate: 2.5, range: 10.4, verified: true, notes: "40% def pen, 2 proj sine." },
     { id: "felling_axe", name: "Felling Axe", type: "Axe", dmgMin: 1, dmgMax: 10, fireRate: 1, range: 8.5, verified: true, notes: "Joke/weak item, pierces, not tradable. Drop: Talking Tree." },
     { id: "festive_axe", name: "Festive Axe", type: "Axe", dmgMin: 110, dmgMax: 135, fireRate: 1, range: 5, scaleStat: "HP", scaleCost: 5, verified: true, notes: "Orbit pattern, 2 proj, seasonal. Drop: Horrific Tree." },
-    { id: "fishy_staff", name: "Fishy Staff", type: "Staff", dmgMin: 1999, dmgMax: 1999, fireRate: 4.22, range: 9.625, verified: true, notes: "4 proj, not tradable, pierces." },
+    { id: "fishy_staff", name: "Fishy Staff", type: "Staff", dmgMin: 1999, dmgMax: 1999, shots: 4, fireRate: 4.22, range: 9, verified: true, notes: "4 simultaneous projectiles (corrected — was missing shot multiplier), not tradable, pierces, shots hit multiple enemies." },
     { id: "fishy_staff_of_doom", name: "Fishy Staff OF DOOM", type: "Staff", dmgMin: 1, dmgMax: 100, fireRate: 2.5, range: 10.4, scaleStat: "SPD", scaleCost: 3, verified: true, notes: "Dungeon Rush exclusive, not tradable, 40% def pen, pierces." },
     { id: "flame_dagger", name: "Flame Dagger", type: "Dagger", dmgMin: 80, dmgMax: 140, fireRate: 2.7, range: 6.65, verified: true, notes: "Linear, no pierce." },
     { id: "flame_sword", name: "Flame Sword", type: "Sword", dmgMin: 360, dmgMax: 400, fireRate: 1.6, range: 4, verified: true, notes: "DEF+8/VIT+20 on equip. Pierces." },
@@ -451,14 +451,14 @@
     { id: "gilded_dagger", name: "Gilded Dagger", type: "Dagger", dmgMin: 100, dmgMax: 160, fireRate: 2.7, range: 6.65, verified: true, notes: "Linear, no pierce." },
     { id: "glacialcore_sword", name: "Glacialcore Sword", type: "Sword", dmgMin: 320, dmgMax: 360, fireRate: 1.6, range: 4, verified: true, notes: "DEF+7/VIT+18 on equip. Pierces." },
     { id: "glyph_weaver", name: "Glyph Weaver", type: "Staff", dmgMin: 75, dmgMax: 80, fireRate: 2.5, range: 10.4, verified: true, notes: "3 proj, 40% def pen; if Banner of Krampus equipped: +3 Imp Spawns. Drop: True Krampus." },
-    { id: "guest666s_gun", name: "Guest666's Gun", type: "Bow", tags: ["Gun"], dmgMin: 140, dmgMax: 155, fireRate: 0.7, range: 8.8, verified: true, notes: "8 proj, multi-target hit. Drop: Guest 666." },
+    { id: "guest666s_gun", name: "Guest666's Gun", type: "Bow", tags: ["Gun"], dmgMin: 140, dmgMax: 155, shots: 8, fireRate: 0.7, range: 8.8, verified: true, notes: "8 simultaneous projectiles (corrected — was missing shot multiplier), pierces, multi-target hit. Drop: Guest 666." },
     { id: "haisee23s_blossom_axe", name: "Haisee 23's Blossom Axe", type: "Axe", dmgMin: 350, dmgMax: 420, fireRate: 1, range: 7, verified: true, notes: "Orbit, no pierce; every kill +1 max HP for 60s (cap +100)." },
     { id: "haladie", name: "Haladie", type: "Dagger", dmgMin: 190, dmgMax: 250, fireRate: 2.7, range: 6.65, verified: true, notes: "Linear, no pierce." },
-    { id: "hand_cannon", name: "Hand Cannon", type: "Bow", tags: ["Gun"], dmgMin: 140, dmgMax: 180, fireRate: 1.5, range: 8.925, verified: true, notes: "SPD+3/VIT+5 on equip. Pierces, linear." },
+    { id: "hand_cannon", name: "Hand Cannon", type: "Bow", tags: ["Gun"], dmgMin: 180, dmgMax: 220, fireRate: 1.5, range: 8.925, verified: true, notes: "SPD+3/VIT+5 on equip. Pierces, linear. Base damage corrected to 180-220 per spreadsheet (stat-twin of Egg Cannon)." },
     { id: "hand_cannon_of_doom", name: "Hand Cannon OF DOOM", type: "Bow", tags: ["Gun"], dmgMin: 310, dmgMax: 340, fireRate: 2.4, range: 8.925, scaleStat: "DEX", scaleCost: 3, verified: true, notes: "SPD+6/VIT+10 on equip. Pierces, 60% def pen." },
     { id: "handheld_fan", name: "Handheld Fan", type: "Fan", dmgMin: 60, dmgMax: 70, fireRate: 0.8, range: 6.495, scaleStat: "HP", scaleCost: 100, verified: true, notes: "ATK+3/DEX+3 on equip. Auto-target; heal-buff kit." },
     { id: "harbingers_axe", name: "Harbinger's Axe", type: "Axe", dmgMin: 170, dmgMax: 180, fireRate: 1, range: 7, verified: true, notes: "Boomerang, pierces, hits same target 2x." },
-    { id: "hellrend", name: "Hellrend", type: "Axe", dmgMin: 500, dmgMax: 580, fireRate: 1.8, range: 6.325, verified: true, notes: "Corrupted. Hellfire: Burn all enemies within 6 tiles, 1s CD, Burn 555/5s." },
+    { id: "hellrend", name: "Hellrend", type: "Axe", dmgMin: 500, dmgMax: 580, fireRate: 1.8, range: 6.325, dotDps: 666, verified: true, notes: "Corrupted. Hellfire: Burn all enemies within 6 tiles, 1s CD, Burning for 3-5s (666 DPS, corrected from spreadsheet)." },
     { id: "hexwoven", name: "Hexwoven", type: "Fan", dmgMin: 70, dmgMax: 80, fireRate: 1.8, range: 6.495, scaleStat: "MANA", scaleCost: 100, verified: true, notes: "Auto-target; heal-buff kit." },
     { id: "horned_sabre", name: "Horned Sabre", type: "Sword", dmgMin: 390, dmgMax: 460, fireRate: 1.6, range: 4, verified: true, notes: "DEF+9/VIT+24 on equip. Life Steal: 100% chance heal 1% dmg dealt." },
     { id: "horror_axe", name: "Horror Axe", type: "Axe", dmgMin: 345, dmgMax: 355, fireRate: 1, range: 7, verified: true, notes: "Boomerang, pierces, hits 2x." },
@@ -469,7 +469,7 @@
     { id: "icicle", name: "Icicle", type: "Dagger", dmgMin: 85, dmgMax: 99, fireRate: 3, range: 6, verified: true, notes: "Boomerang, 3 proj, non-tradable (Pixelmas event)." },
     { id: "infected_grasp", name: "Infected Grasp", type: "Sword", dmgMin: 385, dmgMax: 405, fireRate: 1.6, range: 4, verified: true, notes: "DEF+8/VIT+22 on equip. Life Steal: +5 HP per hit. (Was listed as armor in the original guide script — it's actually a weapon.)" },
     { id: "infernal_bow", name: "Infernal Bow", type: "Bow", dmgMin: 70, dmgMax: 85, fireRate: 2.4, range: 8.925, verified: true, notes: "Pierces, 3 proj, 60% def pen." },
-    { id: "infernal_judgement", name: "Infernal Judgement", type: "Bow", dmgMin: 155, dmgMax: 165, fireRate: 1, range: 7.82, verified: true, notes: "Fuel the Fire: 1.3x dmg vs Burning enemies; 5 proj, pierces." },
+    { id: "infernal_judgement", name: "Infernal Judgement", type: "Bow", dmgMin: 130, dmgMax: 150, shots: 5, fireRate: 1, range: 7, verified: true, notes: "5 simultaneous projectiles, 60% def pen (corrected — was missing shot multiplier, damage was per-volley not per-shot). Fuel the Fire: 1.3x dmg vs Burning enemies (not modeled)." },
     { id: "iron_axe", name: "Iron Axe", type: "Axe", dmgMin: 90, dmgMax: 100, fireRate: 1, range: 7, verified: true, notes: "Boomerang, pierces, hits 2x." },
     { id: "iron_fan", name: "Iron Fan", type: "Fan", dmgMin: 45, dmgMax: 50, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-target, 70% def pen." },
     { id: "jade_axe", name: "Jade Axe", type: "Axe", dmgMin: 650, dmgMax: 725, fireRate: 1, range: 8.25, verified: true, notes: "Armor Shred: 20% chance Exposed; pierces." },
@@ -492,14 +492,14 @@
     { id: "necrophase_sword", name: "Necrophase Sword", type: "Sword", dmgMin: 155, dmgMax: 170, fireRate: 1.6, range: 4, scaleStat: "HP", scaleCost: 7, verified: true, notes: "ATK+5/VIT+8 on equip. If Heavy Armor: +5 proj, 20-30 dmg. Pixelween event." },
     { id: "oak_staff", name: "Oak Staff", type: "Staff", dmgMin: 35, dmgMax: 50, fireRate: 2.5, range: 10.4, verified: true, notes: "No pierce, sine pattern." },
     { id: "octosword", name: "Octosword", type: "Sword", dmgMin: 1844, dmgMax: 1888, fireRate: 0.33, range: 4, verified: true, notes: "DEF+8/HP+88 on equip. Octostrike: summons 8 orbiting projectiles, 150-175 dmg each." },
-    { id: "omnipotent_staff", name: "Omnipotent Staff", type: "Staff", dmgMin: 130, dmgMax: 155, fireRate: 2.5, range: 6, verified: true, notes: "5 proj, custom pattern, 40% def pen. Drop: Seer the Corrupted." },
+    { id: "omnipotent_staff", name: "Omnipotent Staff", type: "Staff", dmgMin: 130, dmgMax: 155, shots: 2, fireRate: 2.5, range: 6, verified: true, notes: "2 base projectiles (corrected — was missing shot multiplier), 40% def pen, pierces. Secondary Projectiles add 3 more @45-55 dmg, not modeled. Drop: Seer the Corrupted." },
     { id: "ouroboros", name: "Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, verified: true, notes: "Corrupted. On-hit: 70 DPS poison 2s. Every 10 hits: serpent proj, 125 dmg. 60% def pen. Drop: Corrupted Ahi." },
     { id: "pantheons_spear", name: "Pantheon's Spear", type: "Dagger", dmgMin: 100, dmgMax: 200, fireRate: 2, range: 6.875, verified: true, notes: "If Helmet equipped: 20% chance +3 proj, 300-400 true dmg. Dungeon Rush exclusive." },
     { id: "peacock_fan", name: "Peacock Fan", type: "Fan", dmgMin: 50, dmgMax: 55, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-targets nearby enemies. 70% def pen, no pierce." },
     { id: "pharaohs_reaper", name: "Pharaoh's Reaper", type: "Staff", dmgMin: 80, dmgMax: 105, fireRate: 4.22, range: 9.625, verified: true, notes: "2 proj, sine pattern, no pierce." },
     { id: "piercers_bow_of_doom", name: "Piercer's Bow OF DOOM", type: "Bow", dmgMin: 0, dmgMax: 1, fireRate: 2.4, range: 8.925, scaleStat: "DEX", scaleCost: 0.25, verified: true, notes: "DEF-25/SPD+25 on equip. Pierces, 60% def pen. Near-zero base dmg, extreme Dex scaling. Dungeon Rush exclusive." },
     { id: "pool_noodle", name: "Pool Noodle", type: "Staff", dmgMin: 95, dmgMax: 115, fireRate: 2.5, range: 9.2, verified: true, notes: "\"Sol\" passive: casts Regeneration on allies. 40% def pen. Real weapon despite the joke name." },
-    { id: "possessed_shovel", name: "Possessed Shovel", type: "Dagger", dmgMin: 250, dmgMax: 275, fireRate: 3, range: 6, verified: true, notes: "Summoner: 5% chance spawn Blue Ghoul." },
+    { id: "possessed_shovel", name: "Possessed Shovel", type: "Dagger", dmgMin: 230, dmgMax: 255, fireRate: 3, range: 5, verified: true, notes: "Summoner: 5% chance spawn Blue Ghoul. Base damage corrected to 230-255, range to 5, per spreadsheet." },
     { id: "possessed_shovel_of_doom", name: "Possessed Shovel OF DOOM", type: "Dagger", dmgMin: 230, dmgMax: 255, fireRate: 2.7, range: 6.65, scaleStat: "SPD", scaleCost: 3, verified: true, notes: "Summoner: 10% chance spawn Blue Ghoul. Dungeon Rush only, non-tradable." },
     { id: "prism_scepter", name: "Prism Scepter", type: "Staff", dmgMin: 70, dmgMax: 90, fireRate: 2, range: 10.4, verified: true, notes: "3 proj triangle pattern, 40% def pen." },
     { id: "purification_staff", name: "Purification Staff", type: "Staff", dmgMin: 60, dmgMax: 80, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj sine, 40% def pen." },
@@ -541,13 +541,13 @@
     { id: "toy_sword_of_doom", name: "Toy Sword OF DOOM", type: "Sword", dmgMin: 240, dmgMax: 300, fireRate: 2, range: 4.55, scaleStat: "DEF", scaleCost: 0.3333, verified: true, notes: "DEF+10/VIT+25 on equip. 3 proj, pierces. Dungeon Rush exclusive." },
     { id: "travelers_sword", name: "Traveler's Sword", type: "Sword", dmgMin: 160, dmgMax: 200, fireRate: 1.6, range: 4, verified: true, notes: "DEF+3/VIT+10 on equip. Pierces." },
     { id: "twinsplitter", name: "Twinsplitter", type: "Dagger", dmgMin: 120, dmgMax: 180, fireRate: 2.7, range: 6.65, verified: true, notes: "No passive." },
-    { id: "unsealed_sensu", name: "Unsealed Sensu", type: "Fan", dmgMin: 99, dmgMax: 132, fireRate: 6, range: 6.495, verified: true, notes: "Auto-target; healing others grants +15 DEX 7s (self) or +12 DEX/+6 DEF 10s (party, 15s CD); Poisoned 66dps 2s." },
+    { id: "unsealed_sensu", name: "Unsealed Sensu", type: "Fan", dmgMin: 99, dmgMax: 132, fireRate: 6, range: 6.495, dotDps: 45, verified: true, notes: "Auto-target; healing others grants +15 DEX 7s (self) or +12 DEX/+6 DEF 10s (party, 15s CD); Poisoned for 2s (45 DPS, corrected from spreadsheet)." },
     { id: "venomfang", name: "Venomfang", type: "Dagger", dmgMin: 40, dmgMax: 50, fireRate: 5, range: 6.4, verified: true, notes: "Multi-Shot: +2 proj, 10-20 true dmg. Drop: Swamp Trap." },
     { id: "verdant_axe", name: "Verdant Axe", type: "Axe", dmgMin: 205, dmgMax: 215, fireRate: 1, range: 7, verified: true, notes: "Pierces, multi-hit 2." },
     { id: "verdent_fan", name: "Verdent Fan", type: "Fan", dmgMin: 35, dmgMax: 40, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-target, 70% def pen." },
     { id: "warped_axe", name: "Warped Axe", type: "Axe", dmgMin: 160, dmgMax: 180, fireRate: 1.25, range: 5.5, verified: true, notes: "Pierces, multi-hit 2. Combo Starter: +2 DEF/kill, cap +20 (not DPS-relevant)." },
     { id: "water_gun", name: "Water Gun", type: "Bow", tags: ["Gun"], dmgMin: 230, dmgMax: 250, fireRate: 3, range: 8.8, verified: true, notes: "ATK+3/DEX+3 on equip (Summer Shine, not auto-applied — same as other weapons' on-equip bonuses). Splash: 50% chance colored water-balloon status proc. Drop: Tyler." },
-    { id: "worm_staff", name: "Worm Staff", type: "Staff", dmgMin: 65, dmgMax: 75, fireRate: 2.5, range: 10.4, scaleStat: "WIS", scaleCost: 1, verified: true, notes: "Mana+30/WIS+10 on equip. Poison DoT, 40% def pen. Drop: Worm Hole." },
+    { id: "worm_staff", name: "Worm Staff", type: "Staff", dmgMin: 65, dmgMax: 75, fireRate: 2.5, range: 10.4, dotDps: 30, verified: true, notes: "Mana+30/WIS+10 on equip. Poisoned for 1s (30 DPS), 40% def pen. No confirmed stat-scaling on this one (removed a guessed WIS/1 default). Drop: Worm Hole." },
     { id: "worm_staff_of_doom", name: "Worm Staff OF DOOM", type: "Staff", dmgMin: 75, dmgMax: 100, fireRate: 2.5, range: 10.4, scaleStat: "WIS", scaleCost: 3, verified: true, notes: "Mana+40/WIS+20 on equip. Poison DoT, 40% def pen. Dungeon Rush exclusive, not tradable." },
     { id: "worn_longsword", name: "Worn Longsword", type: "Sword", dmgMin: 120, dmgMax: 160, fireRate: 1.6, range: 4, verified: true, notes: "DEF+2/VIT+8 on equip. Pierces. Tier 1." },
     { id: "zstrats_leaf_dagger", name: "ZStrat's Leaf Dagger", type: "Dagger", dmgMin: 65, dmgMax: 75, fireRate: 2.7, range: 6, scaleStat: "WIS", scaleCost: 0.99, verified: true, notes: "2 projectiles/attack. Stat-identical to Magical Leaf Dagger." }
@@ -789,13 +789,13 @@
     { id: "flag_of_ashen", name: "Flag of the Ashen", slot: "secondary", verified: true, statMods: { ATK: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 7, castManaCost: 80, castBurstDamage: 0, buffDuration: 7, isFlagBuff: true, notes: "80 mana, 5.2 range, 7s duration. Grants Strengthened + Rallied statuses. +10 ATK only while up — simulated with real cast timing." },
     { id: "crystalline_sigil", name: "Crystalline Sigil", slot: "secondary", verified: true, statMods: { HP: 50 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 8, castManaCost: 100, castBurstDamage: 0, buffDuration: 8, isFlagBuff: true, notes: "100 mana, 8s duration. Grants Focused+Rallied+Regen+Tanky statuses. HP bonus doesn't affect DPS math but uptime is still simulated." },
     { id: "boulder", name: "Boulder", slot: "secondary", verified: true, statMods: { ATK: 8, DEF: 5 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 10, castManaCost: 150, castBurstDamage: 6000, buffDuration: 0, isFlagBuff: false, notes: "ATK+8/DEF+5 always-on from having it equipped. Throwing it deals 6000 dmg on a 10s cooldown, 150 mana per throw — simulated: skips a throw if mana isn't ready." },
-    { id: "avalanche", name: "Avalanche", slot: "secondary", verified: true, statMods: { ATK: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 10, castManaCost: 150, castBurstDamage: 5000, buffDuration: 0, isFlagBuff: false, notes: "ATK+15 always-on. Throwing it deals 5000 dmg on a 10s cooldown, 150 mana per throw — simulated with mana gating." },
+    { id: "avalanche", name: "Avalanche", slot: "secondary", verified: true, statMods: { ATK: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 10, castManaCost: 150, castBurstDamage: 8500, buffDuration: 0, isFlagBuff: false, notes: "ATK+15 always-on. 5000 direct + Snowbomb 2000 AOE + Frost 300 DPS/5s (1500) = 8500 total per throw, 10s cooldown, 150 mana." },
     { id: "flame_of_madness", name: "Flame of Madness", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 6, castManaCost: 85, castBurstDamage: 2250, buffDuration: 0, isFlagBuff: false, procRequiresStat: { WIS: 60 }, notes: "Sympathetic Harming: 5 projectiles @450 dmg (2250 total) every 6s, 85 mana, requires 60 WIS or the proc doesn't fire at all. 3% lifesteal not modeled." },
     { id: "blossom_flag", name: "Blossom Flag", slot: "secondary", verified: true, statMods: { HP: 50, MANA: 50 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 8, castManaCost: 65, castBurstDamage: 0, buffDuration: 8, isFlagBuff: true, notes: "65 mana, 5.2 range, 8s duration. Grants Regen+Rallied+Focused statuses. No ATK/DEX so no DPS impact, but mana cost still affects the sim." },
     { id: "mooshroom_bomb", name: "Mooshroom Bomb", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 2, castManaCost: 60, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, notes: "Heal 100, 60 mana, 2s CD. Best early-game healing item. Pure utility — contributes 0 to the DPS simulation." },
     { id: "ice_bomb", name: "Ice Bomb", slot: "secondary", verified: true, statMods: { ATK: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 1, castManaCost: 85, castBurstDamage: 240, buffDuration: 0, isFlagBuff: false, notes: "ATK+12 always-on. Throwing it deals 225-255 (avg 240) dmg on a 1s cooldown, 85 mana per throw — simulated with mana gating." },
-    { id: "dynamite", name: "Dynamite", slot: "secondary", verified: true, statMods: { ATK: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 1, castManaCost: 80, castBurstDamage: 1000, buffDuration: 0, isFlagBuff: false, notes: "ATK+12 always-on. Throwing it deals 1000 dmg on a 1s cooldown, 80 mana per throw — simulated with mana gating." },
-    { id: "krampus_bomb", name: "Krampus Bomb", slot: "secondary", verified: true, statMods: { DEX: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 1, castManaCost: 85, castBurstDamage: 500, buffDuration: 0, isFlagBuff: false, notes: "DEX+12 always-on. Throwing it deals 500 dmg on a 1s cooldown, 85 mana per throw — simulated with mana gating." },
+    { id: "dynamite", name: "Dynamite", slot: "secondary", verified: true, statMods: { ATK: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 1, castManaCost: 80, castBurstDamage: 2800, buffDuration: 0, isFlagBuff: false, notes: "ATK+12 always-on. 1000 direct + Burning 300 DPS/6s (1800) = 2800 total per throw, 1s cooldown, 80 mana. Drop: Nutcracker." },
+    { id: "krampus_bomb", name: "Krampus Bomb", slot: "secondary", verified: true, statMods: { DEX: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 1, castManaCost: 85, castBurstDamage: 1750, buffDuration: 0, isFlagBuff: false, notes: "DEX+12 always-on. 500 direct + Blood Pool 250 DPS/5s (1250) = 1750 total per throw, 1s cooldown, 85 mana. Drop: Krampus." },
 
     // --- full wiki catalog pull: secondaries ---
     { id: "banner_of_krampus", name: "Banner of Krampus", slot: "secondary", verified: true, statMods: { ATK: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 8, castManaCost: 100, castBurstDamage: 0, buffDuration: 8, isFlagBuff: true, notes: "ATK+15 while up. Sacrifice: -10% max HP on use. Christmas 2025 seasonal, drop True Krampus." },
@@ -1084,6 +1084,7 @@
     var mana = baseEff.MANA || 0;
     var manaRegenPerSec = (baseEff.WIS || 0) / 10;
     var avgDmg = (w.dmgMin + w.dmgMax) / 2;
+    var shots = w.shots || 1;
     var scaleStat = w.scaleStat || null;
     var scaleCost = w.scaleCost || 1;
 
@@ -1143,14 +1144,14 @@
           if (mana >= w.manaCostPerShot) {
             mana -= w.manaCostPerShot;
             mana += (w.manaStealPerShot || 0);
-            weaponDamage += (avgDmg + flatScalingBonus) * atkMult;
+            weaponDamage += (avgDmg + flatScalingBonus) * atkMult * shots;
             weaponFiredShots++;
           } else {
             weaponStarvedShots++;
           }
         }
       } else {
-        weaponDamage += (avgDmg + flatScalingBonus) * atkMult * effFireRate * SIM_DT;
+        weaponDamage += (avgDmg + flatScalingBonus) * atkMult * shots * effFireRate * SIM_DT;
       }
 
       // Status DOT (burn/poison/etc): added as a flat DPS on top once a weapon has dotDps
@@ -1208,8 +1209,8 @@
 
     weaponInfo.innerHTML =
       '<b>' + w.name + '</b> (' + w.type + ')<br>' +
-      "Base damage " + w.dmgMin + "–" + w.dmgMax + " · base fire rate " + w.fireRate + "/s · range " + w.range + "<br>" +
-      "ATK: +1% dmg/point (universal)" + (w.scaleStat ? " · also scales off <b>" + STAT_LABELS[w.scaleStat] + "</b>: +1 flat dmg per " + fmt(w.scaleCost || 1, 4) + " pts" : "") + (w.manaCostPerShot ? " · " + w.manaCostPerShot + " mana/shot, steals " + (w.manaStealPerShot || 0) : "") + "<br>" +
+      "Base damage " + w.dmgMin + "–" + w.dmgMax + (w.shots && w.shots > 1 ? " × " + w.shots + " simultaneous shots" : "") + " · base fire rate " + w.fireRate + "/s · range " + w.range + "<br>" +
+      "ATK: +1% dmg/point (universal)" + (w.scaleStat ? " · also scales off <b>" + STAT_LABELS[w.scaleStat] + "</b>: +1 flat dmg per " + fmt(w.scaleCost || 1, 4) + " pts" : "") + (w.manaCostPerShot ? " · " + w.manaCostPerShot + " mana/shot, steals " + (w.manaStealPerShot || 0) : "") + (w.dotDps ? " · " + w.dotDps + " DPS status effect" : "") + "<br>" +
       '<span style="display:block; margin-top:6px;">' + (w.notes || "") + '</span>';
 
     var rows = [
@@ -1268,6 +1269,7 @@
         '<td><select data-f="type">' + weaponTypeOptions.map(function (t) { return '<option value="' + t + '"' + (t === w.type ? " selected" : "") + '>' + t + '</option>'; }).join("") + '</select></td>' +
         '<td><input type="number" data-f="dmgMin" value="' + w.dmgMin + '" style="width:64px"></td>' +
         '<td><input type="number" data-f="dmgMax" value="' + w.dmgMax + '" style="width:64px"></td>' +
+        '<td><input type="number" data-f="shots" value="' + (w.shots || 1) + '" style="width:44px" title="Simultaneous projectiles per attack -- damage is per-projectile, this multiplies it"></td>' +
         '<td><input type="number" step="0.01" data-f="fireRate" value="' + w.fireRate + '" style="width:60px"></td>' +
         '<td><input type="number" step="0.01" data-f="range" value="' + w.range + '" style="width:60px"></td>' +
         '<td><select data-f="scaleStat"><option value=""' + (w.scaleStat ? "" : " selected") + '>None</option>' + statOptions.map(function (s) { return '<option value="' + s + '"' + (s === w.scaleStat ? " selected" : "") + '>' + s + '</option>'; }).join("") + '</select></td>' +
@@ -1323,7 +1325,7 @@
     if (!w) return;
     var f = e.target.getAttribute("data-f");
     var val = e.target.value;
-    if (["dmgMin", "dmgMax", "fireRate", "range", "scaleCost", "dotDps"].indexOf(f) > -1) val = parseFloat(val) || 0;
+    if (["dmgMin", "dmgMax", "shots", "fireRate", "range", "scaleCost", "dotDps"].indexOf(f) > -1) val = parseFloat(val) || 0;
     w[f] = val;
     w.verified = false;
     saveDb();
