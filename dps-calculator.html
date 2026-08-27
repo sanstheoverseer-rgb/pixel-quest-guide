@@ -742,13 +742,13 @@
     { id: "jeweled_garments", name: "Jeweled Garments", slot: "armor", verified: true, statMods: { ATK: 30, DEF: 8, WIS: 15 }, flatDmgPct: 0, procChance: 0.5, procMult: 1.35, requiresType: null, notes: "Critical Strike: 50% chance to deal 1.35x damage. Modeled as expected value (1.175x average)." },
     { id: "soot_choked_cowl", name: "Soot-Choked Cowl", slot: "armor", verified: true, statMods: { ATK: 20, DEF: 5, DEX: 13, MANA: 80 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Living Ash: +33% non-weapon damage if a Staff is equipped. Informational only — not folded into the weapon DPS number." },
     { id: "crab_leather", name: "Crab Leather", slot: "armor", verified: true, statMods: { DEF: 6, DEX: 12, VIT: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Shell Up!: on ability use, +12 DEF/-12 SPD for 4s (8s CD). Drop: Crab King." },
-    { id: "fire_plated_armor", name: "Fire Plated Armor", slot: "armor", verified: true, statMods: { DEF: 10, HP: 65, VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Attack Booster: +10 ATK if a Sword is equipped (not auto-applied). Drops: Ruins Chest, Ice Knight, Ruins Knight." },
+    { id: "fire_plated_armor", name: "Fire Plated Armor", slot: "armor", verified: true, statMods: { DEF: 10, HP: 65, VIT: 12 }, condMods: { ATK: 10 }, condReqType: "Sword", flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "+10 DEF / +65 HP / +12 VIT on equip. Attack Booster: +10 ATK while a Sword is equipped (spreadsheet says +7 — unverified). Drops: Ruins Chest, Ice Knight, Ruins Knight." },
     { id: "hollowed_leather", name: "Hollowed Leather", slot: "armor", verified: true, statMods: { DEF: 2, DEX: 20, SPD: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Enchanted Power: Axe projectiles cost 10 Mana for +50 dmg. Hollow Power: below 10% Mana, +5 DEF/+5 ATK. Drop: The Hollow." },
     { id: "raiders_robe", name: "Raider's Robe", slot: "armor", verified: true, statMods: { ATK: 18, DEF: 6, MANA: 30, SPD: 8, WIS: 25 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No combat passive. Drop: Prince of Worms." },
     { id: "bandits_tunic", name: "Bandit's Tunic", slot: "armor", verified: true, statMods: { DEF: 10, DEX: 16, SPD: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Second Chance: below 25% HP, instant +100 HP (30s CD). Drop: Cutlass Bandit." },
     { id: "crushers_armor", name: "Crusher's Armor", slot: "armor", verified: true, statMods: { DEF: 14, HP: 110, VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Final Stand: below 50% HP, -10 SPD/+25 ATK/+25 DEF for 10s (25s CD). Drop: The Crusher." },
     { id: "slicers_armor", name: "Slicer's Armor", slot: "armor", verified: true, statMods: { DEF: 11, DEX: 22, SPD: 14 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Second Wind: below 80% HP, +15 DEX for 20s (20s CD). Drop: Slicer." },
-    { id: "dough_armor", name: "Dough Armor", slot: "armor", verified: true, statMods: { ATK: 18, DEF: 16, HP: 50, VIT: 13 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Dexterity Booster: +18 DEX if an Axe is equipped (not auto-applied). Drop: Gingerbread Hero." },
+    { id: "dough_armor", name: "Dough Armor", slot: "armor", verified: true, statMods: { ATK: 18, DEF: 16, HP: 50, VIT: 13 }, condMods: { DEX: 18 }, condReqType: "Axe", flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "+18 ATK / +16 DEF / +50 HP / +13 VIT on equip. Dexterity Booster: +18 DEX while an Axe is equipped. Drop: Gingerbread Hero." },
     { id: "tricksters_vest", name: "Trickster's Vest", slot: "armor", verified: true, statMods: { DEF: 12, DEX: 24, SPD: 8, WIS: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Second Chance: below 25% HP, 10% chance of a full heal. Drops: Slime Man, Big Lucky Slime, Mad Hatter, Handsome Man, Block Cat." },
     { id: "witchs_garment", name: "Witch's Garment", slot: "armor", verified: true, statMods: { DEF: 12, DEX: 20, MANA: 70, WIS: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No combat passive. Drop: Witch." },
     { id: "cinderplate", name: "Cinderplate", slot: "armor", verified: true, statMods: { ATK: 10, DEF: 20, HP: 80, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "On Burning: +50 VIT. Drop: Satanic Barbarian." },
@@ -756,7 +756,7 @@
     { id: "prism_cloak", name: "Prism Cloak", slot: "armor", verified: true, statMods: { ATK: 25, DEF: 12, HP: 50, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Hitless: 5s without taking damage grants +10% max HP. Drops: Slime Man, Big Lucky Slime, Handsome Man, Block Cat, Crystal Entity." },
     { id: "paintball_vest", name: "Paintball Vest", slot: "armor", verified: true, statMods: { DEF: 14, DEX: 22, SPD: 3 }, flatDmgPct: 0, procChance: 0.25, procMult: 1.5, requiresType: "Bow", notes: "Sharp Shot: Bows get a 25% chance to deal 1.5x damage. Drop: Tyler." },
     { id: "crimson_robe", name: "Crimson Robe", slot: "armor", verified: true, statMods: { ATK: 30, DEF: 7, WIS: 14 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Fire Starter: 1.5x Burn damage (burn DOT only, not modeled here). Drops: Slime Man, Big Lucky Slime, Obsidian Golem, Handsome Man, Block Cat." },
-    { id: "lichbound_shroud", name: "Lichbound Shroud", slot: "armor", verified: true, statMods: { DEF: 8, WIS: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Attack Booster: +24 ATK if a Staff is equipped (not auto-applied). Drops: Slime Man, Big Lucky Slime, Handsome Man, Block Cat, Zeal the Sorcerer King." },
+    { id: "lichbound_shroud", name: "Lichbound Shroud", slot: "armor", verified: true, statMods: { ATK: 24, DEF: 8, WIS: 15 }, condMods: { ATK: 24 }, condReqType: "Staff", flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "+24 ATK / +8 DEF / +15 WIS on equip. Attack Booster: +24 MORE ATK while a Staff is equipped (so +48 ATK total with a staff). Drops: Slime Man, Big Lucky Slime, Handsome Man, Block Cat, Zeal the Sorcerer King." },
 
     // --- full wiki catalog pull: armor ---
     { id: "acclaimed_armor", name: "Acclaimed Armor", slot: "armor", verified: true, statMods: { DEF: 15, HP: 40, VIT: 13 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 6." },
@@ -1012,6 +1012,10 @@
       equippedGearList().forEach(function (g) {
         if (g.isFlagBuff) return;
         if (g.statMods) Object.keys(g.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.statMods[k]; });
+        // "if a <type> is equipped, gain +N STAT" -- auto-applies when the weapon matches.
+        if (g.condMods && g.condReqType && weaponMatchesReq(wpn, g.condReqType)) {
+          Object.keys(g.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.condMods[k]; });
+        }
       });
     }
     // Conditional weapon passive (Armageddon's "Focus", etc.) -- opt-in, applies in either mode.
@@ -1124,6 +1128,13 @@
         chips += ok
           ? ' <span class="chip on">PASSIVE ACTIVE</span>'
           : ' <span class="chip off">NEEDS ' + g.requiresType.toUpperCase() + ' — you have ' + curType + '</span>';
+      }
+      if (g.condMods && g.condReqType) {
+        var cok = weaponMatchesReq(w, g.condReqType);
+        var cadd = formatStatMods(g.condMods);
+        chips += cok
+          ? ' <span class="chip on">' + cadd + ' (' + g.condReqType + ' bonus active)</span>'
+          : ' <span class="chip off">EQUIP A ' + g.condReqType.toUpperCase() + ' FOR ' + cadd + '</span>';
       }
       if (g.dotDps && g.dotRequiresType) {
         var dok = weaponMatchesReq(w, g.dotRequiresType);
