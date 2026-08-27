@@ -635,13 +635,13 @@
     { id: "purple_party_hat", name: "Purple Party Hat", slot: "accessory", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No combat stats — Valor+6%/Loot+5% only." },
     { id: "yellow_party_hat", name: "Yellow Party Hat", slot: "accessory", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No combat stats — Valor+6%/Loot+6% only." },
     { id: "white_party_hat", name: "White Party Hat", slot: "accessory", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No combat stats — Valor/Loot bonus only, matches other Party Hat colors." },
-    { id: "bog_hat", name: "Bog Hat", slot: "accessory", verified: true, statMods: { SPD: 5, WIS: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Dagger", notes: "Dexterity Booster: +10 DEX if Dagger equipped (not auto-applied). Drop: Mushroom Mage." },
+    { id: "bog_hat", name: "Bog Hat", slot: "accessory", verified: true, statMods: { SPD: 5, WIS: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Dagger", condMods: { DEX: 10 }, condReqType: "Dagger", notes: "+5 SPD / +15 WIS on equip. Dexterity Booster: +10 DEX while a Dagger is equipped. Drop: Mushroom Mage." },
     { id: "bunny_ears", name: "Bunny Ears", slot: "accessory", verified: true, statMods: { ATK: 8, HP: 40, MANA: 40 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Easter event item." },
     { id: "coconut_crab_ring", name: "Coconut Crab Ring", slot: "accessory", verified: true, statMods: { HP: 2, MANA: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "On killing a Coconut Crab: +5% Aura 3s (not auto-applied)." },
     { id: "coconut_crab_ring_of_doom", name: "Coconut Crab Ring OF DOOM", slot: "accessory", verified: true, statMods: { HP: 200, MANA: -100 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Same passive as base ring. Dungeon Rush mode only, non-tradable." },
     { id: "conditioned_belt", name: "Conditioned Belt", slot: "accessory", verified: true, statMods: { VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Regen +5 HP/s, requires 40 VIT. Drop: The Hollow." },
     { id: "cornucopia", name: "Cornucopia", slot: "accessory", verified: true, statMods: { HP: 40, VIT: 5 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "20% chance on kill: drop 10-25 EXP." },
-    { id: "corrupted_eyepatch", name: "Corrupted Eyepatch", slot: "accessory", verified: true, statMods: { DEF: 8, DEX: 18, WIS: 14 }, flatDmgPct: 0, procChance: 0.12, procMult: 2, requiresType: "Dagger", notes: "Sighted: if Dagger equipped, 12% chance 2x dmg + Armor Broken. Drop: Corrupted Ezebel." },
+    { id: "corrupted_eyepatch", name: "Corrupted Eyepatch", slot: "accessory", verified: true, statMods: { DEF: 8, DEX: 18, WIS: 14 }, flatDmgPct: 0, procChance: 0.12, procMult: 2, requiresType: "Dagger", notes: "Sighted: while a Dagger is equipped, 12% chance for shots to deal 2x damage + inflict Armor Broken (folded in as +12% expected damage). Drop: Corrupted Ezebel." },
     { id: "crown_of_the_sea", name: "Crown of the Sea", slot: "accessory", verified: true, statMods: { DEX: -15, MANA: 50, WIS: 15 }, flatDmgPct: 25, procChance: 0, procMult: 1, requiresType: null, notes: "Summer-event variant of Crown of All-Seeing — same Judgement +25% dmg passive plus Summer Shine (+30HP/+30MP/+6SPD)." },
     { id: "cursed_jeans", name: "Cursed Jeans", slot: "accessory", verified: true, statMods: { DEF: 4, SPD: 12, VIT: 25 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Second Wind: below 70% HP, +50 VIT (not auto-applied)." },
     { id: "daisy_bracelet", name: "Daisy Bracelet", slot: "accessory", verified: true, statMods: { MANA: 100, WIS: 20 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Every +2 Mana above 300, +1 HP." },
@@ -697,8 +697,8 @@
     { id: "novice_pendant", name: "Novice Pendant", slot: "accessory", verified: true, statMods: { HP: 40 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
     { id: "pantheons_helm", name: "Pantheon's Helm", slot: "accessory", verified: true, statMods: { DEF: 8, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Defense Booster: On Rallied, +12 DEF 5s. Dungeon Rush Gamemode." },
     { id: "penguin_signet", name: "Penguin Signet", slot: "accessory", verified: true, statMods: { ATK: 10, DEF: 5, HP: 50 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Valor+4%, Loot+5%. 2025 Pixelmas, non-tradable." },
-    { id: "pirate_bandana", name: "Pirate Bandana", slot: "accessory", verified: true, statMods: { DEF: 4, DEX: 6, SPD: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Sword", notes: "Defense Booster: +6 DEF if Sword equipped (not auto-applied). Drop: Cannoneer." },
-    { id: "pixelween_hat", name: "Pixelween Hat", slot: "accessory", verified: true, statMods: { ATK: 12, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Wisdom Booster: 25% chance +20 WIS 3s if Robe equipped. Halloween special, drop Witch." },
+    { id: "pirate_bandana", name: "Pirate Bandana", slot: "accessory", verified: true, statMods: { DEF: 4, DEX: 6, SPD: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Sword", condMods: { DEF: 6 }, condReqType: "Sword", notes: "+8 SPD / +4 DEF / +8 DEX on equip. Defense Booster: +6 DEF while a Sword is equipped. Drop: Cannoneer." },
+    { id: "pixelween_hat", name: "Pixelween Hat", slot: "accessory", verified: true, statMods: { ATK: 12, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, condMods: { WIS: 20 }, condReqGearName: "Robe", condProcChance: 0.25, condProcDuration: 3, notes: "On equip: +12 ATK / +12 WIS. Wisdom Booster: while a Robe is equipped, 25% chance per shot to gain +20 WIS for 3s -> applied at its expected uptime (near-100% on fast weapons). Halloween special, drop Witch." },
     { id: "pixelween_ring", name: "Pixelween Ring", slot: "accessory", verified: true, statMods: { ATK: 6, VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Combo Starter: +2 ATK per kill for 15s, cap +20 ATK. Halloween special, drop Witch." },
     { id: "pool_pass_wristband", name: "Pool Pass Wristband", slot: "accessory", verified: true, statMods: { HP: 60, MANA: 75, SPD: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Nature Surge: +25 WIS 3s on ability use (not auto-applied). Summer special." },
     { id: "red_buzzring", name: "Red Buzzring", slot: "accessory", verified: true, statMods: { HP: 90, VIT: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No combat passive." },
@@ -778,7 +778,7 @@
     { id: "easter_suit", name: "Easter Suit", slot: "armor", verified: true, statMods: { DEF: 5, DEX: 11, SPD: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Second Wind: ability use → +20 SPD 5s (10s CD). 2026 Easter." },
     { id: "emperors_armor", name: "Emperor's Armor", slot: "armor", verified: true, statMods: { DEF: 17, HP: 50, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 7, drops incl. Demon Idol Azazel, Krampus." },
     { id: "faded_robe", name: "Faded Robe", slot: "armor", verified: true, statMods: { ATK: 1, DEF: 1, WIS: 1 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 0." },
-    { id: "flamingo_float", name: "Flamingo Float", slot: "armor", verified: true, statMods: { DEF: 10, HP: 65, VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine: +4 DEF/+4 ATK/+6 VIT. Attack Booster: +10 ATK if Sword equipped." },
+    { id: "flamingo_float", name: "Flamingo Float", slot: "armor", verified: true, statMods: { DEF: 10, HP: 65, VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, condMods: { ATK: 10 }, condReqType: "Sword", notes: "Attack Booster: +10 ATK while a Sword is equipped. (Summer Shine set bonus +4 DEF/+4 ATK/+6 VIT not auto-applied.)" },
     { id: "floral_mantle", name: "Floral Mantle", slot: "armor", verified: true, statMods: { DEF: 8, HP: 40, MANA: 60, VIT: 18 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Biome Expert: +3 HP/sec while in Woodland Biome. Drop: Woodland Golem." },
     { id: "floral_shirt", name: "Floral Shirt", slot: "armor", verified: true, statMods: { DEF: 15, MANA: 70, VIT: 12, WIS: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine: +4 DEF/+4 ATK/+6 VIT. Drops: Mad Granny, Butterfly Princess." },
     { id: "frankenstein_armor", name: "Frankenstein Armor", slot: "armor", verified: true, statMods: { DEF: 13, HP: 40, SPD: 9, VIT: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Flavor-text only, no numeric ability. Drop: Haunted Frankenstein." },
@@ -787,7 +787,7 @@
     { id: "grand_scholars_robe", name: "Grand Scholar's Robe", slot: "armor", verified: true, statMods: { ATK: 25, DEF: 6, WIS: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 6, drops incl. Zeal the Sorcerer King, Inferno God." },
     { id: "guest_666s_cape", name: "Guest 666's Cape", slot: "armor", verified: true, statMods: { ATK: 25, DEF: 11, SPD: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Speed Booster: ability use → +30 SPD 6s (10s CD). Drop: Guest 666." },
     { id: "halkiyon_armor", name: "Halkiyon Armor", slot: "armor", verified: true, statMods: { DEF: 11, HP: 30, VIT: 9 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 4." },
-    { id: "haunted_robe", name: "Haunted Robe", slot: "armor", verified: true, statMods: { ATK: 25, DEF: 6, MANA: 25, WIS: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Mana Booster: +50 MANA if Staff equipped. Drop: Haunted Ghost." },
+    { id: "haunted_robe", name: "Haunted Robe", slot: "armor", verified: true, statMods: { ATK: 25, DEF: 6, MANA: 25, WIS: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, condMods: { MANA: 50 }, condReqType: "Staff", notes: "+6 DEF / +25 MANA / +8 WIS / +25 ATK on equip. Mana Booster: +50 more MANA while a Staff is equipped. Drop: Haunted Ghost." },
     { id: "heroic_mantle", name: "Heroic Mantle", slot: "armor", verified: true, statMods: { DEF: 7, HP: 60, VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Attack Booster: +10 ATK if Flag equipped. Drop: Woodland Troll." },
     { id: "iron_chestplate", name: "Iron Chestplate", slot: "armor", verified: true, statMods: { DEF: 4, HP: 5, VIT: 5 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 0." },
     { id: "jackalhide_armor", name: "Jackalhide Armor", slot: "armor", verified: true, statMods: { DEF: 9, DEX: 16, SPD: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 5." },
@@ -796,14 +796,14 @@
     { id: "leviathan_hide", name: "Leviathan Hide", slot: "armor", verified: true, statMods: { DEF: 12, DEX: 22, SPD: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Flavor text only. Tier 8, corrupted/endgame drops (Azazel, Tyler, Crystal Titan)." },
     { id: "life_vest", name: "Life Vest", slot: "armor", verified: true, statMods: { DEF: 12, DEX: 24, SPD: 8, WIS: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine: +4 DEF/+4 ATK/+6 VIT. Second Chance: <25% HP, 10% chance full heal. Drop: The Mad Hatter." },
     { id: "lilac_armor", name: "Lilac Armor", slot: "armor", verified: true, statMods: { DEF: 15, MANA: 70, VIT: 12, WIS: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Flavor text only." },
-    { id: "lush_holidays", name: "Lush Holidays", slot: "armor", verified: true, statMods: { ATK: 18, DEF: 8, MANA: 50, WIS: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Vitality Booster: if Staff equipped, +18 VIT. Drop: Holiday Queen." },
-    { id: "lush_shrubs", name: "Lush Shrubs", slot: "armor", verified: true, statMods: { ATK: 12, DEF: 6, MANA: 60, WIS: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Wisdom Booster: if Staff equipped, +12 WIS. Drops: Holiday Queen, Fairy Queen." },
+    { id: "lush_holidays", name: "Lush Holidays", slot: "armor", verified: true, statMods: { ATK: 18, DEF: 8, MANA: 50, WIS: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, condMods: { VIT: 18 }, condReqType: "Staff", notes: "Vitality Booster: +18 VIT while a Staff is equipped. Drop: Holiday Queen." },
+    { id: "lush_shrubs", name: "Lush Shrubs", slot: "armor", verified: true, statMods: { ATK: 12, DEF: 6, MANA: 60, WIS: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, condMods: { WIS: 12 }, condReqType: "Staff", notes: "+40 MANA / +6 DEF / +12 WIS / +12 ATK on equip. Wisdom Booster: +12 more WIS while a Staff is equipped. Drops: Holiday Queen, Fairy Queen." },
     { id: "nomads_robe", name: "Nomad's Robe", slot: "armor", verified: true, statMods: { ATK: 4, DEF: 2, WIS: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 1." },
-    { id: "nutcrackers_coat", name: "Nutcracker's Coat", slot: "armor", verified: true, statMods: { DEF: 16, DEX: 13, HP: 40, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Dexterity Booster: if Sword equipped, +18 DEX. Drop: Nutcracker." },
+    { id: "nutcrackers_coat", name: "Nutcracker's Coat", slot: "armor", verified: true, statMods: { DEF: 16, DEX: 13, HP: 40, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, condMods: { DEX: 18 }, condReqType: "Sword", notes: "+13 DEX / +16 DEF / +40 HP / +15 VIT on equip. Dexterity Booster: +18 more DEX while a Sword is equipped. Drop: Nutcracker." },
     { id: "obsidian_plate", name: "Obsidian Plate", slot: "armor", verified: true, statMods: { DEF: 19, HP: 60, VIT: 17 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 8, corrupted/endgame drops." },
     { id: "permafrost_veil", name: "Permafrost Veil", slot: "armor", verified: true, statMods: { ATK: 33, DEF: 14, HP: 50, SPD: -8, WIS: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Corrupted. Frostbite: above 20% HP, reflect 10x damage back to attacker. Drop: Corrupted Arctic Deer." },
     { id: "princes_plate", name: "Prince's Plate", slot: "armor", verified: true, statMods: { DEF: 13, HP: 35, VIT: 11 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 5." },
-    { id: "robe_of_krampus", name: "Robe of Krampus", slot: "armor", verified: true, statMods: { ATK: 38, DEF: 5, HP: -75, MANA: 65 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Staff", notes: "If Staff equipped, +5 ATK/+5 DEX (informational only). Drop: Krampus." },
+    { id: "robe_of_krampus", name: "Robe of Krampus", slot: "armor", verified: true, statMods: { ATK: 38, DEF: 5, HP: -75, MANA: 65 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Staff", condMods: { ATK: 5, DEX: 5 }, condReqType: "Staff", notes: "+5 DEF / +65 MANA / -75 HP / +38 ATK on equip. On Equip: +5 ATK / +5 DEX while a Staff is equipped. Drop: Krampus." },
     { id: "robe_of_the_horned_demon", name: "Robe of the Horned Demon", slot: "armor", verified: true, statMods: { ATK: 30, DEF: 8, VIT: 10, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "When Banner of Krampus used, +15 ATK for 8s (not auto-applied). Drop: True Krampus." },
     { id: "robe_of_the_worm", name: "Robe of the Worm", slot: "armor", verified: true, statMods: { ATK: 23, MANA: 50, WIS: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Resistance: Sick status 50% as effective. Drop: Worm Hole." },
     { id: "scouts_leathers", name: "Scout's Leathers", slot: "armor", verified: true, statMods: { DEF: 4, DEX: 2, SPD: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 1." },
@@ -981,7 +981,7 @@
     statMeta.forEach(function (m) {
       var el = statGrid.querySelector('[data-derived="' + m.key + '"]');
       if (!el) return;
-      var b = state.stats[m.key] || 0, e = eff[m.key] || 0, d = e - b;
+      var b = state.stats[m.key] || 0, e = Math.round(eff[m.key] || 0), d = e - b;
       var head = d !== 0
         ? '<b>' + e + '</b> <span style="color:var(--text-dim)">(' + b + (d >= 0 ? ' +' + d : ' ' + d) + ' weapon/gear)</span>'
         : '<b>' + e + '</b>';
@@ -1012,9 +1012,17 @@
       equippedGearList().forEach(function (g) {
         if (g.isFlagBuff) return;
         if (g.statMods) Object.keys(g.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.statMods[k]; });
-        // "if a <type> is equipped, gain +N STAT" -- auto-applies when the weapon matches.
-        if (g.condMods && g.condReqType && weaponMatchesReq(wpn, g.condReqType)) {
-          Object.keys(g.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.condMods[k]; });
+        // "if a <weapon type>/<named piece> is equipped" -> +N STAT. Some have a per-shot
+        // proc layer (Pixelween Hat: 25% chance on shoot, lasts 3s) -> apply at its
+        // expected uptime = 1 - (1-chance)^(shots per proc-window).
+        if (g.condMods && condMet(g)) {
+          var upt = 1;
+          if (g.condProcChance) {
+            var frNow = wpn ? wpn.fireRate * (1 + (state.stats.DEX || 0) / 100) : 0;
+            var shotsWin = frNow * (g.condProcDuration || 3);
+            upt = shotsWin > 0 ? (1 - Math.pow(1 - g.condProcChance, shotsWin)) : 0;
+          }
+          Object.keys(g.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.condMods[k] * upt; });
         }
       });
     }
@@ -1129,12 +1137,19 @@
           ? ' <span class="chip on">PASSIVE ACTIVE</span>'
           : ' <span class="chip off">NEEDS ' + g.requiresType.toUpperCase() + ' — you have ' + curType + '</span>';
       }
-      if (g.condMods && g.condReqType) {
-        var cok = weaponMatchesReq(w, g.condReqType);
+      if (g.condMods && (g.condReqType || g.condReqGearName)) {
+        var cok = condMet(g);
         var cadd = formatStatMods(g.condMods);
+        var need = g.condReqType || g.condReqGearName;
+        var uptTxt = "";
+        if (cok && g.condProcChance) {
+          var frN = w ? w.fireRate * (1 + (state.stats.DEX || 0) / 100) : 0;
+          var up = frN > 0 ? Math.round((1 - Math.pow(1 - g.condProcChance, frN * (g.condProcDuration || 3))) * 100) : 0;
+          uptTxt = " ~" + up + "% uptime";
+        }
         chips += cok
-          ? ' <span class="chip on">' + cadd + ' (' + g.condReqType + ' bonus active)</span>'
-          : ' <span class="chip off">EQUIP A ' + g.condReqType.toUpperCase() + ' FOR ' + cadd + '</span>';
+          ? ' <span class="chip on">' + cadd + ' (' + need + ' bonus active' + uptTxt + ')</span>'
+          : ' <span class="chip off">EQUIP A ' + need.toUpperCase() + ' FOR ' + cadd + '</span>';
       }
       if (g.dotDps && g.dotRequiresType) {
         var dok = weaponMatchesReq(w, g.dotRequiresType);
@@ -1175,6 +1190,16 @@
     if (!reqType) return true;
     if (!w) return false;
     return w.type === reqType || (w.tags && w.tags.indexOf(reqType) > -1);
+  }
+
+  // Is a gear item's conditional ("if a Sword equipped", "if a Robe equipped") satisfied?
+  function condMet(g) {
+    if (g.condReqType) return weaponMatchesReq(getWeapon(), g.condReqType);
+    if (g.condReqGearName) {
+      var needle = g.condReqGearName.toLowerCase();
+      return equippedGearList().some(function (x) { return x !== g && x.name.toLowerCase().indexOf(needle) > -1; });
+    }
+    return false;
   }
 
   function gearMultiplierBreakdown(eff, w) {
