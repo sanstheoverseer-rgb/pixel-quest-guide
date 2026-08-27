@@ -485,7 +485,7 @@
     { id: "john_does_dagger", name: "John Doe's Dagger", type: "Dagger", dmgMin: 90, dmgMax: 105, fireRate: 2.7, range: 6.65, scaleStat: "SPD", scaleCost: 0.5882, verified: true, notes: "No pierce, linear." },
     { id: "kaleidoscope", name: "Kaleidoscope", type: "Dagger", dmgMin: 280, dmgMax: 300, fireRate: 3, range: 6, verified: true, notes: "Force/Finesse/Harmony: ATK vs DEX comparison grants ignore-def or Bleed or both." },
     { id: "knights_blade", name: "Knight's Blade", type: "Sword", dmgMin: 400, dmgMax: 440, fireRate: 1.6, range: 4, statMods: { DEF: 8, VIT: 20 }, verified: true, notes: "DEF+8/VIT+20 on equip. Pierces, no other passive." },
-    { id: "laevateinn", name: "Laevateinn", type: "Sword", dmgMin: 600, dmgMax: 666, fireRate: 1.2, range: 4, statMods: { ATK: 10, DEF: 12, VIT: 25 }, secHitDmg: 375, verified: true, notes: "Corrupted. ATK+10/DEF+12/VIT+25 on equip. Homing Burst: every shot emits 5 homing projectiles @75 dmg (375/hit, scales with ATK)." },
+    { id: "laevateinn", name: "Laevateinn", type: "Sword", dmgMin: 600, dmgMax: 666, fireRate: 1.2, range: 4, statMods: { ATK: 10, DEF: 12, VIT: 25 }, secHitDmg: 375, verified: true, notes: "Corrupted. ATK+10/DEF+12/VIT+25 on equip. Homing Burst: every swing emits 5 homing projectiles at 75 base dmg each = 375 base/swing (each projectile scales with ATK, e.g. ~153 each at +104% ATK)." },
     { id: "leaf_storm", name: "Leaf Storm", type: "Fan", dmgMin: 40, dmgMax: 60, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 15, verified: true, notes: "Heal-buff kit (+10DEX 7s solo; +5DEX+5DEF+8WIS 10s party)." },
     { id: "light_of_sol", name: "Light of Sol", type: "Staff", dmgMin: 95, dmgMax: 115, shots: 2, fireRate: 2.5, range: 9.2, verified: true, notes: "2 simultaneous projectiles (spreadsheet base DPS confirms x2). Sol: casting an ability heals nearby allies, 7 tile range, 15s CD." },
     { id: "lightning_bow", name: "Lightning Bow", type: "Bow", dmgMin: 115, dmgMax: 125, fireRate: 2.7, range: 8, verified: true, notes: "Pierces. Pixelween event item." },
@@ -1352,13 +1352,16 @@
     weaponInfo.innerHTML =
       '<b>' + w.name + '</b> (' + w.type + ')<br>' +
       "Base damage " + w.dmgMin + "–" + w.dmgMax + (w.shots && w.shots > 1 ? " × " + w.shots + " simultaneous shots" : "") + " · base fire rate " + w.fireRate + "/s · range " + w.range + "<br>" +
-      "ATK: +1% dmg/point (universal)" + (w.scaleStat ? " · also scales off <b>" + STAT_LABELS[w.scaleStat] + "</b>: +1 flat dmg per " + fmt(w.scaleCost || 1, 4) + " pts" : "") + (w.manaCostPerShot ? " · " + w.manaCostPerShot + " mana/shot, steals " + (w.manaStealPerShot || 0) : "") + (w.dotDps ? " · " + (w.dotType === "poison" ? w.dotDps + "/s poison per stack (stacks per hit)" : "+" + w.dotDps + " " + (w.dotType || "burn") + " DPS (flat)") : "") + (w.secHitDmg ? " · +" + w.secHitDmg + " secondary-projectile dmg per hit (ATK-scaled, approx)" : "") + (w.critChance ? " · " + Math.round(w.critChance * 100) + "% crit ×" + w.critMult : "") + "<br>" +
+      "ATK: +1% dmg/point (universal)" + (w.scaleStat ? " · also scales off <b>" + STAT_LABELS[w.scaleStat] + "</b>: +1 flat dmg per " + fmt(w.scaleCost || 1, 4) + " pts" : "") + (w.manaCostPerShot ? " · " + w.manaCostPerShot + " mana/shot, steals " + (w.manaStealPerShot || 0) : "") + (w.dotDps ? " · " + (w.dotType === "poison" ? w.dotDps + "/s poison per stack (stacks per hit)" : "+" + w.dotDps + " " + (w.dotType || "burn") + " DPS (flat)") : "") + (w.secHitDmg ? " · +" + w.secHitDmg + " secondary-projectile base dmg per swing, total across all its extra projectiles, before ATK (ATK-scaled in the sim)" : "") + (w.critChance ? " · " + Math.round(w.critChance * 100) + "% crit ×" + w.critMult : "") + "<br>" +
       '<span style="display:block; margin-top:6px;">' + (w.notes || "") + '</span>';
 
     var rows = [
       { k: "Weapon damage (30s)" + (w.critChance ? " incl. " + Math.round(w.critChance * 100) + "% crit ×" + w.critMult : ""), v: fmt(sim.weaponDamage, 0) }
     ];
-    if (sim.secProjDamage) rows.push({ k: "Secondary projectiles — " + w.name + " (" + (w.secHitDmg) + "/hit, ATK-scaled)", v: fmt(sim.secProjDamage, 0) });
+    if (sim.secProjDamage) {
+      var atkM = (1 + (baseEff.ATK || 0) / 100) * gearMult;
+      rows.push({ k: "Secondary projectiles — " + w.name + " (" + w.secHitDmg + " base/swing pre-ATK → ~" + fmt(w.secHitDmg * atkM, 0) + "/swing at your ATK)", v: fmt(sim.secProjDamage, 0) });
+    }
     (sim.dotBreakdown || []).forEach(function (d) {
       if (!d.total) return;
       var k;
