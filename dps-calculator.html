@@ -264,6 +264,9 @@
           <label for="weaponSelect">Selected weapon</label>
           <select id="weaponSelect"></select>
         </div>
+        <div class="sub" id="condRow" style="display:none; margin:-4px 0 8px;">
+          <label><input type="checkbox" id="applyCondChk"> apply <span id="condLabelTxt">its conditional passive</span> (off by default)</label>
+        </div>
         <div class="weapon-info" id="weaponInfo"></div>
         <div id="awpDistanceRow" style="display:none; margin-top:12px;">
           <label style="display:block; font-size:0.75rem; color:var(--text-dim); margin-bottom:4px;">Distance to target (tiles) — +6%/tile, capped +100%</label>
@@ -403,7 +406,7 @@
     { id: "ahis_reaper", name: "Ahi's Reaper", type: "Staff", dmgMin: 55, dmgMax: 65, shots: 2, fireRate: 2.5, range: 12.5, statMods: { SPD: 8 }, secHitDmg: 22.5, verified: true, notes: "2 base simultaneous projectiles (spreadsheet), + a 3rd always-on 20-25 true-dmg projectile (~22.5/hit). SPD+8 on equip. Drop: Ahi the Wyrmm." },
     { id: "amethyst_fan", name: "Amethyst Fan", type: "Fan", dmgMin: 45, dmgMax: 50, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-targets nearby enemies, 70% def pen." },
     { id: "aqua_claymore", name: "Aqua Claymore", type: "Sword", dmgMin: 145, dmgMax: 165, fireRate: 1.6, range: 4, scaleStat: "HP", scaleCost: 7, statMods: { ATK: 5, VIT: 8 }, secHitDmg: 125, verified: true, notes: "ATK+5/VIT+8 on equip. Fireball: if Heavy Armor, +7 proj @20-30 dmg (~125/hit). Base hit only without Heavy Armor." },
-    { id: "armageddon", name: "Armageddon", type: "Bow", dmgMin: 350, dmgMax: 400, fireRate: 1.5, range: 8.007, dotDps: 300, secHitDmg: 282.5, statMods: { DEF: 5, VIT: 6 }, verified: true, notes: "Corrupted. DEF+5/VIT+6 on equip. Secondary explosion projectiles ~282.5/hit (265-300, 100% def pen) + Burning 300 DPS/5s. Focus: standing still 1s+ grants +20ATK/+20DEX/+13DEF. Drop: Corrupted Ezebel." },
+    { id: "armageddon", name: "Armageddon", type: "Bow", dmgMin: 350, dmgMax: 400, fireRate: 1.5, range: 8.007, dotDps: 300, secHitDmg: 282.5, statMods: { DEF: 5, VIT: 6 }, condMods: { ATK: 20, DEX: 20, DEF: 13 }, condLabel: "Focus (standing still 1s+)", verified: true, notes: "Corrupted. DEF+5/VIT+6 on equip. Secondary explosion projectiles ~282.5/hit (265-300, 100% def pen) + Burning 300 DPS/5s. Focus: standing still 1s+ grants +20 ATK / +20 DEX / +13 DEF (toggle above the weapon list). Drop: Corrupted Ezebel." },
     { id: "ashen_war_horn", name: "Ashen War Horn", type: "Staff", dmgMin: 170, dmgMax: 200, fireRate: 2.5, range: 7, statMods: { ATK: 6, DEF: 6 }, verified: true, notes: "ATK+6/DEF+6 on equip. Every 1500 dmg dealt, summon Ashen Warrior. Drop: Depraved Demon Idol." },
     { id: "atlantis", name: "Atlantis", type: "Staff", dmgMin: 130, dmgMax: 155, shots: 2, fireRate: 2.5, range: 6, verified: true, notes: "Summer Shine +3ATK/+3DEX, 2 base projectiles (corrected), 0.85s, 40% def pen, pierces. Near-twin of 0y0's Omnipotent Staff." },
     { id: "axe_of_the_hollows", name: "Axe of the Hollows", type: "Axe", dmgMin: 180, dmgMax: 230, fireRate: 1.8, range: 6.325, verified: true, notes: "Hollow Execution: +34% dmg below 25% MP. Drop: The True Hollow." },
@@ -891,7 +894,8 @@
     accessoryId: "",
     awpDistance: 0,
     statMode: "base", // "base" = typed stats are unequipped, calc adds item bonuses; "final" = typed stats already include them
-    useSecondary: true // whether the secondary ability is actually used during the sim (still equipped for stats either way)
+    useSecondary: true, // whether the secondary ability is actually used during the sim (still equipped for stats either way)
+    applyCond: false // fold in the current weapon's conditional passive (Focus, etc.) -- off by default
   };
 
   // ---------- STAT PANEL ----------
@@ -946,6 +950,9 @@
     var flagAdd = {};
     var flagSec = equippedGearList().find(function (g) { return g.isFlagBuff && g.statMods; });
     if (flagSec) Object.keys(flagSec.statMods).forEach(function (k) { flagAdd[k] = flagSec.statMods[k]; });
+    // "would gain" hint for the current weapon's conditional passive when it's toggled off.
+    var condW = getWeapon(), condAdd = {};
+    if (condW && condW.condMods && !state.applyCond) Object.keys(condW.condMods).forEach(function (k) { condAdd[k] = condW.condMods[k]; });
 
     statMeta.forEach(function (m) {
       var el = statGrid.querySelector('[data-derived="' + m.key + '"]');
@@ -955,6 +962,7 @@
         ? '<b>' + e + '</b> <span style="color:var(--text-dim)">(' + b + (d >= 0 ? ' +' + d : ' ' + d) + ' weapon/gear)</span>'
         : '<b>' + e + '</b>';
       if (flagAdd[m.key]) head += ' <span style="color:var(--text-dim)">→ ' + (e + flagAdd[m.key]) + ' while flag up</span>';
+      if (condAdd[m.key]) head += ' <span style="color:var(--text-dim)">→ ' + (e + condAdd[m.key]) + ' with ' + (condW.condLabel || "passive") + '</span>';
       el.innerHTML = head + ' &nbsp;·&nbsp; ' + m.desc(e);
     });
   }
@@ -982,6 +990,9 @@
         if (g.statMods) Object.keys(g.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.statMods[k]; });
       });
     }
+    // Conditional weapon passive (Armageddon's "Focus", etc.) -- opt-in, applies in either mode.
+    var cw = getWeapon();
+    if (state.applyCond && cw && cw.condMods) Object.keys(cw.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + cw.condMods[k]; });
     return eff;
   }
 
@@ -1007,8 +1018,28 @@
     });
     if (state.weaponId) weaponSelect.value = state.weaponId;
   }
+  var condRow = document.getElementById("condRow");
+  var applyCondChk = document.getElementById("applyCondChk");
+  function renderCondRow() {
+    var wc = getWeapon();
+    if (wc && wc.condMods) {
+      condRow.style.display = "";
+      document.getElementById("condLabelTxt").textContent = wc.condLabel || "its conditional passive";
+      applyCondChk.checked = state.applyCond;
+    } else {
+      condRow.style.display = "none";
+    }
+  }
+  applyCondChk.addEventListener("change", function (e) {
+    state.applyCond = e.target.checked;
+    renderDerived();
+    renderEquipInfo();
+    compute();
+  });
+
   weaponSelect.addEventListener("change", function () {
     state.weaponId = weaponSelect.value;
+    renderCondRow();
     renderDerived();
     renderEquipInfo();
     compute();
@@ -1689,6 +1720,7 @@
     renderSlotSelects();
     renderWeaponTable();
     renderGearTable();
+    renderCondRow();
     renderDerived();
     renderEquipInfo();
     compute();
