@@ -655,7 +655,7 @@
     { id: "nature_band", name: "Nature Band", slot: "accessory", verified: true, statMods: { HP: 30, MANA: 45, SPD: 9 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "On ability use: +25 WIS for 3s (this is the guide script's 'Nature gives 25 on passive' — not auto-applied here). Drops: Holiday Queen, Fairy Queen." },
     { id: "necklace_of_fangs", name: "Necklace of Fangs", slot: "accessory", verified: true, statMods: { ATK: 12, DEX: 12, HP: -50 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "If Crimson Bow or Coral Bow equipped: inflicts Bleeding (informational). Drop: True Krampus." },
     { id: "necklace_of_protection", name: "Necklace of Protection", slot: "accessory", verified: true, statMods: { HP: 5 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Low tier (T5)." },
-    { id: "necrotoxin", name: "Necrotoxin", slot: "accessory", dotDps: 200, dotType: "poison", dotDuration: 3, dotDecay: 40, dotEffectCd: 0.8, dotFlatDps: 200, verified: true, statMods: { ATK: 12, DEX: 12, VIT: -12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Poison explosions every 0.8s: each inflicts a stacking poison that ticks 200 -> 160 -> 120 over 3s, PLUS a separate flat 200 DPS. No ATK scaling. Corrupted tier, drop Corrupted Ahi." },
+    { id: "necrotoxin", name: "Necrotoxin", slot: "accessory", dotFlatDps: 230, dotRequiresPoison: true, verified: true, statMods: { ATK: 12, DEX: 12, VIT: -12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Only does anything while the target is ALREADY poisoned by something else (e.g. Stygian Plate, a poison staff). Poison explosions every 0.8s (200->160->120 ticks) + a flat 200 DPS -- folded together as ~230 flat, no ATK scaling. Tune this number if you have a clean in-game read. Corrupted, drop Corrupted Ahi." },
     { id: "novice_belt", name: "Novice Belt", slot: "accessory", verified: true, statMods: { VIT: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
     { id: "novice_boots", name: "Novice Boots", slot: "accessory", verified: true, statMods: { SPD: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
     { id: "novice_bracelet", name: "Novice Bracelet", slot: "accessory", verified: true, statMods: { MANA: 40 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 2 starter set." },
@@ -1307,14 +1307,19 @@
     var secItem = state.useSecondary ? equippedSecondary : null;
 
     // Collect DOT sources: the weapon's own dotDps, plus any equipped armor/accessory that
-    // applies burn/poison (gated by dotRequiresType, e.g. Stygian Plate needs a Sword).
+    // applies burn/poison. Gated by dotRequiresType (Stygian needs a Sword) and by
+    // dotRequiresPoison (Necrotoxin only does anything if the target is ALREADY poisoned by
+    // something else -- so it needs another poison source in the mix).
     var dotSources = [];
     if (w.dotDps) {
       dotSources.push({ label: (w.dotType === "poison" ? "Poison" : "Extra") + " — " + w.name,
         dps: w.dotDps, type: w.dotType || "flat", duration: w.dotDuration, decay: w.dotDecay, effectCd: w.dotEffectCd, maxStacks: w.dotMaxStacks });
     }
+    var hasOtherPoison = dotSources.some(function (s) { return s.type === "poison"; }) ||
+      equippedGearList().some(function (g) { return g.dotType === "poison" && !g.dotRequiresPoison && (!g.dotRequiresType || weaponMatchesReq(w, g.dotRequiresType)); });
     equippedGearList().forEach(function (g) {
       if (g.dotRequiresType && !weaponMatchesReq(w, g.dotRequiresType)) return;
+      if (g.dotRequiresPoison && !hasOtherPoison) return; // Necrotoxin with nothing else poisoning
       if (g.dotDps) {
         dotSources.push({ label: (g.dotType === "poison" ? "Poison" : "Burn") + " — " + g.name,
           dps: g.dotDps, type: g.dotType || "flat", duration: g.dotDuration, decay: g.dotDecay, effectCd: g.dotEffectCd, maxStacks: g.dotMaxStacks });
