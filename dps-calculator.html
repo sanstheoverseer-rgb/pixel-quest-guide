@@ -244,7 +244,12 @@
     <div>
       <div class="card">
         <h2>Character Stats</h2>
-        <p class="sub">Enter what you'd have with nothing equipped. The <b>bold number</b> under each field is your actual stat after armour / accessory / ability bonuses — that's what the simulation uses.</p>
+        <div class="sub" style="display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline;">
+          <span>Input mode:</span>
+          <label><input type="radio" name="statMode" value="base" checked> unequipped (calc adds gear + weapon bonuses)</label>
+          <label><input type="radio" name="statMode" value="final"> fully equipped (use my numbers as-is)</label>
+        </div>
+        <p class="sub" id="statModeHint">Enter what you'd have with nothing equipped. The <b>bold number</b> under each field is your actual stat after armour / accessory / weapon bonuses — that's what the simulation uses.</p>
         <div class="stat-grid" id="statGrid"></div>
       </div>
 
@@ -877,7 +882,8 @@
     secondaryId: "",
     armorId: "",
     accessoryId: "",
-    awpDistance: 0
+    awpDistance: 0,
+    statMode: "base" // "base" = typed stats are unequipped, calc adds item bonuses; "final" = typed stats already include them
   };
 
   // ---------- STAT PANEL ----------
@@ -912,6 +918,19 @@
     compute();
   });
 
+  var statModeHint = document.getElementById("statModeHint");
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="statMode"]'), function (r) {
+    r.addEventListener("change", function () {
+      if (!r.checked) return;
+      state.statMode = r.value;
+      statModeHint.innerHTML = r.value === "final"
+        ? "Enter your stats <b>with everything equipped</b> (straight off your in-game stat screen). The calculator uses them exactly as typed and does <b>not</b> add item bonuses on top."
+        : "Enter what you'd have with nothing equipped. The <b>bold number</b> under each field is your actual stat after armour / accessory / weapon bonuses — that's what the simulation uses.";
+      renderDerived();
+      compute();
+    });
+  });
+
   function renderDerived() {
     var eff = effectiveStats();
     // How much more a flag-type secondary would add on top (only while its buff is up).
@@ -943,13 +962,17 @@
   function effectiveStats() {
     var eff = {};
     STAT_KEYS.forEach(function (k) { eff[k] = state.stats[k] || 0; });
-    // The held weapon's own "on equip" stat bonus (Laevateinn +10 ATK, etc.) IS always-on.
-    var wpn = getWeapon();
-    if (wpn && wpn.statMods) Object.keys(wpn.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + wpn.statMods[k]; });
-    equippedGearList().forEach(function (g) {
-      if (g.isFlagBuff) return;
-      if (g.statMods) Object.keys(g.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.statMods[k]; });
-    });
+    // In "final" mode the typed numbers already include every always-on item bonus, so we
+    // use them verbatim. (Flag-buff bonuses are still layered on during their uptime by the
+    // sim, since those toggle on and off.) In "base" mode we add the always-on bonuses here.
+    if (state.statMode !== "final") {
+      var wpn = getWeapon();
+      if (wpn && wpn.statMods) Object.keys(wpn.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + wpn.statMods[k]; });
+      equippedGearList().forEach(function (g) {
+        if (g.isFlagBuff) return;
+        if (g.statMods) Object.keys(g.statMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.statMods[k]; });
+      });
+    }
     return eff;
   }
 
@@ -1019,7 +1042,7 @@
     el.innerHTML = items.map(function (g) {
       var bits = [];
       var mods = formatStatMods(g.statMods);
-      if (mods) bits.push((g.isFlagBuff ? "while buff active: " : "always: ") + mods);
+      if (mods) bits.push((g.isFlagBuff ? "while buff active: " : (state.statMode === "final" ? "already in your stats: " : "always: ")) + mods);
       if (g.flatDmgPct) bits.push("+" + g.flatDmgPct + "% dmg");
       if (g.procChance === "mana") bits.push("crit scales with Mana, up to 15%, x" + g.procMult);
       else if (g.procChance) bits.push(Math.round(g.procChance * 100) + "% chance x" + g.procMult);
