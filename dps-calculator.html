@@ -409,7 +409,7 @@
     { id: "cerberus_bow", name: "Cerberus Bow", type: "Bow", dmgMin: 210, dmgMax: 230, fireRate: 2.5, range: 8.75, statMods: { DEX: 3, ATK: 3, SPD: 3 }, secHitDmg: 160, verified: true, notes: "+3 DEX/ATK/SPD on equip. Every shot also fires 2 arrows @70-90 dmg (~160/hit, -10 DEF 3s)." },
     { id: "drako_axe", name: "Drako Axe", type: "Axe", dmgMin: 400, dmgMax: 460, fireRate: 1.5, range: 6.71, secHitDmg: 300, verified: true, notes: "On enemy damaged: 2-tile AOE, 300 dmg, 100% def pen every hit." },
     { id: "shardbreaker", name: "Shardbreaker", type: "Sword", dmgMin: 350, dmgMax: 400, fireRate: 2, range: 4.16, statMods: { DEF: 10, VIT: 25 }, secHitDmg: 180, verified: true, notes: "Sword (was wrongly Hammer). DEF+10/VIT+25 on equip. Sword Barrage: 40% chance for 5 projectiles @90 dmg (~180/hit expected value; if that's true damage it should NOT be ATK-scaled — unconfirmed). Stat-twin of Easterblade." },
-    { id: "crystalline_fan", name: "Crystalline Fan", type: "Fan", dmgMin: 160, dmgMax: 170, fireRate: 1, range: 6.495, scaleStat: "DEF", scaleCost: 15, verified: true, notes: "Heal-buff kit. Sire of Shards: 10% chance 300 dmg + -10 DEF." },
+    { id: "crystalline_fan", name: "Crystalline Fan", type: "Fan", dmgMin: 160, dmgMax: 170, fireRate: 1, range: 6.495, scaleStat: "DEF", scaleCost: 15, secHitDmg: 30, verified: true, notes: "Heal-buff kit. Sire of Shards: 10% chance 300 dmg + -10 DEF (~30/hit EV, ATK-scaled in sim)." },
     { id: "coldflame_sword", name: "Coldflame Sword", type: "Sword", dmgMin: 380, dmgMax: 440, fireRate: 1.6, range: 4, statMods: { DEF: 9, VIT: 24 }, secHitDmg: 175, verified: true, notes: "+9 DEF/+24 VIT on equip. If Heavy Armor: guaranteed extra Burn+Slow projectile @150-200 dmg (~175/hit). Base hit only without Heavy Armor." },
     { id: "searing_penlight", name: "Searing Penlight", type: "Staff", dmgMin: 135, dmgMax: 145, fireRate: 2.5, range: 10, verified: true, notes: "Ashen Pulse: fires 1-3 shots, 40% def pen, no pierce. Rough vs. small bosses." },
     { id: "crimson_bow", name: "Crimson Bow", type: "Bow", dmgMin: 1222, dmgMax: 1666, fireRate: 0.5, range: 8.125, verified: true, notes: "Krampus drop. Pierces." },
@@ -462,7 +462,7 @@
     { id: "deck_of_cards", name: "Deck of Cards", type: "Dagger", dmgMin: 210, dmgMax: 230, fireRate: 3, range: 6.875, verified: true, notes: "Ace passive, stat-identical to Chocolate Gambit." },
     { id: "dixoulds_crimson_bow", name: "Dixould's Crimson Bow", type: "Bow", dmgMin: 1222, dmgMax: 1666, fireRate: 0.5, range: 8.125, verified: true, notes: "Pierces. Stat-identical to Coral Bow." },
     { id: "divine_judgement_staff", name: "Divine Judgement Staff", type: "Staff", dmgMin: 85, dmgMax: 100, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj, 40% def pen, no passive." },
-    { id: "drako_fan", name: "Drako Fan", type: "Fan", dmgMin: 55, dmgMax: 65, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 20, verified: true, notes: "Explosion +40 AOE; heal-others buffs +18 ATK(7s) solo / +10ATK+10DEX+25HP(10s,15sCD) party." },
+    { id: "drako_fan", name: "Drako Fan", type: "Fan", dmgMin: 55, dmgMax: 65, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 20, secHitDmg: 40, flourishMods: { ATK: 18 }, verified: true, notes: "Explosion! +40 AOE dmg per hit (ATK-scaled). Flourish: healing others grants +18 ATK for 7s (assumed active when Totem equipped). Party Buff: +10 ATK/+10 DEX/+25 HP for 10s, 15s CD (party-only, not modeled)." },
     { id: "easterblade", name: "Easterblade", type: "Sword", dmgMin: 350, dmgMax: 400, fireRate: 2, range: 4.16, statMods: { DEF: 10, VIT: 25 }, secHitDmg: 180, verified: true, notes: "DEF+10/VIT+25 on equip. Sword Barrage: 40% chance for 5 crystal projectiles @90 dmg (~180/hit EV). Stat-twin of Shardbreaker." },
     { id: "egg_cannon", name: "Egg Cannon", type: "Bow", dmgMin: 180, dmgMax: 220, fireRate: 1.5, range: 8.925, statMods: { SPD: 3, VIT: 5 }, verified: true, notes: "SPD+3/VIT+5 on equip. Pierces." },
     { id: "eggsecutor", name: "Eggsecutor", type: "Axe", dmgMin: 400, dmgMax: 460, fireRate: 1.5, range: 6.71, secHitDmg: 300, verified: true, notes: "Eggplosion: 2-tile AOE, 300 dmg, 100% def pen every hit. Stat-twin of Drako Axe." },
@@ -516,7 +516,7 @@
     { id: "kaleidoscope", name: "Kaleidoscope", type: "Dagger", dmgMin: 280, dmgMax: 300, fireRate: 3, range: 6, verified: true, notes: "Force/Finesse/Harmony: ATK vs DEX comparison grants ignore-def or Bleed or both." },
     { id: "knights_blade", name: "Knight's Blade", type: "Sword", dmgMin: 400, dmgMax: 440, fireRate: 1.6, range: 4, statMods: { DEF: 8, VIT: 20 }, verified: true, notes: "DEF+8/VIT+20 on equip. Pierces, no other passive." },
     { id: "laevateinn", name: "Laevateinn", type: "Sword", dmgMin: 600, dmgMax: 666, fireRate: 1.2, range: 4, statMods: { ATK: 10, DEF: 12, VIT: 25 }, secHitDmg: 375, verified: true, notes: "Corrupted. ATK+10/DEF+12/VIT+25 on equip. Homing Burst: every swing emits 5 homing projectiles at 75 base dmg each = 375 base/swing (each projectile scales with ATK, e.g. ~153 each at +104% ATK)." },
-    { id: "leaf_storm", name: "Leaf Storm", type: "Fan", dmgMin: 40, dmgMax: 60, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 15, verified: true, notes: "Heal-buff kit (+10DEX 7s solo; +5DEX+5DEF+8WIS 10s party)." },
+    { id: "leaf_storm", name: "Leaf Storm", type: "Fan", dmgMin: 40, dmgMax: 60, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 15, flourishMods: { DEX: 10 }, verified: true, notes: "Heal-buff kit. Flourish: healing others grants +10 DEX 7s (assumed active when Totem equipped). Party Buff: +5DEX+5DEF+8WIS 10s (party-only, not modeled)." },
     { id: "light_of_sol", name: "Light of Sol", type: "Staff", dmgMin: 95, dmgMax: 115, shots: 2, fireRate: 2.5, range: 9.2, verified: true, notes: "2 simultaneous projectiles (spreadsheet base DPS confirms x2). Sol: casting an ability heals nearby allies, 7 tile range, 15s CD." },
     { id: "lightning_bow", name: "Lightning Bow", type: "Bow", dmgMin: 115, dmgMax: 125, fireRate: 2.7, range: 8, verified: true, notes: "Pierces. Pixelween event item." },
     { id: "midnight_bow", name: "Midnight Bow", type: "Bow", dmgMin: 30, dmgMax: 40, shots: 3, fireRate: 2.4, range: 8.925, verified: true, notes: "Pierces, 60% def pen, 3 proj." },
@@ -553,10 +553,10 @@
     { id: "rusty_broadsword", name: "Rusty Broadsword", type: "Sword", dmgMin: 100, dmgMax: 140, fireRate: 1.6, range: 4, statMods: { DEF: 1, VIT: 5 }, verified: true, notes: "DEF+1/VIT+5 on equip. Pierces." },
     { id: "sapphire_fan", name: "Sapphire Fan", type: "Fan", dmgMin: 50, dmgMax: 55, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-target, 70% def pen." },
     { id: "sapphire_ouroboros", name: "Sapphire Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, scaleStat: "WIS", scaleCost: 1, dotDps: 70, dotType: "poison", dotDecay: 40, dotDuration: 2, statMods: { MANA: 110, WIS: 15 }, verified: true, notes: "MANA+110/WIS+15 on equip. On Hit: 70 DPS poison 2s; Serpent: every 20 hits, 420 dmg+frost." },
-    { id: "scarlet_veil", name: "Scarlet Veil", type: "Fan", dmgMin: 60, dmgMax: 70, fireRate: 0.8, range: 6.495, scaleStat: "HP", scaleCost: 100, verified: true, notes: "Auto-target; heal-others buffs: +15DEX+60VIT(7s) solo / +50HP+50MANA+15VIT(10s) party, 15s CD. Drop: Butterfly Princess." },
+    { id: "scarlet_veil", name: "Scarlet Veil", type: "Fan", dmgMin: 60, dmgMax: 70, fireRate: 0.8, range: 6.495, scaleStat: "HP", scaleCost: 100, flourishMods: { DEX: 15, VIT: 60 }, verified: true, notes: "Auto-target. Flourish: healing others grants +15 DEX +60 VIT for 7s (assumed active when Totem equipped). Party Buff: +50HP+50MANA+15VIT 10s, 15s CD (party-only, not modeled). Drop: Butterfly Princess." },
     { id: "scorch_sceptre", name: "Scorch Sceptre", type: "Staff", dmgMin: 70, dmgMax: 90, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj sine, 40% def pen." },
     { id: "scythe_of_the_forsaken", name: "Scythe of the Forsaken", type: "Staff", dmgMin: 75, dmgMax: 95, fireRate: 2.5, range: 10, verified: true, notes: "40% def pen. Executor: +70% dmg to bosses below 33% HP." },
-    { id: "sealed_sensu", name: "Sealed Sensu", type: "Fan", dmgMin: 30, dmgMax: 40, fireRate: 3, range: 6.495, scaleStat: "SPD", scaleCost: 20, dotDps: 10, dotType: "poison", dotDecay: 40, dotDuration: 1, verified: true, notes: "Auto-target; heal-buffs +13ATK(7s) solo / +7ATK+7VIT+7WIS(10s) party; Poisoned ~10 DPS/1s (rough), 70% def pen." },
+    { id: "sealed_sensu", name: "Sealed Sensu", type: "Fan", dmgMin: 30, dmgMax: 40, fireRate: 3, range: 6.495, scaleStat: "SPD", scaleCost: 20, dotDps: 10, dotType: "poison", dotDecay: 40, dotDuration: 1, flourishMods: { ATK: 13 }, verified: true, notes: "Auto-target; 70% def pen. Flourish: healing others grants +13 ATK 7s (assumed active when Totem equipped). Party Buff: +7ATK+7VIT+7WIS 10s (party-only, not modeled). Poisoned ~10 DPS/1s (rough)." },
     { id: "selfie_stick", name: "Selfie Stick", type: "Staff", dmgMin: 35, dmgMax: 50, shots: 12, fireRate: 2.5, range: 4.2, statMods: { WIS: 10, ATK: 3, DEX: 3 }, verified: true, notes: "Staff. WIS+10 on equip, plus Summer Shine! (+3 ATK / +3 DEX). 12 projectiles. Real weapon despite the joke name." },
     { id: "shadow_dagger", name: "Shadow Dagger", type: "Dagger", dmgMin: 60, dmgMax: 120, fireRate: 2.7, range: 6.65, verified: true, notes: "No passive." },
     { id: "skysteel_axe", name: "Skysteel Axe", type: "Axe", dmgMin: 240, dmgMax: 250, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Boomerang, pierces, multi-hit 2." },
@@ -580,7 +580,7 @@
     { id: "toy_sword_of_doom", name: "Toy Sword OF DOOM", type: "Sword", dmgMin: 240, dmgMax: 300, shots: 3, fireRate: 2, range: 4.55, scaleStat: "DEF", scaleCost: 0.3333, statMods: { DEF: 10, VIT: 25 }, verified: true, notes: "DEF+10/VIT+25 on equip. 3 proj, pierces. Dungeon Rush exclusive." },
     { id: "travelers_sword", name: "Traveler's Sword", type: "Sword", dmgMin: 160, dmgMax: 200, fireRate: 1.6, range: 4, statMods: { DEF: 3, VIT: 10 }, verified: true, notes: "DEF+3/VIT+10 on equip. Pierces." },
     { id: "twinsplitter", name: "Twinsplitter", type: "Dagger", dmgMin: 120, dmgMax: 180, fireRate: 2.7, range: 6.65, verified: true, notes: "No passive." },
-    { id: "unsealed_sensu", name: "Unsealed Sensu", type: "Fan", dmgMin: 99, dmgMax: 132, fireRate: 6, range: 6.495, dotDps: 45, dotType: "poison", dotDecay: 40, dotDuration: 2, verified: true, notes: "Auto-target; healing others grants +15 DEX 7s (self) or +12 DEX/+6 DEF 10s (party, 15s CD); Poisoned for 2s (45 DPS, corrected from spreadsheet)." },
+    { id: "unsealed_sensu", name: "Unsealed Sensu", type: "Fan", dmgMin: 99, dmgMax: 132, fireRate: 6, range: 6.495, dotDps: 45, dotType: "poison", dotDecay: 40, dotDuration: 2, flourishMods: { DEX: 15 }, verified: true, notes: "Auto-target. Flourish: healing others grants +15 DEX 7s (assumed active when Totem equipped). Party Buff: +12DEX+6DEF 10s, 15s CD (party-only, not modeled). Poisoned for 2s (45 DPS, corrected from spreadsheet)." },
     { id: "venomfang", name: "Venomfang", type: "Dagger", dmgMin: 40, dmgMax: 50, fireRate: 5, range: 6.4, verified: true, notes: "Multi-Shot: +2 proj, 10-20 true dmg. Drop: Swamp Trap." },
     { id: "verdant_axe", name: "Verdant Axe", type: "Axe", dmgMin: 205, dmgMax: 215, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Pierces, multi-hit 2." },
     { id: "verdent_fan", name: "Verdent Fan", type: "Fan", dmgMin: 35, dmgMax: 40, fireRate: 1.5, range: 6.495, scaleStat: "VIT", scaleCost: 10, verified: true, notes: "Auto-target, 70% def pen." },
@@ -823,7 +823,7 @@
     // secondary (totems / flags / bombs / spells)
     // isFlagBuff:true items grant their statMods ONLY while the buff is active (simulated), not always-on.
     // castCooldown/castManaCost/castBurstDamage/buffDuration drive the 30s combat simulation.
-    { id: "budding_totem", name: "Budding Totem", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 4, castManaCost: 0, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, notes: "Heal 100, range 5.95, 4s cooldown. Multi-Shot passive (10s CD): 3 extra healing projectiles +15-25 HP, needs 60 WIS. Pure utility — contributes 0 to the DPS simulation." },
+    { id: "budding_totem", name: "Budding Totem", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 4, castManaCost: 0, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, isTotem: true, notes: "Heal 100, range 5.95, 4s cooldown. Multi-Shot passive (10s CD): 3 extra healing projectiles +15-25 HP, needs 60 WIS. Pure utility — contributes 0 to the DPS simulation." },
     { id: "voodoo_totem", name: "Voodoo Totem", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 4, castManaCost: 100, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, notes: "Heal 100, range 8.66, 4s CD, 100 mana. Grants Regeneration + Protected statuses. Pure utility — contributes 0 to the DPS simulation." },
     { id: "piercers_flag", name: "Piercer's Flag", slot: "secondary", verified: true, statMods: { DEX: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 7, castManaCost: 70, castBurstDamage: 0, buffDuration: 7, isFlagBuff: true, notes: "70 mana, 5.2 range, 7s duration. Grants Hastened + Rallied statuses. +10 DEX only while the flag is actually up — simulated with real cast/recast timing, not always-on." },
     { id: "flag_of_ashen", name: "Flag of the Ashen", slot: "secondary", verified: true, statMods: { ATK: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 7, castManaCost: 80, castBurstDamage: 0, buffDuration: 7, isFlagBuff: true, notes: "80 mana, 5.2 range, 7s duration. Grants Strengthened + Rallied statuses. +10 ATK only while up — simulated with real cast timing." },
@@ -874,9 +874,9 @@
     { id: "slicers_bomb", name: "Slicer's Bomb", slot: "secondary", verified: true, statMods: { DEX: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 0.5, castManaCost: 25, castBurstDamage: 250, buffDuration: 0, isFlagBuff: false, notes: "DEX+12 always-on. Scales off Attack cost 2." },
     { id: "small_bomb", name: "Small Bomb", slot: "secondary", verified: true, statMods: { ATK: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 0.8, castManaCost: 20, castBurstDamage: 15, buffDuration: 0, isFlagBuff: false, notes: "ATK+2 always-on. Scales off Attack cost 6. 10-20 (avg 15) dmg, Burning 20/3s." },
     { id: "songs_of_the_deep_sea", name: "Songs of the Deep Sea", slot: "secondary", verified: true, statMods: { MANA: 30, WIS: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 0.5, castManaCost: 25, castBurstDamage: 105, buffDuration: 0, isFlagBuff: false, notes: "Mana+30/WIS+6 on equip. On cast +7 SPD/+7 DEX 2s (not modeled). 3 projectiles, ignores DEF." },
-    { id: "soothers_totem", name: "Soother's Totem", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 3, castManaCost: 50, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, notes: "Heal 50, Regeneration (11,3s) — pure heal, 0 DPS." },
+    { id: "soothers_totem", name: "Soother's Totem", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 3, castManaCost: 50, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, isTotem: true, notes: "Heal 50, Regeneration (11,3s) — pure heal, 0 DPS." },
     { id: "spectral_spell", name: "Spectral Spell", slot: "secondary", verified: true, statMods: { WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 0.5, castManaCost: 65, castBurstDamage: 130, buffDuration: 0, isFlagBuff: false, notes: "WIS+12 on equip. Scales off Mana cost 4. 125-135 (avg 130) dmg, 6 projectiles circular." },
-    { id: "starfish_totem", name: "Starfish Totem", slot: "secondary", verified: true, statMods: { WIS: 6, DEX: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 4, castManaCost: 100, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, notes: "Heal 100, Regen(20,3s)+Protected(15,2s) — 0 direct DPS. Summer Shine! (+6 WIS / +4 DEX, always on)." },
+    { id: "starfish_totem", name: "Starfish Totem", slot: "secondary", verified: true, statMods: { WIS: 6, DEX: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 4, castManaCost: 100, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, isTotem: true, notes: "Heal 100, Regen(20,3s)+Protected(15,2s) — 0 direct DPS. Summer Shine! (+6 WIS / +4 DEX, always on)." },
     { id: "steelcap_bomb", name: "Steelcap Bomb", slot: "secondary", verified: true, statMods: { ATK: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 0.8, castManaCost: 30, castBurstDamage: 25, buffDuration: 0, isFlagBuff: false, notes: "ATK+4 always-on. Scales off Attack cost 5. 17-33 (avg 25) dmg, Burning 30/5s." },
     { id: "surrender_flag", name: "Surrender Flag", slot: "secondary", verified: true, statMods: {}, equipMods: { WIS: 6, DEX: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 7, castManaCost: 80, castBurstDamage: 0, buffDuration: 7, isFlagBuff: true, notes: "Summer Shine! (+6 WIS / +4 DEX, always on). Flag: grants Strengthened(+25)+Rallied while up." },
     { id: "tabula_viridis", name: "Tabula Viridis", slot: "secondary", verified: true, statMods: { DEX: 9, WIS: 18 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 5, castManaCost: 75, castBurstDamage: 228, buffDuration: 0, isFlagBuff: false, notes: "DEX+9/WIS+18 on equip. Orbit pattern, ignores DEF, multi-hit 6x, 8 projectiles, pierces." },
@@ -889,7 +889,7 @@
     { id: "water_balloon", name: "Water Balloon", slot: "secondary", verified: true, statMods: { ATK: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 1, castManaCost: 80, castBurstDamage: 1000, buffDuration: 0, isFlagBuff: false, notes: "ATK+12 always-on. Summer Shine: +6 WIS/+4 DEX. Applies Frost." },
     { id: "witchs_concoction", name: "Witch's Concoction", slot: "secondary", verified: true, statMods: { MANA: 45 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 0.8, castManaCost: 75, castBurstDamage: 220, buffDuration: 0, isFlagBuff: false, notes: "Mana+45 always-on. Scales off Attack cost 2. 10% chance negative status, applies Burning. Drop: Witch." },
     { id: "witchfire_brew", name: "Witchfire Brew", slot: "secondary", verified: true, statMods: { ATK: 10, DEX: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 4, castManaCost: 90, castBurstDamage: 0, buffDuration: 8, isFlagBuff: true, notes: "Typed as a Totem but functions like a flag: self-buff +10 ATK/+10 DEX for 8s on cast, also heals 150. Drop: Witch." },
-    { id: "wooden_totem", name: "Wooden Totem", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 2, castManaCost: 30, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, notes: "Heal 25, Regeneration on hit — pure heal, 0 DPS. Tier 0." }
+    { id: "wooden_totem", name: "Wooden Totem", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 2, castManaCost: 30, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, isTotem: true, notes: "Heal 25, Regeneration on hit — pure heal, 0 DPS. Tier 0." }
   ];
 
   var STAT_KEYS = ["ATK", "DEX", "WIS", "VIT", "DEF", "SPD", "HP", "MANA"];
@@ -1036,6 +1036,13 @@
     }
     // Conditional weapon passive (Armageddon's "Focus", etc.) -- opt-in, applies in either mode.
     if (state.applyCond && wpn && wpn.condMods) Object.keys(wpn.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + wpn.condMods[k]; });
+    // Fan Flourish passive: healing others grants stat buff. Assumed always active when a Totem
+    // is in the secondary slot (totem cooldown < buff duration so uptime is ~100%).
+    // Only applied in base mode; in final mode the user's typed stats already include it.
+    if (state.statMode !== "final" && wpn && wpn.flourishMods) {
+      var hasTotem = equippedGearList().some(function (g) { return g.slot === "secondary" && g.isTotem; });
+      if (hasTotem) Object.keys(wpn.flourishMods).forEach(function (k) { eff[k] = (eff[k] || 0) + wpn.flourishMods[k]; });
+    }
     return eff;
   }
 
@@ -1392,7 +1399,7 @@
       for (var d = 0; d < dotSources.length; d++) {
         var ds = dotSources[d];
         if (!ds.dps) continue;
-        if (!ds.poison) { ds.acc += ds.dps * atkMult * SIM_DT; dotDamage += ds.dps * atkMult * SIM_DT; continue; }
+        if (!ds.poison) { ds.acc += ds.dps * SIM_DT; dotDamage += ds.dps * SIM_DT; continue; }
         // New applications per second. Normally one per swing; a weapon that hits the same
         // target multiple times per swing (Blighted Edge, Max Hits 2) procs it once per hit
         // if dotHits is set. Never more often than an effect cooldown allows.
@@ -1407,7 +1414,7 @@
         for (var k = ds.instances.length - 1; k >= 0; k--) {
           var inst = ds.instances[k];
           while (inst.next <= elapsed + 1e-9 && inst.done < ds.duration) {
-            stepDmg += Math.max(0, ds.dps - ds.decay * inst.done) * atkMult;
+            stepDmg += Math.max(0, ds.dps - ds.decay * inst.done);
             inst.done++;
             inst.next += 1;
           }
@@ -1529,6 +1536,13 @@
       '<br>' +
       "Base damage " + w.dmgMin + "–" + w.dmgMax + (w.shots && w.shots > 1 ? " × " + w.shots + " simultaneous shots" : "") + " · base fire rate " + w.fireRate + "/s · range " + w.range + "<br>" +
       "ATK: +1% dmg/point (universal)" + (w.scaleStat ? " · also scales off <b>" + STAT_LABELS[w.scaleStat] + "</b>: +1 flat dmg per " + fmt(w.scaleCost || 1, 4) + " pts" : "") + (w.manaCostPerShot ? " · " + w.manaCostPerShot + " mana/shot, steals " + (w.manaStealPerShot || 0) : "") + (w.dotDps ? " · " + (w.dotType === "poison" ? w.dotDps + "/s poison per stack (stacks per hit)" : "+" + w.dotDps + " " + (w.dotType || "burn") + " DPS (flat)") : "") + (w.secHitDmg ? " · +" + w.secHitDmg + " secondary-projectile base dmg per swing, total across all its extra projectiles, before ATK (ATK-scaled in the sim)" : "") + (w.critChance ? " · " + Math.round(w.critChance * 100) + "% crit ×" + w.critMult : "") + "<br>" +
+      (w.flourishMods ? (function () {
+        var hasTotem = equippedGearList().some(function (g) { return g.slot === "secondary" && g.isTotem; });
+        var flourishStr = Object.keys(w.flourishMods).map(function (k) { return "+" + w.flourishMods[k] + " " + k; }).join("/");
+        return hasTotem
+          ? ' <span class="chip on">FLOURISH ON (' + flourishStr + ')</span>'
+          : ' <span class="chip off">FLOURISH OFF — equip a Totem to activate (' + flourishStr + ')</span>';
+      })() : '') +
       '<span style="display:block; margin-top:6px;">' + (w.notes || "") + '</span>';
 
     var rows = [
@@ -1542,7 +1556,7 @@
       if (!d.total) return;
       var k;
       if (!d.poison) {
-        k = d.label + " (" + d.dps + "/s base pre-ATK → ~" + fmt(d.dps * (1 + (baseEff.ATK || 0) / 100) * gearMult, 0) + "/s at your ATK, flat)";
+        k = d.label + " (" + d.dps + "/s flat, approx)";
       } else if (d.decay) {
         var pattern = [];
         for (var t = 0; t < d.duration; t++) pattern.push(Math.max(0, d.dps - d.decay * t));
