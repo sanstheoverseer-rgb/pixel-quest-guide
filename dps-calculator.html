@@ -1392,7 +1392,7 @@
       for (var d = 0; d < dotSources.length; d++) {
         var ds = dotSources[d];
         if (!ds.dps) continue;
-        if (!ds.poison) { ds.acc += ds.dps * SIM_DT; dotDamage += ds.dps * SIM_DT; continue; }
+        if (!ds.poison) { ds.acc += ds.dps * atkMult * SIM_DT; dotDamage += ds.dps * atkMult * SIM_DT; continue; }
         // New applications per second. Normally one per swing; a weapon that hits the same
         // target multiple times per swing (Blighted Edge, Max Hits 2) procs it once per hit
         // if dotHits is set. Never more often than an effect cooldown allows.
@@ -1407,7 +1407,7 @@
         for (var k = ds.instances.length - 1; k >= 0; k--) {
           var inst = ds.instances[k];
           while (inst.next <= elapsed + 1e-9 && inst.done < ds.duration) {
-            stepDmg += Math.max(0, ds.dps - ds.decay * inst.done);
+            stepDmg += Math.max(0, ds.dps - ds.decay * inst.done) * atkMult;
             inst.done++;
             inst.next += 1;
           }
@@ -1542,7 +1542,7 @@
       if (!d.total) return;
       var k;
       if (!d.poison) {
-        k = d.label + " (" + d.dps + "/s flat, approx)";
+        k = d.label + " (" + d.dps + "/s base pre-ATK → ~" + fmt(d.dps * (1 + (baseEff.ATK || 0) / 100) * gearMult, 0) + "/s at your ATK, flat)";
       } else if (d.decay) {
         var pattern = [];
         for (var t = 0; t < d.duration; t++) pattern.push(Math.max(0, d.dps - d.decay * t));
