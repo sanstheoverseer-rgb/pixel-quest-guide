@@ -625,7 +625,7 @@
     { id: "musket", name: "Musket", type: "Bow", tags: ["Gun"], dmgMin: 50, dmgMax: 150, fireRate: 3, range: 8.8, scaleStat: "MANA", scaleCost: 3.03, manaCostPerShot: 8, statMods: { MANA: 25 }, verified: true, notes: "Mana+25 on equip. Costs 8 mana/shot, stops firing if mana runs out" },
     { id: "musket_of_doom", name: "Musket OF DOOM", type: "Bow", tags: ["Gun"], dmgMin: 70, dmgMax: 90, fireRate: 2.4, range: 8.925, scaleStat: "MANA", scaleCost: 2, manaCostPerShot: 3, statMods: { MANA: 25 }, verified: true, notes: "Mana+25 on equip. Costs 3 mana/shot. 60% def pen. Dungeon Rush exclusive, non-tradable" },
     { id: "nutcrackers_pistol", name: "Nutcracker's Pistol", type: "Bow", tags: ["Gun"], dmgMin: 800, dmgMax: 900, fireRate: 2, range: 8.8, manaCostPerShot: 40, verified: true, notes: "On Equip: +50 DEX for 10s while held (not auto-applied). Drop: Nutcracker" },
-    { id: "lazer_pistol", name: "Lazer Pistol", type: "Bow", tags: ["Gun"], dmgMin: 444, dmgMax: 444, fireRate: 2.25, range: 8.4, manaCostPerShot: 15, statMods: { MANA: 25 }, verified: true, notes: "Corrupted. Mana+25 on equip. Costs 15 mana/shot (landed shots reduce cost by 1 for 5s, not modeled)" },
+    { id: "lazer_pistol", name: "Lazer Pistol", type: "Bow", tags: ["Gun"], dmgMin: 444, dmgMax: 444, fireRate: 2.25, range: 8.4, manaCostPerShot: 15, highScore: { duration: 5, minCost: 0 }, statMods: { MANA: 25 }, verified: true, notes: "Corrupted. MANA+25 on equip. Costs 15 mana/shot. High Score: each landed shot reduces cost by 1 for 5s (sim tracks stacks, cost floors at 0)" },
     { id: "void_staff", name: "Void Staff", type: "Staff", dmgMin: 100, dmgMax: 130, shots: 2, fireRate: 2.5, range: 9, verified: true, notes: "2 shots, 40% def pen. Hitting same enemy 10 times grants +30 WIS for 20s (ramps up, not modeled for average)" },
     { id: "coldfront", name: "Coldfront", type: "Fan", dmgMin: 50, dmgMax: 60, fireRate: 1.5, range: 6.495, shots: 1, projScaleStat: "WIS", projScaleCost: 15, projMax: 4, flourishMods: { DEF: 10 }, verified: true, notes: "Fan. Flourish: healing others grants +10 DEF 7s (assumed active when Totem equipped). Frozen Bloom: after 12 hits, 5 projectiles 100 true dmg + Slow 4s (not modeled)" },
     { id: "venom_spell", name: "Venom Spell", type: "Spell", dmgMin: 42, dmgMax: 50, shots: 8, fireRate: 2, range: 14, scaleStat: "MANA", scaleCost: 3.03, verified: true, notes: "Fires 8 simultaneous projectiles per attack. Shots pass through solids. Damage" },
@@ -2243,6 +2243,12 @@
     var csMultiAcc = 0; // fractional accumulator for multi-shot Cold Streak hits
     var csAvgAcc = 0; // for average stacks breakdown
 
+    // High Score (Lazer Pistol): each landed shot reduces mana cost by 1 for 5s.
+    var highScore = w.highScore || null;
+    var hsBonus = 0; // current cost reduction stacks
+    var hsQueue = []; // expiry times
+    var hsAvgAcc = 0; // for average reduction display
+
     for (var i = 0; i < steps; i++) {
       mana += manaRegenPerSec * SIM_DT;
 
@@ -2267,6 +2273,11 @@
       if (coldStreak) {
         while (csQueue.length && csQueue[0] <= elapsed) { csQueue.shift(); csBonus--; }
         csAvgAcc += csBonus * SIM_DT;
+      }
+      // High Score: expire cost-reduction stacks.
+      if (highScore) {
+        while (hsQueue.length && hsQueue[0] <= elapsed) { hsQueue.shift(); hsBonus--; }
+        hsAvgAcc += hsBonus * SIM_DT;
       }
 
       var atkNow = baseEff.ATK || 0, dexNow = (baseEff.DEX || 0) + csBonus, scaleNow = scaleStat ? (baseEff[scaleStat] || 0) : 0;
@@ -2294,14 +2305,18 @@
         weaponShotAcc += effFireRate * SIM_DT;
         while (weaponShotAcc >= 1) {
           weaponShotAcc -= 1;
-          if (mana >= w.manaCostPerShot) {
-            mana -= w.manaCostPerShot;
+          var effManaCost = highScore
+            ? Math.max(highScore.minCost !== undefined ? highScore.minCost : 0, w.manaCostPerShot - hsBonus)
+            : w.manaCostPerShot;
+          if (mana >= effManaCost) {
+            mana -= effManaCost;
             mana += (w.manaStealPerShot || 0);
             weaponDamage += mainHit * atkMult;
             secProjDamage += secHitDmg * atkMult;
             trueProjDamage += secHitDmgFlat;
             onSwing();
             weaponFiredShots++;
+            if (highScore) { hsQueue.push(elapsed + highScore.duration); hsBonus++; }
           } else {
             weaponStarvedShots++;
           }
@@ -2377,6 +2392,8 @@
       weaponStarvedShots: weaponStarvedShots, weaponFiredShots: weaponFiredShots,
       coldStreakAvgDex: coldStreak ? (csAvgAcc / SIM_DURATION) : null,
       coldStreakPeakDex: coldStreak ? csBonus : null,
+      highScoreAvgReduction: highScore ? (hsAvgAcc / SIM_DURATION) : null,
+      highScorePeakReduction: highScore ? hsBonus : null,
       dotBreakdown: dotSources.map(function (d) {
         return { label: d.label, total: d.acc, poison: d.poison, stacks: d.poison ? d.lastStacks : null,
           dps: d.dps, decay: d.decay, duration: d.duration };
@@ -2546,6 +2563,9 @@
     }
     if (sim.coldStreakAvgDex !== null) {
       rows.push({ k: "Cold Streak avg DEX bonus over fight (peak at end: +" + fmt(sim.coldStreakPeakDex, 0) + " DEX)", v: "+" + fmt(sim.coldStreakAvgDex, 1) + " DEX avg" });
+    }
+    if (sim.highScoreAvgReduction !== null) {
+      rows.push({ k: "High Score avg mana cost reduction (peak: -" + fmt(sim.highScorePeakReduction, 0) + " per shot, base cost " + w.manaCostPerShot + ")", v: "-" + fmt(sim.highScoreAvgReduction, 1) + " avg/shot" });
     }
     rows.push({ k: "Mana: start → end (min seen)", v: fmt(baseEff.MANA || 0, 0) + " → " + fmt(sim.endMana, 0) + " (" + fmt(sim.minMana, 0) + ")" });
     rows.push({ k: "Average DPS (" + SIM_DURATION + "s)", v: fmt(sim.avgDps, 1), total: true });
