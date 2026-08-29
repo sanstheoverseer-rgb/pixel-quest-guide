@@ -257,6 +257,73 @@
 
   .note { font-size: 0.75rem; color: var(--text-dim); margin-top: 8px; }
 
+  /* Custom weapon picker */
+  .wpk { position: relative; }
+  .wpk-selected {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    cursor: pointer;
+    user-select: none;
+    min-height: 36px;
+  }
+  .wpk-selected:hover { border-color: var(--text-dim); }
+  .wpk-selected img { width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
+  .wpk-selected .wpk-arrow { margin-left: auto; font-size: 0.7rem; color: var(--text-dim); flex-shrink: 0; }
+  .wpk-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    z-index: 100;
+    border: 1px solid var(--border);
+    border-top: none;
+    background: var(--surface-2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .wpk-dropdown.open { display: block; }
+  .wpk-search {
+    width: 100%;
+    padding: 7px 10px;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+    outline: none;
+  }
+  .wpk-list {
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .wpk-group {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    padding: 5px 10px 2px;
+    background: var(--surface);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+  }
+  .wpk-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .wpk-item:hover { background: var(--ok-bg); color: var(--ok); }
+  .wpk-item.active { background: var(--ok-bg); color: var(--ok); font-weight: 600; }
+  .wpk-item img { width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; flex-shrink: 0; }
+  .wpk-none { padding: 10px; font-size: 0.82rem; color: var(--text-dim); text-align: center; }
+
   .footer-note {
     color: var(--text-dim);
     font-size: 0.75rem;
@@ -285,8 +352,18 @@
         <h2>Weapon</h2>
         <p class="sub">Base damage &amp; fire rate from the wiki — each weapon scales off its own stat.</p>
         <div class="field-row">
-          <label for="weaponSelect">Selected weapon</label>
-          <select id="weaponSelect"></select>
+          <label>Selected weapon</label>
+          <div class="wpk" id="wpkWrap">
+            <div class="wpk-selected" id="wpkSelected">
+              <img id="wpkSelectedImg" src="" alt="" style="display:none;">
+              <span id="wpkSelectedName" style="color:var(--text-dim)">Choose a weapon…</span>
+              <span class="wpk-arrow">▼</span>
+            </div>
+            <div class="wpk-dropdown" id="wpkDropdown">
+              <input class="wpk-search" id="wpkSearch" type="text" placeholder="Search…" autocomplete="off">
+              <div class="wpk-list" id="wpkList"></div>
+            </div>
+          </div>
         </div>
         <div class="sub" id="condRow" style="display:none; margin:-4px 0 8px;">
           <label><input type="checkbox" id="applyCondChk"> apply <span id="condLabelTxt">its conditional passive</span> (off by default)</label>
@@ -1057,28 +1134,113 @@
     return eff;
   }
 
-  // ---------- WEAPON SELECT ----------
-  var weaponSelect = document.getElementById("weaponSelect");
-  function renderWeaponOptions() {
-    weaponSelect.innerHTML = "";
+  // ---------- WEAPON SELECT (custom image picker) ----------
+  function weaponImgUrl(w) {
+    return "https://wiki.playpixelquest.com/wiki/Special:FilePath/" + encodeURIComponent(w.name.replace(/ /g, "_")) + ".png";
+  }
+
+  function setWeapon(id) {
+    state.weaponId = id;
+    var w = getWeapon();
+    var img = document.getElementById("wpkSelectedImg");
+    var nm  = document.getElementById("wpkSelectedName");
+    if (w) {
+      nm.textContent = w.name;
+      nm.style.color = "";
+      img.src = weaponImgUrl(w);
+      img.style.display = "";
+      img.onerror = function () { img.style.display = "none"; };
+    } else {
+      nm.textContent = "Choose a weapon…";
+      nm.style.color = "var(--text-dim)";
+      img.style.display = "none";
+    }
+    // highlight active item
+    document.querySelectorAll(".wpk-item").forEach(function (el) {
+      el.classList.toggle("active", el.dataset.id === id);
+    });
+    renderCondRow();
+    renderDerived();
+    renderEquipInfo();
+    compute();
+  }
+
+  function buildWpkList(filter) {
+    var list = document.getElementById("wpkList");
+    list.innerHTML = "";
+    var q = (filter || "").toLowerCase();
     var groups = {};
     db.weapons.forEach(function (w) {
+      if (q && w.name.toLowerCase().indexOf(q) === -1 && w.type.toLowerCase().indexOf(q) === -1) return;
       groups[w.type] = groups[w.type] || [];
       groups[w.type].push(w);
     });
-    Object.keys(groups).sort().forEach(function (type) {
-      var og = document.createElement("optgroup");
-      og.label = type;
+    var types = Object.keys(groups).sort();
+    if (!types.length) {
+      list.innerHTML = '<div class="wpk-none">No weapons found.</div>';
+      return;
+    }
+    types.forEach(function (type) {
+      var grp = document.createElement("div");
+      grp.className = "wpk-group";
+      grp.textContent = type;
+      list.appendChild(grp);
       groups[type].forEach(function (w) {
-        var opt = document.createElement("option");
-        opt.value = w.id;
-        opt.textContent = w.name;
-        og.appendChild(opt);
+        var item = document.createElement("div");
+        item.className = "wpk-item" + (w.id === state.weaponId ? " active" : "");
+        item.dataset.id = w.id;
+        var img = document.createElement("img");
+        img.src = weaponImgUrl(w);
+        img.alt = "";
+        img.onerror = function () { img.style.display = "none"; };
+        var span = document.createElement("span");
+        span.textContent = w.name;
+        item.appendChild(img);
+        item.appendChild(span);
+        item.addEventListener("click", function () {
+          setWeapon(w.id);
+          closeWpk();
+        });
+        list.appendChild(item);
       });
-      weaponSelect.appendChild(og);
     });
-    if (state.weaponId) weaponSelect.value = state.weaponId;
   }
+
+  function openWpk() {
+    document.getElementById("wpkDropdown").classList.add("open");
+    var s = document.getElementById("wpkSearch");
+    s.value = "";
+    buildWpkList("");
+    s.focus();
+    // scroll active item into view
+    setTimeout(function () {
+      var active = document.querySelector(".wpk-item.active");
+      if (active) active.scrollIntoView({ block: "nearest" });
+    }, 0);
+  }
+
+  function closeWpk() {
+    document.getElementById("wpkDropdown").classList.remove("open");
+  }
+
+  document.getElementById("wpkSelected").addEventListener("click", function () {
+    var dd = document.getElementById("wpkDropdown");
+    if (dd.classList.contains("open")) closeWpk(); else openWpk();
+  });
+
+  document.getElementById("wpkSearch").addEventListener("input", function () {
+    buildWpkList(this.value);
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!document.getElementById("wpkWrap").contains(e.target)) closeWpk();
+  });
+
+  function renderWeaponOptions() {
+    buildWpkList("");
+    if (state.weaponId) setWeapon(state.weaponId);
+  }
+
   var condRow = document.getElementById("condRow");
   var applyCondChk = document.getElementById("applyCondChk");
   function renderCondRow() {
@@ -1093,14 +1255,6 @@
   }
   applyCondChk.addEventListener("change", function (e) {
     state.applyCond = e.target.checked;
-    renderDerived();
-    renderEquipInfo();
-    compute();
-  });
-
-  weaponSelect.addEventListener("change", function () {
-    state.weaponId = weaponSelect.value;
-    renderCondRow();
     renderDerived();
     renderEquipInfo();
     compute();
