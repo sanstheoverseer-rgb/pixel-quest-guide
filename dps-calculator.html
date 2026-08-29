@@ -295,9 +295,9 @@
   .gp-stat-input::-webkit-inner-spin-button,
   .gp-stat-input::-webkit-outer-spin-button { -webkit-appearance: none; }
   /* Bar number inputs — background matches bar color to cover baked-in screenshot number */
-  .gp-n-hp   { background: #7c1313; }
-  .gp-n-mp   { background: #122779; }
-  .gp-n-vlr  { background: #7a5800; width: 62px; }
+  .gp-n-hp   { background: #da1f42; width: 40px; }
+  .gp-n-mp   { background: #229fe6; width: 40px; }
+  .gp-n-vlr  { background: #c78816; width: 58px; }
   /* Max HP/MP spans */
   .gp-n-max {
     position: absolute;
@@ -305,10 +305,10 @@
     color: #fff; text-shadow: 1px 1px 0 #000;
     pointer-events: none; min-width: 36px;
   }
-  .gp-n-max-hp { background: #7c1313; }
-  .gp-n-max-mp { background: #122779; }
+  .gp-n-max-hp { background: #da1f42; }
+  .gp-n-max-mp { background: #229fe6; }
   /* Stat number inputs — dark bg matches screenshot panel bg */
-  .gp-n-stat { background: #1d1d2c; }
+  .gp-n-stat { background: #212121; width: 44px; }
   /* Bonus spans */
   .gp-bonus {
     position: absolute;
@@ -405,32 +405,32 @@
     <div class="gp-slot" id="cpSlotArmor"      title="Armor"></div>
     <div class="gp-slot" id="cpSlotAccessory"  title="Accessory"></div>
 
-    <!-- HP bar: input over current HP, span over max HP -->
-    <input id="gpStatHP"   class="gp-stat-input gp-n-hp"  type="number" min="0" step="1" value="0" data-stat="HP"   style="left:57px;top:10px">
-    <span  id="gpHpMax"    class="gp-n-max gp-n-max-hp"   style="left:118px;top:10px">0</span>
-    <span  id="gpHpBonus"  class="gp-bonus"                style="left:164px;top:10px"></span>
-    <!-- MP bar -->
-    <input id="gpStatMANA" class="gp-stat-input gp-n-mp"  type="number" min="0" step="1" value="0" data-stat="MANA" style="left:57px;top:48px">
-    <span  id="gpMpMax"    class="gp-n-max gp-n-max-mp"   style="left:118px;top:48px">0</span>
-    <span  id="gpMpBonus"  class="gp-bonus"                style="left:164px;top:48px"></span>
-    <!-- VLR bar -->
-    <input id="gpStatVLR"  class="gp-stat-input gp-n-vlr" type="number" min="0" step="1" value="0" data-stat="VLR"  style="left:122px;top:86px">
+    <!-- HP bar numbers (sampled: text starts x=69, y=25) -->
+    <input id="gpStatHP"   class="gp-stat-input gp-n-hp"  type="number" min="0" step="1" value="0" data-stat="HP"   style="left:69px;top:25px">
+    <span  id="gpHpMax"    class="gp-n-max gp-n-max-hp"   style="left:109px;top:25px">0</span>
+    <span  id="gpHpBonus"  class="gp-bonus"                style="left:149px;top:25px"></span>
+    <!-- MP bar numbers (y=62) -->
+    <input id="gpStatMANA" class="gp-stat-input gp-n-mp"  type="number" min="0" step="1" value="0" data-stat="MANA" style="left:70px;top:62px">
+    <span  id="gpMpMax"    class="gp-n-max gp-n-max-mp"   style="left:110px;top:62px">0</span>
+    <span  id="gpMpBonus"  class="gp-bonus"                style="left:150px;top:62px"></span>
+    <!-- VLR bar number (sampled: x=190, y=95) -->
+    <input id="gpStatVLR"  class="gp-stat-input gp-n-vlr" type="number" min="0" step="1" value="0" data-stat="VLR"  style="left:190px;top:95px">
 
-    <!-- Stat inputs — each overlaid on top of the stat number shown in the screenshot -->
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="VIT" style="left:552px;top:9px">
-    <span  class="gp-bonus" id="gpBonusVIT" style="left:598px;top:9px"></span>
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEX" style="left:724px;top:9px">
-    <span  class="gp-bonus" id="gpBonusDEX" style="left:770px;top:9px"></span>
+    <!-- Stat inputs (sampled from white pixel positions in screenshot) -->
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="VIT" style="left:627px;top:17px">
+    <span  class="gp-bonus" id="gpBonusVIT" style="left:673px;top:17px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEX" style="left:740px;top:17px">
+    <span  class="gp-bonus" id="gpBonusDEX" style="left:786px;top:17px"></span>
 
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="WIS" style="left:552px;top:47px">
-    <span  class="gp-bonus" id="gpBonusWIS" style="left:598px;top:47px"></span>
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="ATK" style="left:724px;top:47px">
-    <span  class="gp-bonus" id="gpBonusATK" style="left:770px;top:47px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="WIS" style="left:627px;top:55px">
+    <span  class="gp-bonus" id="gpBonusWIS" style="left:673px;top:55px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="ATK" style="left:744px;top:55px">
+    <span  class="gp-bonus" id="gpBonusATK" style="left:790px;top:55px"></span>
 
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEF" style="left:552px;top:86px">
-    <span  class="gp-bonus" id="gpBonusDEF" style="left:598px;top:86px"></span>
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="SPD" style="left:724px;top:86px">
-    <span  class="gp-bonus" id="gpBonusSPD" style="left:770px;top:86px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEF" style="left:627px;top:74px">
+    <span  class="gp-bonus" id="gpBonusDEF" style="left:673px;top:74px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="SPD" style="left:741px;top:74px">
+    <span  class="gp-bonus" id="gpBonusSPD" style="left:787px;top:74px"></span>
   </div>
   <div class="gp-mode-row">
     <label class="gp-mode-label"><input type="radio" name="statMode" value="base" checked> base stats</label>
