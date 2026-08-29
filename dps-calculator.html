@@ -1135,8 +1135,49 @@
   }
 
   // ---------- WEAPON SELECT (custom image picker) ----------
+  var WEAPON_IMG = {
+    armageddon:            "Item_armageddon_746.png",
+    awp:                   "Item_aw-pixel-sniper-rifle_622.png",
+    broadbow:              "Item_broadbow_139.png",
+    carrot_bow:            "Item_carrot-bow_672.png",
+    cerberus_bow:          "Item_cerberus-bow_245.png",
+    crimson_bow:           "Item_crimson-bow_515.png",
+    crustacean_cracker:    "Item_crustacean-cracker_848.png",
+    dixoulds_crimson_bow:  "Item_dixould-s-crimson-bow_785.png",
+    egg_cannon:            "Item_egg-cannon_674.png",
+    eternal_winter:        "Item_eternal-winter_765.png",
+    forged_bow:            "Item_forged-bow_140.png",
+    frost_bow:             "Item_frost-bow_141.png",
+    guest666s_gun:         "Item_guest666-s-gun_557.png",
+    hand_cannon:           "Item_hand-cannon_276.png",
+    hand_cannon_of_doom:   "Item_hand-cannon-of-doom_571.png",
+    hunting_bow:           "Item_hunting-bow_142.png",
+    infernal_bow:          "Item_infernal-bow_143.png",
+    infernal_judgement:    "Item_infernal-judgement_144.png",
+    lazer_pistol:          "Item_lazer-pistol_830.png",
+    lightning_bow:         "Item_lightning-bow_325.png",
+    midnight_bow:          "Item_midnight-bow_145.png",
+    mistleaf_bow:          "Item_mistleaf-bow_146.png",
+    mushroom_bow:          "Item_mushroom-bow_275.png",
+    mushroom_bow_of_doom:  "Item_mushroom-bow-of-doom_572.png",
+    musket:                "Item_musket_370.png",
+    musket_of_doom:        "Item_musket-of-doom_576.png",
+    mystical_longbow:      "Item_mystical-longbow_147.png",
+    nutcrackers_pistol:    "Item_nutcracker-s-pistol_503.png",
+    paintball_gun:         "Item_paintball-gun_621.png",
+    piercers_bow:          "Item_piercer-s-bow_367.png",
+    piercers_bow_of_doom:  "Item_piercer-s-bow-of-doom_721.png",
+    rattling_bow:          "Item_rattling-bow_323.png",
+    rubycore_bow:          "Item_rubycore-bow_136.png",
+    slime_bow:             "Item_slime-bow_916.png",
+    spirit_bow:            "Item_spirit-bow_148.png",
+    sun_star:              "Item_sun-star_724.png",
+    water_gun:             "Item_water-gun_852.png",
+  };
+
   function weaponImgUrl(w) {
-    return "https://wiki.playpixelquest.com/wiki/Special:FilePath/" + encodeURIComponent(w.name.replace(/ /g, "_")) + ".png";
+    if (WEAPON_IMG[w.id]) return "img/" + WEAPON_IMG[w.id];
+    return null;
   }
 
   function setWeapon(id) {
@@ -1147,9 +1188,9 @@
     if (w) {
       nm.textContent = w.name;
       nm.style.color = "";
-      img.src = weaponImgUrl(w);
-      img.style.display = "";
-      img.onerror = function () { img.style.display = "none"; };
+      var url = weaponImgUrl(w);
+      if (url) { img.src = url; img.style.display = ""; img.onerror = function () { img.style.display = "none"; }; }
+      else { img.style.display = "none"; }
     } else {
       nm.textContent = "Choose a weapon…";
       nm.style.color = "var(--text-dim)";
@@ -1190,9 +1231,10 @@
         item.className = "wpk-item" + (w.id === state.weaponId ? " active" : "");
         item.dataset.id = w.id;
         var img = document.createElement("img");
-        img.src = weaponImgUrl(w);
+        var iurl = weaponImgUrl(w);
+        if (iurl) { img.src = iurl; img.onerror = function () { img.style.display = "none"; }; }
+        else { img.style.display = "none"; }
         img.alt = "";
-        img.onerror = function () { img.style.display = "none"; };
         var span = document.createElement("span");
         span.textContent = w.name;
         item.appendChild(img);
