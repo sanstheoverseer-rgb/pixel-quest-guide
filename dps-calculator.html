@@ -395,7 +395,7 @@
 
 <div class="wrap">
   <h1>Pixel Quest DPS Calculator</h1>
-  <p class="tagline">Enter your stats with no gear equipped, pick a weapon and equipment, see your average DPS from a simulated 30-second fight against a dummy — mana, cooldowns, and flag/buff downtime all tracked tick by tick.</p>
+  <p class="tagline">Enter your stats with no gear equipped, pick a weapon and equipment, see your average DPS from a simulated 60-second fight against a dummy — mana, cooldowns, and flag/buff downtime all tracked tick by tick.</p>
 
   <div class="game-panel">
     <!-- Equipment slots: transparent — screenshot shows empty slot graphic, item image overlaid when equipped -->
@@ -523,7 +523,7 @@
       <div class="card">
         <h2>Result</h2>
         <div class="dps-hero">
-          <div class="label">Average DPS — 30s simulated fight</div>
+          <div class="label">Average DPS — 60s simulated fight</div>
           <div class="num" id="dpsOut">0</div>
           <div class="sub" id="dpsSub">select a weapon to begin</div>
         </div>
@@ -591,7 +591,7 @@
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "pq_dps_calc_db_v2";
+  var STORAGE_KEY = "pq_dps_calc_db_v3";
 
   var DEFAULT_WEAPONS = [
     { id: "cutlass", name: "Cutlass", type: "Sword", dmgMin: 230, dmgMax: 260, fireRate: 1.6, range: 4, scaleStat: "SPD", scaleCost: 2, verified: true, notes: "" },
@@ -611,10 +611,10 @@
     { id: "crystalline_fan", name: "Crystalline Fan", type: "Fan", dmgMin: 160, dmgMax: 170, fireRate: 1, range: 6.495, shots: 1, statMods: { DEF: 10 }, projScaleStat: "DEF", projScaleCost: 15, projMax: 4, secHitDmg: 30, flourishMods: { DEX: 10 }, verified: true, notes: "DEF+10 on equip. Flourish: healing others grants +10 DEX 7s (assumed active when Totem equipped). Sire of Shards: 10% chance 300 true dmg + Exposed (~30/hit EV, ATK-scaled in sim)" },
     { id: "coldflame_sword", name: "Coldflame Sword", type: "Sword", dmgMin: 380, dmgMax: 440, fireRate: 1.6, range: 4, statMods: { DEF: 9, VIT: 24 }, secHitDmg: 175, verified: true, notes: "+9 DEF/+24 VIT on equip. If Heavy Armor: guaranteed extra Burn+Slow projectile @150-200 dmg (~175/hit). Base hit only without Heavy Armor" },
     { id: "coldflame_sword_of_doom", name: "Coldflame Sword OF DOOM", type: "Sword", dmgMin: 360, dmgMax: 420, fireRate: 1.6, range: 4, statMods: { DEF: 12, VIT: 28 }, secHitDmg: 219, verified: true, notes: "DEF+12/VIT+28 on equip. If Heavy Armor: 75% chance 5 additional Burning+Slow projectiles @75-100 dmg (~87.5 avg, 5×87.5×0.75=328 EV, modeled as secHitDmg 219 = 75%×5×(75+100)/2). Assume active if Heavy Armor equipped" },
-    { id: "searing_penlight", name: "Searing Penlight", type: "Staff", dmgMin: 135, dmgMax: 145, fireRate: 2.5, range: 10, verified: true, notes: "Ashen Pulse: fires 1-3 shots, 40% def pen, no pierce. Rough vs. small bosses" },
+    { id: "searing_penlight", name: "Searing Penlight", type: "Staff", dmgMin: 135, dmgMax: 145, shots: 2, fireRate: 2.5, range: 10, verified: true, notes: "Ashen Pulse: fires 1-3 shots randomly (avg 2), 40% def pen, no pierce. Rough vs. small bosses" },
     { id: "crimson_bow", name: "Crimson Bow", type: "Bow", dmgMin: 1222, dmgMax: 1666, fireRate: 0.5, range: 8.125, verified: true, notes: "Krampus drop. Pierces" },
     { id: "paintball_gun", name: "Paintball Gun", type: "Bow", tags: ["Gun"], dmgMin: 230, dmgMax: 250, fireRate: 3, range: 8.8, verified: true, notes: "Official wiki type is Bow — \"Gun\" is a community label some items (Guest 666's Hat) check for. 50% chance colored paintball: Blue=+10MP steal, Red=+10HP steal, Green=Poison, Yellow=Exposed." },
-    { id: "azazels_penlight", name: "Azazel's Penlight", type: "Staff", dmgMin: 135, dmgMax: 145, fireRate: 2.5, range: 10, verified: true, notes: "Ashen Pulse + Hell's Grasp: 8 landed projectiles summons a demonic hand" },
+    { id: "azazels_penlight", name: "Azazel's Penlight", type: "Staff", dmgMin: 135, dmgMax: 145, shots: 2, fireRate: 2.5, range: 10, verified: true, notes: "Ashen Pulse: fires 1-3 shots randomly (avg 2), 40% def pen. Hell's Grasp: 8 landed projectiles summons a demonic hand" },
     { id: "mizumis_musket", name: "Mizumi's Musket", type: "Bow", tags: ["Gun"], dmgMin: 50, dmgMax: 150, fireRate: 3, range: 8.8, scaleStat: "MANA", scaleCost: 2.5, manaCostPerShot: 5, statMods: { MANA: 50 }, verified: true, notes: "Mana+50 on equip. Costs 5 mana/shot (wiki), stops firing if mana runs out. +0.40 dmg/Mana" },
     { id: "musket", name: "Musket", type: "Bow", tags: ["Gun"], dmgMin: 50, dmgMax: 150, fireRate: 3, range: 8.8, scaleStat: "MANA", scaleCost: 3.03, manaCostPerShot: 8, statMods: { MANA: 25 }, verified: true, notes: "Mana+25 on equip. Costs 8 mana/shot, stops firing if mana runs out" },
     { id: "musket_of_doom", name: "Musket OF DOOM", type: "Bow", tags: ["Gun"], dmgMin: 70, dmgMax: 90, fireRate: 2.4, range: 8.925, scaleStat: "MANA", scaleCost: 2, manaCostPerShot: 3, statMods: { MANA: 25 }, verified: true, notes: "Mana+25 on equip. Costs 3 mana/shot. 60% def pen. Dungeon Rush exclusive, non-tradable" },
@@ -622,7 +622,7 @@
     { id: "lazer_pistol", name: "Lazer Pistol", type: "Bow", tags: ["Gun"], dmgMin: 444, dmgMax: 444, fireRate: 2.25, range: 8.4, manaCostPerShot: 15, statMods: { MANA: 25 }, verified: true, notes: "Corrupted. Mana+25 on equip. Costs 15 mana/shot (landed shots reduce cost by 1 for 5s, not modeled)" },
     { id: "void_staff", name: "Void Staff", type: "Staff", dmgMin: 100, dmgMax: 130, shots: 2, fireRate: 2.5, range: 9, verified: true, notes: "2 shots, 40% def pen. Hitting same enemy 10 times grants +30 WIS for 20s (ramps up, not modeled for average)" },
     { id: "coldfront", name: "Coldfront", type: "Fan", dmgMin: 50, dmgMax: 60, fireRate: 1.5, range: 6.495, shots: 1, projScaleStat: "WIS", projScaleCost: 15, projMax: 4, flourishMods: { DEF: 10 }, verified: true, notes: "Fan. Flourish: healing others grants +10 DEF 7s (assumed active when Totem equipped). Frozen Bloom: after 12 hits, 5 projectiles 100 true dmg + Slow 4s (not modeled)" },
-    { id: "venom_spell", name: "Venom Spell", type: "Staff", dmgMin: 42, dmgMax: 50, shots: 8, fireRate: 2, range: 14, scaleStat: "MANA", scaleCost: 3.03, verified: true, notes: "Fires 8 simultaneous projectiles per attack. Shots pass through solids. Damage" },
+    { id: "venom_spell", name: "Venom Spell", type: "Spell", dmgMin: 42, dmgMax: 50, shots: 8, fireRate: 2, range: 14, scaleStat: "MANA", scaleCost: 3.03, verified: true, notes: "Fires 8 simultaneous projectiles per attack. Shots pass through solids. Damage" },
     { id: "awp", name: "AWP", type: "Bow", tags: ["Gun"], dmgMin: 1600, dmgMax: 1800, fireRate: 0.3, range: 10.4, manaCostPerShot: 45, manaStealPerShot: 60, verified: true, notes: "Official wiki type is Bow, not Sniper — \"Gun\" is a community label. Sniper passive: +6% dmg per tile of distance, capped +100%. Costs 45 mana/shot, steals 60 mana (net mana-positive)." },
 
     // --- full wiki catalog pull below ---
@@ -765,7 +765,7 @@
     { id: "skysteel_axe", name: "Skysteel Axe", type: "Axe", dmgMin: 240, dmgMax: 250, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Boomerang, pierces, multi-hit 2" },
     { id: "slime_bow", name: "Slime Bow", type: "Bow", dmgMin: 70, dmgMax: 85, shots: 7, fireRate: 2, range: 8, verified: true, notes: "7 shots, 60% def pen. Deal 2x damage to Slimes (not modeled for dummy)" },
     { id: "snow_kings_blade", name: "Snow King's Blade", type: "Sword", dmgMin: 300, dmgMax: 350, fireRate: 1.6, range: 4, statMods: { HP: 50, SPD: 5 }, verified: true, notes: "HP+50/SPD+5 on equip. Rallied → +25 SPD 3s (5s CD)" },
-    { id: "softwood_staff", name: "Softwood Staff", type: "Staff", dmgMin: 30, dmgMax: 40, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj, 40% def pen" },
+    { id: "softwood_staff", name: "Softwood Staff", type: "Staff", dmgMin: 30, dmgMax: 40, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj, 40% def pen" },
     { id: "soul_splitter", name: "Soul Splitter", type: "Axe", dmgMin: 320, dmgMax: 330, shots: 2, fireRate: 1.25, range: 6, verified: true, notes: "2 simultaneous projectiles, pierces" },
     { id: "spirit_bow", name: "Spirit Bow", type: "Bow", dmgMin: 45, dmgMax: 55, shots: 3, fireRate: 2.4, range: 8.925, verified: true, notes: "Pierces, 60% def pen, 3 proj" },
     { id: "spirit_catcher", name: "Spirit Catcher", type: "Dagger", dmgMin: 180, dmgMax: 235, fireRate: 3, range: 6, secHitDmg: 9, verified: true, notes: "Soul Stealer: 10% chance to fire +8 MP steal or +8 HP steal projectile (secHitDmg≈9 EV, minimal damage contribution)" },
@@ -1110,7 +1110,35 @@
       var raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         var parsed = JSON.parse(raw);
-        if (parsed && parsed.weapons && parsed.gear) return parsed;
+        if (parsed && parsed.weapons && parsed.gear) {
+          // Build maps of defaults by ID
+          var defWeaponMap = {};
+          DEFAULT_WEAPONS.forEach(function (w) { defWeaponMap[w.id] = w; });
+          var defGearMap = {};
+          DEFAULT_GEAR.forEach(function (g) { defGearMap[g.id] = g; });
+          // For verified (default) weapons, always use the latest DEFAULT definition
+          // so any field updates (e.g. shots, dmgMin) propagate automatically.
+          // Custom weapons (not in DEFAULT_WEAPONS) are preserved as-is.
+          parsed.weapons = parsed.weapons.map(function (w) {
+            return defWeaponMap[w.id] ? clone(defWeaponMap[w.id]) : w;
+          });
+          // Add new default weapons not yet in stored DB
+          var storedIds = {};
+          parsed.weapons.forEach(function (w) { storedIds[w.id] = true; });
+          DEFAULT_WEAPONS.forEach(function (w) {
+            if (!storedIds[w.id]) parsed.weapons.push(clone(w));
+          });
+          // Same for gear
+          parsed.gear = parsed.gear.map(function (g) {
+            return defGearMap[g.id] ? clone(defGearMap[g.id]) : g;
+          });
+          var storedGearIds = {};
+          parsed.gear.forEach(function (g) { storedGearIds[g.id] = true; });
+          DEFAULT_GEAR.forEach(function (g) {
+            if (!storedGearIds[g.id]) parsed.gear.push(clone(g));
+          });
+          return parsed;
+        }
       }
     } catch (e) {}
     return { weapons: clone(DEFAULT_WEAPONS), gear: clone(DEFAULT_GEAR) };
@@ -2435,7 +2463,7 @@
       '<span style="display:block; margin-top:6px;">' + (w.notes || "") + '</span>';
 
     var rows = [
-      { k: "Weapon damage (30s)" + (w.critChance ? " incl. " + Math.round(w.critChance * 100) + "% crit ×" + w.critMult : ""), v: fmt(sim.weaponDamage, 0) }
+      { k: "Weapon damage (" + SIM_DURATION + "s)" + (w.critChance ? " incl. " + Math.round(w.critChance * 100) + "% crit ×" + w.critMult : ""), v: fmt(sim.weaponDamage, 0) }
     ];
     if (sim.secProjDamage) {
       var atkM = (1 + (baseEff.ATK || 0) / 100) * gearMult;
@@ -2481,7 +2509,7 @@
       rows.push({ k: "Cold Streak avg DEX bonus over fight (peak at end: +" + fmt(sim.coldStreakPeakDex, 0) + " DEX)", v: "+" + fmt(sim.coldStreakAvgDex, 1) + " DEX avg" });
     }
     rows.push({ k: "Mana: start → end (min seen)", v: fmt(baseEff.MANA || 0, 0) + " → " + fmt(sim.endMana, 0) + " (" + fmt(sim.minMana, 0) + ")" });
-    rows.push({ k: "Average DPS (30s)", v: fmt(sim.avgDps, 1), total: true });
+    rows.push({ k: "Average DPS (" + SIM_DURATION + "s)", v: fmt(sim.avgDps, 1), total: true });
 
     breakdown.innerHTML = rows.map(function (r) {
       return '<div class="b-row' + (r.total ? " total" : "") + (r.inactive ? " inactive" : "") + '"><span class="k">' + r.k + '</span><span class="v">' + r.v + '</span></div>';
@@ -2544,7 +2572,7 @@
   // "Gun" is not an official weapon type on the wiki (Paintball Gun/AWP/etc are all Bows) --
   // it's a community label some items check for via the tags array. Keep it out of the
   // primary type list but still offer it as a "Requires" option for gear passives.
-  var weaponTypeOptions = ["Sword", "Axe", "Bow", "Dagger", "Staff", "Fan"];
+  var weaponTypeOptions = ["Sword", "Axe", "Bow", "Dagger", "Staff", "Spell", "Fan"];
   var requiresTypeOptions = weaponTypeOptions.concat(["Gun"]);
   var statOptions = STAT_KEYS;
   var slotOptions = ["secondary", "armor", "accessory"];
