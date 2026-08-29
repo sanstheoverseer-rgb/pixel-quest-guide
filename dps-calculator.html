@@ -523,7 +523,13 @@
       <div class="card">
         <h2>Result</h2>
         <div class="dps-hero">
-          <div class="label">Average DPS — 60s simulated fight</div>
+          <div class="label">Average DPS — <select id="simDurSelect" style="font-family:inherit;font-size:inherit;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:1px 4px;cursor:pointer;">
+            <option value="15">15s</option>
+            <option value="30">30s</option>
+            <option value="60" selected>60s</option>
+            <option value="120">120s</option>
+            <option value="300">300s</option>
+          </select> simulated fight</div>
           <div class="num" id="dpsOut">0</div>
           <div class="sub" id="dpsSub">select a weapon to begin</div>
         </div>
@@ -739,7 +745,7 @@
     { id: "peacock_fan", name: "Peacock Fan", type: "Fan", dmgMin: 50, dmgMax: 55, fireRate: 1.5, range: 6.495, shots: 1, projScaleStat: "VIT", projScaleCost: 10, projMax: 6, verified: true, notes: "Auto-targets nearby enemies. 70% def pen, no pierce" },
     { id: "pharaohs_reaper", name: "Pharaoh's Reaper", type: "Staff", dmgMin: 80, dmgMax: 105, shots: 2, fireRate: 4.22, range: 9.625, verified: true, notes: "2 simultaneous projectiles, sine pattern, no pierce" },
     { id: "piercers_bow_of_doom", name: "Piercer's Bow OF DOOM", type: "Bow", dmgMin: 0, dmgMax: 1, fireRate: 2.4, range: 8.925, scaleStat: "DEX", scaleCost: 0.25, statMods: { DEF: -25, SPD: 25 }, verified: true, notes: "DEF-25/SPD+25 on equip. Pierces, 60% def pen. Near-zero base dmg, extreme Dex scaling. Dungeon Rush exclusive" },
-    { id: "pool_noodle", name: "Pool Noodle", type: "Staff", dmgMin: 95, dmgMax: 115, fireRate: 2.5, range: 9.2, statMods: { ATK: 3, DEX: 3 }, verified: true, notes: "Summer Shine! (+3 ATK / +3 DEX, always on). Sol: casting an ability applies Regeneration to nearby allies. 40% def pen. Real weapon despite the joke name" },
+    { id: "pool_noodle", name: "Pool Noodle", type: "Staff", dmgMin: 95, dmgMax: 115, shots: 2, fireRate: 2.5, range: 9.2, statMods: { ATK: 3, DEX: 3 }, verified: true, notes: "Summer Shine! (+3 ATK / +3 DEX, always on). Sol: casting an ability applies Regeneration to nearby allies. 40% def pen. Real weapon despite the joke name" },
     { id: "possessed_shovel", name: "Possessed Shovel", type: "Dagger", dmgMin: 230, dmgMax: 255, fireRate: 3, range: 5, verified: true, notes: "Summoner: 5% chance spawn Blue Ghoul" },
     { id: "possessed_shovel_of_doom", name: "Possessed Shovel OF DOOM", type: "Dagger", dmgMin: 230, dmgMax: 255, fireRate: 2.7, range: 6.65, scaleStat: "SPD", scaleCost: 3, verified: true, notes: "Summoner: 10% chance spawn Blue Ghoul. Dungeon Rush only, non-tradable" },
     { id: "carrot_staff", name: "Carrot Staff", type: "Staff", dmgMin: 70, dmgMax: 90, shots: 2, fireRate: 2, range: 10.4, secHitDmg: 150, verified: true, notes: "2 shots, 40% def pen. Secondary: 1 extra projectile @140-160 dmg (~150/hit, ATK-scaled) + Slow. Twin of Prism Scepter" },
@@ -2116,8 +2122,12 @@
     return n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: d });
   }
 
-  var SIM_DURATION = 60; // seconds -- "hit a dummy for 60s" test
-  var SIM_DT = 0.05; // 50ms timestep, 600 steps -- fine enough to be accurate, cheap enough to run live
+  var SIM_DURATION = 60; // seconds -- updated by the duration picker
+  var SIM_DT = 0.05; // 50ms timestep -- fine enough to be accurate, cheap enough to run live
+  document.getElementById("simDurSelect").addEventListener("change", function () {
+    SIM_DURATION = parseInt(this.value, 10);
+    compute();
+  });
 
   // Runs a full 30s combat simulation: mana starts full and regens from Wisdom, the
   // secondary ability only fires when its cooldown is up AND mana can afford it (otherwise
