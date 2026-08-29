@@ -380,19 +380,49 @@
         <h2>Equipment</h2>
         <p class="sub">One of each slot, same as in-game. Chance-based procs are folded in as expected value.</p>
         <div class="field-row">
-          <label for="secondarySelect">Secondary (totem / flag / bomb / spell)</label>
-          <select id="secondarySelect"></select>
+          <label>Secondary (totem / flag / bomb / spell)</label>
+          <div class="wpk" id="wpkWrap-secondary">
+            <div class="wpk-selected" id="wpkSelected-secondary">
+              <img id="wpkSelectedImg-secondary" src="" alt="" style="display:none;">
+              <span id="wpkSelectedName-secondary" style="color:var(--text-dim)">None</span>
+              <span class="wpk-arrow">▼</span>
+            </div>
+            <div class="wpk-dropdown" id="wpkDropdown-secondary">
+              <input class="wpk-search" id="wpkSearch-secondary" type="text" placeholder="Search…" autocomplete="off">
+              <div class="wpk-list" id="wpkList-secondary"></div>
+            </div>
+          </div>
         </div>
         <div class="sub" style="margin:-4px 0 8px;">
           <label><input type="checkbox" id="useSecondaryChk" checked> use the secondary ability during the fight (throw bombs / cast spells / raise flags). Off = keep it equipped for its stats but never use it.</label>
         </div>
         <div class="field-row">
-          <label for="armorSelect">Armor</label>
-          <select id="armorSelect"></select>
+          <label>Armor</label>
+          <div class="wpk" id="wpkWrap-armor">
+            <div class="wpk-selected" id="wpkSelected-armor">
+              <img id="wpkSelectedImg-armor" src="" alt="" style="display:none;">
+              <span id="wpkSelectedName-armor" style="color:var(--text-dim)">None</span>
+              <span class="wpk-arrow">▼</span>
+            </div>
+            <div class="wpk-dropdown" id="wpkDropdown-armor">
+              <input class="wpk-search" id="wpkSearch-armor" type="text" placeholder="Search…" autocomplete="off">
+              <div class="wpk-list" id="wpkList-armor"></div>
+            </div>
+          </div>
         </div>
         <div class="field-row">
-          <label for="accessorySelect">Accessory</label>
-          <select id="accessorySelect"></select>
+          <label>Accessory</label>
+          <div class="wpk" id="wpkWrap-accessory">
+            <div class="wpk-selected" id="wpkSelected-accessory">
+              <img id="wpkSelectedImg-accessory" src="" alt="" style="display:none;">
+              <span id="wpkSelectedName-accessory" style="color:var(--text-dim)">None</span>
+              <span class="wpk-arrow">▼</span>
+            </div>
+            <div class="wpk-dropdown" id="wpkDropdown-accessory">
+              <input class="wpk-search" id="wpkSearch-accessory" type="text" placeholder="Search…" autocomplete="off">
+              <div class="wpk-list" id="wpkList-accessory"></div>
+            </div>
+          </div>
         </div>
         <div class="weapon-info" id="equipInfo"></div>
       </div>
@@ -1340,6 +1370,298 @@
     worn_longsword                : "Item_worn-longsword_199.png",
   };
 
+  var GEAR_IMG = {
+    // manually matched (apostrophe / special names)
+    admirals_coat                      : "Item_admiral-s-coat_905.png",
+    ahis_amulet                        : "Item_ahi-s-amulet_78.png",
+    ahis_hide                          : "Item_ahi-s-hide_96.png",
+    apostles_gown                      : "Item_apostle-s-gown_110.png",
+    archfiends_garb                    : "Item_archfiend-s-garb_880.png",
+    ballers_necklace                   : "Item_baller-s-necklace_359.png",
+    bandits_tunic                      : "Item_bandit-s-tunic_726.png",
+    bards_mandolin                     : "Item_bard-s-mandolin_807.png",
+    crown_all_seeing                   : "Item_crown-of-all-seeing_561.png",
+    crushers_armor                     : "Item_crusher-s-armor_358.png",
+    deaths_bargain_amulet              : "Item_death-s-bargain-amulet_447.png",
+    emperors_armor                     : "Item_emperor-s-armor_85.png",
+    encyclopedia_floral                : "Item_encyclopedia-floral-edition_913.png",
+    experts_bracelet                   : "Item_expert-s-bracelet_59.png",
+    experts_crown                      : "Item_expert-s-crown_40.png",
+    ezebels_ring                       : "Item_ezebel-s-ring_303.png",
+    grand_scholars_robe                : "Item_grand-scholar-s-robe_116.png",
+    guest_666s_cape                    : "Item_guest-666-s-cape_560.png",
+    guest_666s_hat                     : "Item_guest-666-s-hat_559.png",
+    guest_666s_hat_of_doom             : "Item_guest-666-s-hat-of-doom_575.png",
+    john_does_jeans                    : "Item_john-doe-s-jeans_342.png",
+    john_does_shorts                   : "Item_john-doe-s-shorts_908.png",
+    knights_dashing_helm               : "Item_knight-s-dashing-helm_920.png",
+    nerps_voodoo_totem                 : "Item_nerp-s-voodoo-totem_791.png",
+    nomads_robe                        : "Item_nomad-s-robe_118.png",
+    nutcrackers_coat                   : "Item_nutcracker-s-coat_419.png",
+    pantheons_flag                     : "Item_pantheon-s-flag_611.png",
+    pantheons_helm                     : "Item_pantheon-s-helm_610.png",
+    piercers_flag                      : "Item_piercer-s-flag_347.png",
+    princes_plate                      : "Item_prince-s-plate_93.png",
+    raiders_robe                       : "Item_raider-s-robe_727.png",
+    rogues_cloak                       : "Item_rogue-s-cloak_773.png",
+    santas_mitten                      : "Item_santa-s-mitten_454.png",
+    scouts_leathers                    : "Item_scout-s-leathers_105.png",
+    seers_incantations                 : "Item_seer-s-incantations_242.png",
+    sekuad_hiros_mushroom_bomb         : "Item_sekuad-hiro-s-mushroom-bomb_786.png",
+    slicers_armor                      : "Item_slicer-s-armor_346.png",
+    slicers_bomb                       : "Item_slicer-s-bomb_366.png",
+    soot_choked_cowl                   : "Item_soot-choked-cowl_847.png",
+    soothers_totem                     : "Item_soother-s-totem_229.png",
+    sun_sorcerers_robe                 : "Item_sun-sorcerer-s-robe_122.png",
+    tricksters_vest                    : "Item_trickster-s-vest_582.png",
+    tricksters_vest_of_doom            : "Item_trickster-s-vest-of-doom_585.png",
+    wardhunters_leathers               : "Item_wardhunter-s-leathers_107.png",
+    witchs_concoction                  : "Item_witch-s-concoction_329.png",
+    witchs_garment                     : "Item_witch-s-garment_507.png",
+    wizards_ring                       : "Item_wizard-s-ring_761.png",
+    // auto-matched
+    absolute_zero                      : "Item_absolute-zero_763.png",
+    abyssal_helm                       : "Item_abyssal-helm_661.png",
+    acclaimed_armor                    : "Item_acclaimed-armor_81.png",
+    adept_belt                         : "Item_adept-belt_72.png",
+    adept_boots                        : "Item_adept-boots_66.png",
+    adept_bracelet                     : "Item_adept-bracelet_60.png",
+    adept_crown                        : "Item_adept-crown_38.png",
+    adept_gauntlet                     : "Item_adept-gauntlet_48.png",
+    adept_hat                          : "Item_adept-hat_77.png",
+    adept_helmet                       : "Item_adept-helmet_43.png",
+    adept_pendant                      : "Item_adept-pendant_53.png",
+    archanist_robe                     : "Item_archanist-robe_111.png",
+    armor_of_true_christmas            : "Item_armor-of-true-christmas_416.png",
+    armor_of_true_ice                  : "Item_armor-of-true-ice_82.png",
+    avalanche                          : "Item_avalanche_766.png",
+    banner_of_krampus                  : "Item_banner-of-krampus_428.png",
+    banner_of_march                    : "Item_banner-of-march_209.png",
+    beach_ball                         : "Item_beach-ball_876.png",
+    beach_umbrella                     : "Item_beach-umbrella_874.png",
+    bike_helmet                        : "Item_bike-helmet_883.png",
+    black_top_hat                      : "Item_black-top-hat_441.png",
+    blissful_hide                      : "Item_blissful-hide_97.png",
+    blossom_flag                       : "Item_blossom-flag_211.png",
+    blue_birthday_hat                  : "Item_blue-birthday-hat_778.png",
+    blue_party_hat                     : "Item_blue-party-hat_546.png",
+    blue_top_hat                       : "Item_blue-top-hat_619.png",
+    bog_hat                            : "Item_bog-hat_690.png",
+    boulder                            : "Item_boulder_676.png",
+    bronze_armor                       : "Item_bronze-armor_83.png",
+    budding_totem                      : "Item_budding-totem_344.png",
+    bunny_ears                         : "Item_bunny-ears_651.png",
+    cerulean_leather                   : "Item_cerulean-leather_531.png",
+    chocolate_bunny                    : "Item_chocolate-bunny_650.png",
+    chocolate_top_hat                  : "Item_chocolate-top-hat_808.png",
+    cinder_bomb                        : "Item_cinder-bomb_200.png",
+    cinderplate                        : "Item_cinderplate_530.png",
+    clown_costume                      : "Item_clown-costume_322.png",
+    coconut_crab_ring                  : "Item_coconut-crab-ring_541.png",
+    coconut_crab_ring_of_doom          : "Item_coconut-crab-ring-of-doom_577.png",
+    cold_emerald_armor                 : "Item_cold-emerald-armor_411.png",
+    conditioned_belt                   : "Item_conditioned-belt_806.png",
+    cornucopia                         : "Item_cornucopia_374.png",
+    corrupted_eyepatch                 : "Item_corrupted-eyepatch_751.png",
+    crab_leather                       : "Item_crab-leather_849.png",
+    crimson_robe                       : "Item_crimson-robe_539.png",
+    crown_of_the_sea                   : "Item_crown-of-the-sea_906.png",
+    crystal_bastion                    : "Item_crystal-bastion_598.png",
+    crystalline_sigil                  : "Item_crystalline-sigil_599.png",
+    cursed_jeans                       : "Item_cursed-jeans_512.png",
+    cursed_mirror                      : "Item_cursed-mirror_510.png",
+    daisy_bracelet                     : "Item_daisy-bracelet_915.png",
+    darksteel_plate                    : "Item_darksteel-plate_84.png",
+    demon_claw                         : "Item_demon-claw_845.png",
+    demonic_nova_spell                 : "Item_demonic-nova-spell_217.png",
+    desert_veil_acc                    : "Item_desert-veil_725.png",
+    divine_totem                       : "Item_divine-totem_226.png",
+    dominion_robe                      : "Item_dominion-robe_112.png",
+    dough_armor                        : "Item_dough-armor_519.png",
+    drako_belt                         : "Item_drako-belt_627.png",
+    duskhorn_hide                      : "Item_duskhorn-hide_100.png",
+    dynamite                           : "Item_dynamite_505.png",
+    easter_signet                      : "Item_easter-signet_665.png",
+    easter_suit                        : "Item_easter-suit_673.png",
+    easter_top_hat                     : "Item_easter-top-hat_667.png",
+    egg_bomb                           : "Item_egg-bomb_649.png",
+    ember_spell                        : "Item_ember-spell_218.png",
+    emerald_belt                       : "Item_emerald-belt_522.png",
+    emerald_kodoku_claw                : "Item_emerald-kodoku-claw_829.png",
+    expert_belt                        : "Item_expert-belt_69.png",
+    expert_boots                       : "Item_expert-boots_64.png",
+    expert_gauntlet                    : "Item_expert-gauntlet_50.png",
+    expert_hat                         : "Item_expert-hat_74.png",
+    expert_helmet                      : "Item_expert-helmet_45.png",
+    expert_pendant                     : "Item_expert-pendant_55.png",
+    faded_robe                         : "Item_faded-robe_113.png",
+    fallen_banner                      : "Item_fallen-banner_675.png",
+    festive_footwear                   : "Item_festive-footwear_435.png",
+    final_gift                         : "Item_final-gift_391.png",
+    fire_helm                          : "Item_fire-helm_301.png",
+    fire_plated_armor                  : "Item_fire-plated-armor_302.png",
+    flag_of_ashen                      : "Item_flag-of-the-ashen_532.png",
+    flag_of_the_vale                   : "Item_flag-of-the-vale_212.png",
+    flame_of_madness                   : "Item_flame-of-madness_811.png",
+    flamingo_float                     : "Item_flamingo-float_884.png",
+    flippers                           : "Item_flippers_911.png",
+    floral_footwear                    : "Item_floral-footwear_341.png",
+    floral_mantle                      : "Item_floral-mantle_86.png",
+    floral_necklace                    : "Item_floral-necklace_914.png",
+    floral_shirt                       : "Item_floral-shirt_877.png",
+    floral_top_hat                     : "Item_floral-top-hat_821.png",
+    frankenstein_armor                 : "Item_frankenstein-armor_336.png",
+    frozen_heart                       : "Item_frozen-heart_423.png",
+    gardening_gloves                   : "Item_gardening-gloves_886.png",
+    garnetthread_robe                  : "Item_garnetthread-robe_114.png",
+    ghostly_crown                      : "Item_ghostly-crown_511.png",
+    gingerbread_bracelet               : "Item_gingerbread-bracelet_520.png",
+    gold_top_hat                       : "Item_gold-top-hat_629.png",
+    golden_cornucopia                  : "Item_golden-cornucopia_376.png",
+    golden_turkey_garments             : "Item_golden-turkey-garments_375.png",
+    gravestone_totem                   : "Item_gravestone-totem_227.png",
+    green_buzzring                     : "Item_green-buzzring_237.png",
+    green_ornament                     : "Item_green-ornament_421.png",
+    green_party_hat                    : "Item_green-party-hat_548.png",
+    green_top_hat                      : "Item_green-top-hat_562.png",
+    halkiyon_armor                     : "Item_halkiyon-armor_87.png",
+    haunted_robe                       : "Item_haunted-robe_334.png",
+    haunting_pendant                   : "Item_haunting-pendant_337.png",
+    heavy_belt                         : "Item_heavy-belt_504.png",
+    helm_of_the_hollow                 : "Item_helm-of-the-hollow_804.png",
+    heroic_mantle                      : "Item_heroic-mantle_88.png",
+    high_heels                         : "Item_high-heels_509.png",
+    hollowed_leather                   : "Item_hollowed-leather_805.png",
+    ice_bomb                           : "Item_ice-bomb_202.png",
+    ice_crown                          : "Item_ice-crown_409.png",
+    ice_helm                           : "Item_ice-helm_403.png",
+    infernal_liber_ignis               : "Item_infernal-liber-ignis_879.png",
+    inferno_spell                      : "Item_inferno-spell_220.png",
+    ink_bomb                           : "Item_ink-bomb_921.png",
+    iron_chestplate                    : "Item_iron-chestplate_89.png",
+    iron_skull_ring                    : "Item_iron-skull-ring_620.png",
+    ivory_top_hat                      : "Item_ivory-top-hat_700.png",
+    jackalhide_armor                   : "Item_jackalhide-armor_102.png",
+    jade_protector                     : "Item_jade-protector_595.png",
+    jeweled_garments                   : "Item_jeweled-garments_597.png",
+    jormunscale                        : "Item_jormunscale_814.png",
+    kindred_idol                       : "Item_kindred-idol_228.png",
+    kingstag_hide                      : "Item_kingstag-hide_103.png",
+    kodoku_claw                        : "Item_kodoku-claw_818.png",
+    krampus_bomb                       : "Item_krampus-bomb_513.png",
+    leviathan_hide                     : "Item_leviathan-hide_104.png",
+    liber_ignis                        : "Item_liber-ignis_846.png",
+    lichbound_shroud                   : "Item_lichbound-shroud_451.png",
+    life_vest                          : "Item_life-vest_896.png",
+    lightning_in_a_bottle              : "Item_lightning-in-a-bottle_335.png",
+    lilac_armor                        : "Item_lilac-armor_357.png",
+    lush_holidays                      : "Item_lush-holidays_396.png",
+    lush_shrubs                        : "Item_lush-shrubs_117.png",
+    mad_hat                            : "Item_mad-hat_581.png",
+    mooshroom_bomb                     : "Item_mooshroom-bomb_300.png",
+    mortar_bomb                        : "Item_mortar-bomb_204.png",
+    mushroom_cap                       : "Item_mushroom-cap_279.png",
+    nature_band                        : "Item_nature-band_238.png",
+    necklace_of_fangs                  : "Item_necklace-of-fangs_524.png",
+    necklace_of_protection             : "Item_necklace-of-protection_315.png",
+    necrotoxin                         : "Item_necrotoxin_816.png",
+    novice_belt                        : "Item_novice-belt_70.png",
+    novice_boots                       : "Item_novice-boots_65.png",
+    novice_bracelet                    : "Item_novice-bracelet_61.png",
+    novice_crown                       : "Item_novice-crown_41.png",
+    novice_gauntlet                    : "Item_novice-gauntlet_51.png",
+    novice_hat                         : "Item_novice-hat_75.png",
+    novice_helmet                      : "Item_novice-helmet_46.png",
+    novice_pendant                     : "Item_novice-pendant_56.png",
+    obsidian_plate                     : "Item_obsidian-plate_91.png",
+    paintball_vest                     : "Item_paintball-vest_623.png",
+    peach_top_hat                      : "Item_peach-top-hat_732.png",
+    penguin_signet                     : "Item_penguin-signet_405.png",
+    permafrost_veil                    : "Item_permafrost-veil_764.png",
+    pirate_bandana                     : "Item_pirate-bandana_737.png",
+    pixelween_hat                      : "Item_pixelween-hat_324.png",
+    pixelween_ring                     : "Item_pixelween-ring_331.png",
+    pool_pass_wristband                : "Item_pool-pass-wristband_888.png",
+    prism_cloak                        : "Item_prism-cloak_603.png",
+    psychic_detonation_spell           : "Item_psychic-detonation-spell_221.png",
+    purple_party_hat                   : "Item_purple-party-hat_545.png",
+    purple_top_hat                     : "Item_purple-top-hat_352.png",
+    red_birthday_hat                   : "Item_red-birthday-hat_780.png",
+    red_buzzring                       : "Item_red-buzzring_236.png",
+    red_ornament                       : "Item_red-ornament_420.png",
+    red_party_hat                      : "Item_red-party-hat_544.png",
+    red_scarf                          : "Item_red-scarf_392.png",
+    red_top_hat                        : "Item_red-top-hat_615.png",
+    reindeer_signet                    : "Item_reindeer-signet_406.png",
+    ring_of_avarice                    : "Item_ring-of-avarice_748.png",
+    ring_of_horrors                    : "Item_ring-of-horrors_333.png",
+    ring_of_instantaneous_dying        : "Item_ring-of-instantaneous-dying_79.png",
+    ring_of_the_molten_core            : "Item_ring-of-the-molten-core_241.png",
+    robe_of_krampus                    : "Item_robe-of-krampus_394.png",
+    robe_of_the_horned_demon           : "Item_robe-of-the-horned-demon_432.png",
+    robe_of_the_worm                   : "Item_robe-of-the-worm_294.png",
+    rose_gauntlet                      : "Item_rose-gauntlet_356.png",
+    royal_guidon                       : "Item_royal-guidon_213.png",
+    royal_signet                       : "Item_royal-signet_80.png",
+    ruby_kodoku_claw                   : "Item_ruby-kodoku-claw_826.png",
+    sack_of_coins                      : "Item_sack-of-coins_750.png",
+    safe_guard                         : "Item_safe-guard_835.png",
+    sanguine_heart                     : "Item_sanguine-heart_523.png",
+    sapphire_kodoku_claw               : "Item_sapphire-kodoku-claw_827.png",
+    scorching_fist                     : "Item_scorching-fist_535.png",
+    scuba_suit                         : "Item_scuba-suit_887.png",
+    siege_bomb                         : "Item_siege-bomb_307.png",
+    silver_chainmail                   : "Item_silver-chainmail_94.png",
+    silver_top_hat                     : "Item_silver-top-hat_668.png",
+    silver_trophy                      : "Item_silver-trophy_517.png",
+    small_bomb                         : "Item_small-bomb_206.png",
+    snorkel_mask                       : "Item_snorkel-mask_339.png",
+    songs_of_the_deep_sea              : "Item_songs-of-the-deep-sea_736.png",
+    soothing_pendant                   : "Item_soothing-pendant_292.png",
+    soul_lantern_band                  : "Item_soul-lantern-band_450.png",
+    soul_lantern_band_of_doom          : "Item_soul-lantern-band-of-doom_733.png",
+    soul_ring                          : "Item_soul-ring_326.png",
+    spectral_spell                     : "Item_spectral-spell_223.png",
+    spectrum_boots                     : "Item_spectrum-boots_596.png",
+    squid_hat                          : "Item_squid-hat_922.png",
+    starfish_totem                     : "Item_starfish-totem_910.png",
+    steelcap_bomb                      : "Item_steelcap-bomb_207.png",
+    stygian_plate                      : "Item_stygian-plate_660.png",
+    surrender_flag                     : "Item_surrender-flag_909.png",
+    tabula_viridis                     : "Item_tabula-viridis_771.png",
+    tattered_banner                    : "Item_tattered-banner_214.png",
+    theros_flag                        : "Item_theros-flag_215.png",
+    tombstone_spell                    : "Item_tombstone-spell_453.png",
+    tooth_necklace                     : "Item_tooth-necklace_295.png",
+    topaz_kodoku_claw                  : "Item_topaz-kodoku-claw_828.png",
+    towel_robe                         : "Item_towel-robe_872.png",
+    toxic_fluid                        : "Item_toxic-fluid_208.png",
+    turkey_garments                    : "Item_turkey-garments_373.png",
+    twilight_tunic                     : "Item_twilight-tunic_106.png",
+    venom_spell                        : "Item_venom-spell_225.png",
+    verdant_robe                       : "Item_verdant-robe_123.png",
+    violet_stars                       : "Item_violet-stars_594.png",
+    voodoo_totem                       : "Item_voodoo-totem_580.png",
+    water_balloon                      : "Item_water-balloon_924.png",
+    white_party_hat                    : "Item_white-party-hat_547.png",
+    white_top_hat                      : "Item_white-top-hat_592.png",
+    winner_trophy                      : "Item_winner-trophy_516.png",
+    witchfire_brew                     : "Item_witchfire-brew_508.png",
+    withered_lull                      : "Item_withered-lull_636.png",
+    wooden_totem                       : "Item_wooden-totem_231.png",
+    worn_belt                          : "Item_worn-belt_68.png",
+    worn_boots                         : "Item_worn-boots_63.png",
+    worn_bracelet                      : "Item_worn-bracelet_58.png",
+    worn_crown                         : "Item_worn-crown_39.png",
+    worn_gauntlet                      : "Item_worn-gauntlet_49.png",
+    worn_hat                           : "Item_worn-hat_73.png",
+    worn_helmet                        : "Item_worn-helmet_44.png",
+    worn_leather                       : "Item_worn-leather_109.png",
+    worn_pendant                       : "Item_worn-pendant_54.png",
+    yellow_birthday_hat                : "Item_yellow-birthday-hat_779.png",
+    yellow_party_hat                   : "Item_yellow-party-hat_549.png",
+  };
+
   function weaponImgUrl(w) {
     if (WEAPON_IMG[w.id]) return "img/" + WEAPON_IMG[w.id];
     return null;
@@ -1467,29 +1789,108 @@
     compute();
   });
 
-  // ---------- EQUIPMENT SLOTS ----------
-  var secondarySelect = document.getElementById("secondarySelect");
-  var armorSelect = document.getElementById("armorSelect");
-  var accessorySelect = document.getElementById("accessorySelect");
-
-  function renderSlotOptions(selectEl, slot, currentId) {
-    var items = db.gear.filter(function (g) { return g.slot === slot; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
-    selectEl.innerHTML = '<option value="">None</option>' + items.map(function (g) {
-      return '<option value="' + g.id + '">' + g.name + '</option>';
-    }).join("");
-    selectEl.value = currentId || "";
+  // ---------- EQUIPMENT SLOTS (custom image pickers) ----------
+  function gearImgUrl(g) {
+    if (GEAR_IMG[g.id]) return "img/" + GEAR_IMG[g.id];
+    return null;
   }
+
+  function setGear(slot, id) {
+    if (slot === "secondary") state.secondaryId = id;
+    else if (slot === "armor") state.armorId = id;
+    else if (slot === "accessory") state.accessoryId = id;
+    var g = id ? db.gear.find(function (x) { return x.id === id; }) : null;
+    var img = document.getElementById("wpkSelectedImg-" + slot);
+    var nm  = document.getElementById("wpkSelectedName-" + slot);
+    if (g) {
+      nm.textContent = g.name; nm.style.color = "";
+      var url = gearImgUrl(g);
+      if (url) { img.src = url; img.style.display = ""; img.onerror = function () { img.style.display = "none"; }; }
+      else img.style.display = "none";
+    } else {
+      nm.textContent = "None"; nm.style.color = "var(--text-dim)"; img.style.display = "none";
+    }
+    document.querySelectorAll("#wpkList-" + slot + " .wpk-item").forEach(function (el) {
+      el.classList.toggle("active", el.dataset.id === id);
+    });
+    renderDerived(); renderEquipInfo(); compute();
+  }
+
+  function buildGearList(slot, filter) {
+    var list = document.getElementById("wpkList-" + slot);
+    list.innerHTML = "";
+    var q = (filter || "").toLowerCase();
+    var items = db.gear.filter(function (g) {
+      return g.slot === slot && (!q || g.name.toLowerCase().indexOf(q) > -1);
+    }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+    // "None" option
+    var noneEl = document.createElement("div");
+    noneEl.className = "wpk-item" + (!getCurrentGearId(slot) ? " active" : "");
+    noneEl.dataset.id = "";
+    noneEl.textContent = "None";
+    noneEl.addEventListener("click", function () { setGear(slot, ""); closeGearWpk(slot); });
+    list.appendChild(noneEl);
+    if (!items.length && q) { list.innerHTML += '<div class="wpk-none">No items found.</div>'; return; }
+    items.forEach(function (g) {
+      var item = document.createElement("div");
+      item.className = "wpk-item" + (g.id === getCurrentGearId(slot) ? " active" : "");
+      item.dataset.id = g.id;
+      var img = document.createElement("img");
+      var url = gearImgUrl(g);
+      if (url) { img.src = url; img.onerror = function () { img.style.display = "none"; }; }
+      else img.style.display = "none";
+      img.alt = "";
+      var span = document.createElement("span");
+      span.textContent = g.name;
+      item.appendChild(img); item.appendChild(span);
+      item.addEventListener("click", function () { setGear(slot, g.id); closeGearWpk(slot); });
+      list.appendChild(item);
+    });
+  }
+
+  function getCurrentGearId(slot) {
+    if (slot === "secondary") return state.secondaryId;
+    if (slot === "armor") return state.armorId;
+    if (slot === "accessory") return state.accessoryId;
+    return "";
+  }
+
+  function openGearWpk(slot) {
+    document.getElementById("wpkDropdown-" + slot).classList.add("open");
+    var s = document.getElementById("wpkSearch-" + slot);
+    s.value = ""; buildGearList(slot, ""); s.focus();
+    setTimeout(function () {
+      var a = document.querySelector("#wpkList-" + slot + " .wpk-item.active");
+      if (a) a.scrollIntoView({ block: "nearest" });
+    }, 0);
+  }
+
+  function closeGearWpk(slot) {
+    document.getElementById("wpkDropdown-" + slot).classList.remove("open");
+  }
+
+  ["secondary", "armor", "accessory"].forEach(function (slot) {
+    document.getElementById("wpkSelected-" + slot).addEventListener("click", function () {
+      var dd = document.getElementById("wpkDropdown-" + slot);
+      if (dd.classList.contains("open")) closeGearWpk(slot); else openGearWpk(slot);
+    });
+    document.getElementById("wpkSearch-" + slot).addEventListener("input", function () {
+      buildGearList(slot, this.value);
+    });
+    document.addEventListener("click", function (e) {
+      if (!document.getElementById("wpkWrap-" + slot).contains(e.target)) closeGearWpk(slot);
+    });
+  });
+
+  document.getElementById("useSecondaryChk").addEventListener("change", function (e) { state.useSecondary = e.target.checked; compute(); });
 
   function renderSlotSelects() {
-    renderSlotOptions(secondarySelect, "secondary", state.secondaryId);
-    renderSlotOptions(armorSelect, "armor", state.armorId);
-    renderSlotOptions(accessorySelect, "accessory", state.accessoryId);
+    ["secondary", "armor", "accessory"].forEach(function (slot) {
+      buildGearList(slot, "");
+      var id = getCurrentGearId(slot);
+      if (id) setGear(slot, id);
+    });
   }
-
-  secondarySelect.addEventListener("change", function () { state.secondaryId = secondarySelect.value; renderDerived(); renderEquipInfo(); compute(); });
-  document.getElementById("useSecondaryChk").addEventListener("change", function (e) { state.useSecondary = e.target.checked; compute(); });
-  armorSelect.addEventListener("change", function () { state.armorId = armorSelect.value; renderDerived(); renderEquipInfo(); compute(); });
-  accessorySelect.addEventListener("change", function () { state.accessoryId = accessorySelect.value; renderDerived(); renderEquipInfo(); compute(); });
 
   function formatStatMods(mods) {
     var keys = Object.keys(mods || {});
