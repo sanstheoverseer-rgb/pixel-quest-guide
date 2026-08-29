@@ -257,6 +257,106 @@
 
   .note { font-size: 0.75rem; color: var(--text-dim); margin-top: 8px; }
 
+  /* ---- Character Panel ---- */
+  .char-panel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #1a1a2e;
+    border: 2px solid #333;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .char-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 160px;
+  }
+  .char-bar {
+    position: relative;
+    height: 22px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #111;
+    border: 1px solid #444;
+  }
+  .char-bar-fill {
+    position: absolute; inset: 0;
+    border-radius: 3px;
+  }
+  .char-bar-fill.hp  { background: #c0392b; }
+  .char-bar-fill.mp  { background: #2980b9; }
+  .char-bar-label {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 1px 1px 0 #000;
+    font-family: ui-monospace, monospace;
+    white-space: nowrap;
+  }
+  .char-equip-slots {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .char-slot {
+    width: 52px; height: 52px;
+    background: #2a2a3a;
+    border: 2px solid #555;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .char-slot img {
+    width: 44px; height: 44px;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+  .char-slot-empty {
+    width: 32px; height: 32px;
+    background: #333;
+    border-radius: 2px;
+  }
+  .char-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+    margin-left: auto;
+  }
+  .char-stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.82rem;
+    font-family: ui-monospace, monospace;
+    color: #eee;
+  }
+  .char-stat-icon {
+    width: 18px; height: 18px;
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.55rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 1px 1px 0 #000;
+    flex-shrink: 0;
+    image-rendering: pixelated;
+  }
+  .char-stat-icon.vit { background: #2d7a3a; border: 1px solid #3da04a; }
+  .char-stat-icon.wis { background: #6a3d9a; border: 1px solid #9b59b6; }
+  .char-stat-icon.def { background: #1a5fa0; border: 1px solid #2980b9; }
+  .char-stat-icon.dex { background: #b03020; border: 1px solid #e74c3c; }
+  .char-stat-icon.atk { background: #c0601a; border: 1px solid #e67e22; }
+  .char-stat-icon.spd { background: #9a7a00; border: 1px solid #f1c40f; }
+  .char-stat-name { color: #aaa; font-size: 0.75rem; }
+  .char-stat-val { color: #fff; font-weight: 700; }
+  .char-stat-bonus { color: #4caf50; font-size: 0.72rem; }
+
   /* Custom weapon picker */
   .wpk { position: relative; }
   .wpk-selected {
@@ -334,6 +434,33 @@
 <div class="wrap">
   <h1>Pixel Quest DPS Calculator</h1>
   <p class="tagline">Enter your stats with no gear equipped, pick a weapon and equipment, see your average DPS from a simulated 30-second fight against a dummy — mana, cooldowns, and flag/buff downtime all tracked tick by tick.</p>
+
+  <div class="char-panel" id="charPanel">
+    <div class="char-bars">
+      <div class="char-bar" style="width:180px">
+        <div class="char-bar-fill hp" id="cpHpFill" style="width:100%"></div>
+        <div class="char-bar-label" id="cpHpLabel">HP: — / —</div>
+      </div>
+      <div class="char-bar" style="width:180px">
+        <div class="char-bar-fill mp" id="cpMpFill" style="width:100%"></div>
+        <div class="char-bar-label" id="cpMpLabel">MP: — / —</div>
+      </div>
+    </div>
+    <div class="char-equip-slots">
+      <div class="char-slot" id="cpSlotWeapon"   title="Weapon"><div class="char-slot-empty"></div></div>
+      <div class="char-slot" id="cpSlotSecondary" title="Secondary"><div class="char-slot-empty"></div></div>
+      <div class="char-slot" id="cpSlotArmor"    title="Armor"><div class="char-slot-empty"></div></div>
+      <div class="char-slot" id="cpSlotAccessory" title="Accessory"><div class="char-slot-empty"></div></div>
+    </div>
+    <div class="char-stats-grid">
+      <div class="char-stat"><div class="char-stat-icon vit">VIT</div><span class="char-stat-name">VIT:</span><span class="char-stat-val" id="cpVit">—</span><span class="char-stat-bonus" id="cpVitB"></span></div>
+      <div class="char-stat"><div class="char-stat-icon dex">DEX</div><span class="char-stat-name">DEX:</span><span class="char-stat-val" id="cpDex">—</span><span class="char-stat-bonus" id="cpDexB"></span></div>
+      <div class="char-stat"><div class="char-stat-icon wis">WIS</div><span class="char-stat-name">WIS:</span><span class="char-stat-val" id="cpWis">—</span><span class="char-stat-bonus" id="cpWisB"></span></div>
+      <div class="char-stat"><div class="char-stat-icon atk">ATK</div><span class="char-stat-name">ATK:</span><span class="char-stat-val" id="cpAtk">—</span><span class="char-stat-bonus" id="cpAtkB"></span></div>
+      <div class="char-stat"><div class="char-stat-icon def">DEF</div><span class="char-stat-name">DEF:</span><span class="char-stat-val" id="cpDef">—</span><span class="char-stat-bonus" id="cpDefB"></span></div>
+      <div class="char-stat"><div class="char-stat-icon spd">SPD</div><span class="char-stat-name">SPD:</span><span class="char-stat-val" id="cpSpd">—</span><span class="char-stat-bonus" id="cpSpdB"></span></div>
+    </div>
+  </div>
 
   <div class="layout">
     <div>
@@ -2440,6 +2567,55 @@
     if (w.manaCostPerShot) lines.push(w.name + " fired " + sim.weaponFiredShots + " shots, skipped " + sim.weaponStarvedShots + " for lack of mana.");
     lines.push("Total damage over " + SIM_DURATION + "s: " + fmt(sim.totalDamage, 0) + " -> average " + fmt(sim.avgDps, 1) + " DPS.");
     formulaOut.textContent = lines.join("\n");
+    renderCharPanel();
+  }
+
+  function renderCharPanel() {
+    var eff = effectiveStats();
+    var base = state.stats;
+
+    // HP / MP bars
+    var hp = Math.round(eff.HP || 0);
+    var mp = Math.round(eff.MANA || 0);
+    var hpBase = base.HP || 0;
+    var mpBase = base.MANA || 0;
+    var hpBonus = hp - hpBase;
+    var mpBonus = mp - mpBase;
+    document.getElementById("cpHpLabel").textContent = "HP: " + hp + " / " + hp + (hpBonus > 0 ? " (+" + hpBonus + ")" : "");
+    document.getElementById("cpMpLabel").textContent = "MP: " + mp + " / " + mp + (mpBonus > 0 ? " (+" + mpBonus + ")" : "");
+
+    // Equipment slot icons
+    function setSlotImg(elId, imgUrl) {
+      var el = document.getElementById(elId);
+      if (imgUrl) {
+        el.innerHTML = '<img src="' + imgUrl + '" alt="" onerror="this.style.display=\'none\'">';
+      } else {
+        el.innerHTML = '<div class="char-slot-empty"></div>';
+      }
+    }
+    var w = getWeapon();
+    setSlotImg("cpSlotWeapon",    w ? (WEAPON_IMG[w.id] ? "img/" + WEAPON_IMG[w.id] : null) : null);
+    var secG = state.secondaryId  ? db.gear.find(function(g){return g.id===state.secondaryId;})  : null;
+    var armG = state.armorId      ? db.gear.find(function(g){return g.id===state.armorId;})      : null;
+    var accG = state.accessoryId  ? db.gear.find(function(g){return g.id===state.accessoryId;})  : null;
+    setSlotImg("cpSlotSecondary", secG && GEAR_IMG[secG.id] ? "img/" + GEAR_IMG[secG.id] : null);
+    setSlotImg("cpSlotArmor",     armG && GEAR_IMG[armG.id] ? "img/" + GEAR_IMG[armG.id] : null);
+    setSlotImg("cpSlotAccessory", accG && GEAR_IMG[accG.id] ? "img/" + GEAR_IMG[accG.id] : null);
+
+    // Stats
+    function setStat(key, valId, bonusId) {
+      var effVal = Math.round(eff[key] || 0);
+      var baseVal = Math.round(base[key] || 0);
+      var bonus = effVal - baseVal;
+      document.getElementById(valId).textContent = effVal;
+      document.getElementById(bonusId).textContent = bonus > 0 ? "(+" + bonus + ")" : bonus < 0 ? "(" + bonus + ")" : "";
+    }
+    setStat("VIT",  "cpVit",  "cpVitB");
+    setStat("DEX",  "cpDex",  "cpDexB");
+    setStat("WIS",  "cpWis",  "cpWisB");
+    setStat("ATK",  "cpAtk",  "cpAtkB");
+    setStat("DEF",  "cpDef",  "cpDefB");
+    setStat("SPD",  "cpSpd",  "cpSpdB");
   }
 
   // ---------- DB TABLES ----------
