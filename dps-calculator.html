@@ -1007,7 +1007,7 @@
     { id: "heroic_mantle", name: "Heroic Mantle", slot: "armor", verified: true, statMods: { DEF: 7, HP: 60, VIT: 12 }, condMods: { ATK: 10 }, condReqSecType: "flag", flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Attack Booster: +10 ATK while a Flag-type secondary is equipped (auto-applied). Drop: Woodland Troll" },
     { id: "iron_chestplate", name: "Iron Chestplate", slot: "armor", verified: true, statMods: { DEF: 4, HP: 5, VIT: 5 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 0" },
     { id: "jackalhide_armor", name: "Jackalhide Armor", slot: "armor", verified: true, statMods: { DEF: 9, DEX: 16, SPD: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 5" },
-    { id: "jormunscale", name: "Jormunscale", slot: "armor", verified: true, statMods: { DEF: 16, DEX: 25, SPD: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Dagger", notes: "Ahi's Artifacts: if Dagger equipped, orbiting artifacts deal 75 dmg/s to nearest enemy (informational, not folded into DPS number). Symbiosis: +1 ATK per 7 SPD and vice versa, max 15 each. Corrupted, drop Corrupted Ahi" },
+    { id: "jormunscale", name: "Jormunscale", slot: "armor", verified: true, statMods: { DEF: 16, DEX: 25, SPD: 12 }, dotFlatDps: 300, symbiosis: { statA: "ATK", statB: "SPD", ratio: 7, max: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Dagger", notes: "Ahi's Artifacts: orbiting artifacts deal 75 true dmg × 4/s = 300 flat DPS (auto-applied). Symbiosis: +1 ATK per 7 SPD and vice versa, max 15 each (auto-applied). Corrupted, drop Corrupted Ahi" },
     { id: "kingstag_hide", name: "Kingstag Hide", slot: "armor", verified: true, statMods: { DEF: 10, DEX: 18, SPD: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive. Tier 6, drops incl. Inferno God, Zeal, Seer the Corrupted, John Doe" },
     { id: "leviathan_hide", name: "Leviathan Hide", slot: "armor", verified: true, statMods: { DEF: 12, DEX: 22, SPD: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Flavor text only. Tier 8, corrupted/endgame drops (Azazel, Tyler, Crystal Titan)" },
     { id: "life_vest", name: "Life Vest", slot: "armor", verified: true, statMods: { DEF: 16, DEX: 24, SPD: 8, WIS: 15, ATK: 4, VIT: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine: +4 DEF/+4 ATK/+6 VIT. Second Chance: <25% HP, 10% chance full heal. Drop: The Mad Hatter" },
@@ -1242,6 +1242,16 @@
           upt = shotsWin > 0 ? (1 - Math.pow(1 - g.condProcChance, shotsWin)) : 0;
         }
         Object.keys(g.condMods).forEach(function (k) { eff[k] = (eff[k] || 0) + g.condMods[k] * upt; });
+      });
+      // Pass 3: Symbiosis-style mutual scaling bonuses. Computed from post-pass-2 stats
+      // to avoid circular dependency — both sides read the pre-Symbiosis values.
+      equippedGearList().forEach(function (g) {
+        if (!g.symbiosis) return;
+        var sym = g.symbiosis;
+        var bonusA = Math.min(sym.max !== undefined ? sym.max : Infinity, Math.floor((eff[sym.statB] || 0) / sym.ratio));
+        var bonusB = Math.min(sym.max !== undefined ? sym.max : Infinity, Math.floor((eff[sym.statA] || 0) / sym.ratio));
+        eff[sym.statA] = (eff[sym.statA] || 0) + bonusA;
+        eff[sym.statB] = (eff[sym.statB] || 0) + bonusB;
       });
     }
     // Conditional weapon passive (Armageddon's "Focus", etc.) -- opt-in, applies in either mode.
