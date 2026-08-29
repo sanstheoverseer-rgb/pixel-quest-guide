@@ -264,73 +264,79 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #28283a;
-    border: 2px solid #555564;
-    padding: 8px 12px;
+    background: #1e1e2c;
+    border: 2px solid #3a3a52;
+    padding: 8px 10px;
     margin-bottom: 16px;
-    font-family: 'VT323', 'Courier New', monospace;
-    flex-wrap: wrap;
+    font-family: 'VT323', monospace;
   }
-  .gp-bars { display: flex; flex-direction: column; gap: 5px; }
+  .gp-bars { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
   .gp-bar {
-    width: 200px; height: 28px;
-    border-radius: 3px; border: 1px solid #111;
+    width: 236px; height: 26px;
+    border: 2px solid #000;
     display: flex; align-items: center;
-    position: relative; overflow: hidden;
   }
-  .gp-hp { background: #9b1c1c; }
-  .gp-mp { background: #1a4c8a; }
+  .gp-hp  { background: #7a1212; }
+  .gp-mp  { background: #12267a; }
+  .gp-vlr { background: #7a5800; }
   .gp-bar-text {
-    position: relative; z-index: 1;
-    color: #fff; font-size: 17px; letter-spacing: 0.5px;
+    color: #fff; font-size: 20px; letter-spacing: 0.3px;
     text-shadow: 1px 1px 0 #000;
-    padding: 0 8px;
+    padding: 0 6px;
     display: flex; align-items: center; gap: 2px;
-    white-space: nowrap;
+    white-space: nowrap; width: 100%;
   }
   .gp-stat-input {
     background: transparent; border: none; outline: none;
-    color: #fff; font: inherit; font-size: 17px;
+    color: #fff; font: inherit; font-size: 20px;
     text-shadow: 1px 1px 0 #000;
-    width: 52px; padding: 0; margin: 0;
+    width: 50px; padding: 0; margin: 0;
     -moz-appearance: textfield;
   }
   .gp-stat-input::-webkit-inner-spin-button,
   .gp-stat-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-  .gp-bar-bonus { color: #5dde5d; font-size: 15px; margin-left: 3px; }
-  .gp-mode-row { display: flex; gap: 10px; margin-top: 3px; }
-  .gp-mode-label { color: #aaa; font-size: 13px; font-family: system-ui, sans-serif; cursor: pointer; }
+  .gp-bar-bonus { color: #6dff6d; font-size: 18px; }
+  .gp-mode-row { display: flex; gap: 8px; margin-top: 2px; }
+  .gp-mode-label { color: #999; font-size: 12px; font-family: system-ui, sans-serif; cursor: pointer; }
 
-  .gp-slots { display: flex; gap: 5px; }
+  .gp-center { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  .gp-slots { display: flex; gap: 3px; }
   .gp-slot {
-    width: 58px; height: 58px;
-    background: #38384e; border: 2px solid #5a5a72;
+    width: 54px; height: 54px;
+    background: #2a2a3e; border: 2px solid #4a4a64;
     display: flex; align-items: center; justify-content: center;
-    border-radius: 2px;
   }
-  .gp-slot img { width: 50px; height: 50px; object-fit: contain; image-rendering: pixelated; }
-  .gp-slot-empty { width: 36px; height: 36px; background: #2a2a3e; border-radius: 2px; }
+  .gp-slot img { width: 46px; height: 46px; object-fit: contain; image-rendering: pixelated; }
+  .gp-slot-empty { width: 32px; height: 32px; background: #1e1e30; }
+  .gp-nav-btns { display: flex; gap: 3px; }
+  .gp-nav-btn {
+    width: 28px; height: 24px;
+    background: #2a2a3e; border: 2px solid #4a4a64;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #bbb; cursor: default; user-select: none;
+  }
 
-  .gp-stats { display: flex; flex-direction: column; gap: 4px; margin-left: auto; }
-  .gp-stat-row { display: flex; gap: 16px; }
+  .gp-stats { display: flex; flex-direction: column; gap: 3px; margin-left: auto; }
+  .gp-stat-row { display: flex; gap: 10px; }
   .gp-stat {
     display: flex; align-items: center; gap: 4px;
-    font-size: 18px; color: #fff;
+    font-size: 20px; color: #fff;
     text-shadow: 1px 1px 0 #000;
-    min-width: 120px;
+    min-width: 118px;
   }
   .gp-icon {
-    width: 22px; height: 22px; border-radius: 2px; flex-shrink: 0;
-    border: 1px solid rgba(255,255,255,0.25);
+    width: 22px; height: 22px; flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.6);
+    image-rendering: pixelated;
   }
-  .gp-vit { background: #2d7a3a; }
-  .gp-wis { background: #6a3d9a; }
-  .gp-def { background: #1a5fa0; }
-  .gp-dex { background: #b03020; }
-  .gp-atk { background: #c0601a; }
-  .gp-spd { background: #9a7a00; }
-  .gp-sname { color: #ccc; }
-  .gp-bonus { color: #5dde5d; font-size: 15px; }
+  .gp-vit { background: #2e7d32; }
+  .gp-wis { background: #6a1b9a; }
+  .gp-def { background: #1565c0; }
+  .gp-dex { background: #b71c1c; }
+  .gp-atk { background: #e65100; }
+  .gp-spd { background: #f57f17; }
+  .gp-sname { color: #ddd; }
+  .gp-bonus { color: #6dff6d; font-size: 18px; }
 
   /* Custom weapon picker */
   .wpk { position: relative; }
@@ -411,7 +417,7 @@
   <p class="tagline">Enter your stats with no gear equipped, pick a weapon and equipment, see your average DPS from a simulated 30-second fight against a dummy — mana, cooldowns, and flag/buff downtime all tracked tick by tick.</p>
 
   <div class="game-panel">
-    <!-- LEFT: HP + MP bars (editable) -->
+    <!-- LEFT: HP / MP / VLR bars -->
     <div class="gp-bars">
       <div class="gp-bar gp-hp">
         <div class="gp-bar-text">HP:&nbsp;<input id="gpStatHP" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="HP">&nbsp;/&nbsp;<span id="gpHpMax">0</span><span class="gp-bar-bonus" id="gpHpBonus"></span></div>
@@ -419,21 +425,33 @@
       <div class="gp-bar gp-mp">
         <div class="gp-bar-text">MP:&nbsp;<input id="gpStatMANA" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="MANA">&nbsp;/&nbsp;<span id="gpMpMax">0</span><span class="gp-bar-bonus" id="gpMpBonus"></span></div>
       </div>
+      <div class="gp-bar gp-vlr">
+        <div class="gp-bar-text">BASE VLR:&nbsp;<input id="gpStatVLR" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="VLR" style="width:68px"></div>
+      </div>
       <div class="gp-mode-row">
-        <label class="gp-mode-label"><input type="radio" name="statMode" value="base" checked> base stats</label>
+        <label class="gp-mode-label"><input type="radio" name="statMode" value="base" checked> base</label>
         <label class="gp-mode-label"><input type="radio" name="statMode" value="final"> with gear</label>
       </div>
     </div>
 
-    <!-- MIDDLE: 4 equipment slots -->
-    <div class="gp-slots">
-      <div class="gp-slot" id="cpSlotWeapon"    title="Weapon"></div>
-      <div class="gp-slot" id="cpSlotSecondary"  title="Secondary"></div>
-      <div class="gp-slot" id="cpSlotArmor"      title="Armor"></div>
-      <div class="gp-slot" id="cpSlotAccessory"  title="Accessory"></div>
+    <!-- MIDDLE: 4 equipment slots + 5 nav buttons -->
+    <div class="gp-center">
+      <div class="gp-slots">
+        <div class="gp-slot" id="cpSlotWeapon"    title="Weapon"></div>
+        <div class="gp-slot" id="cpSlotSecondary"  title="Secondary"></div>
+        <div class="gp-slot" id="cpSlotArmor"      title="Armor"></div>
+        <div class="gp-slot" id="cpSlotAccessory"  title="Accessory"></div>
+      </div>
+      <div class="gp-nav-btns">
+        <div class="gp-nav-btn">&#128100;</div>
+        <div class="gp-nav-btn">&#127890;</div>
+        <div class="gp-nav-btn">&#128202;</div>
+        <div class="gp-nav-btn">&#128274;</div>
+        <div class="gp-nav-btn">&#128101;</div>
+      </div>
     </div>
 
-    <!-- RIGHT: 6 stats grid (VIT/WIS/DEF | DEX/ATK/SPD) -->
+    <!-- RIGHT: stats grid (VIT/DEX | WIS/ATK | DEF/SPD) -->
     <div class="gp-stats">
       <div class="gp-stat-row">
         <div class="gp-stat"><div class="gp-icon gp-vit"></div><span class="gp-sname">VIT:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="VIT"><span class="gp-bonus" id="gpBonusVIT"></span></div>
@@ -1136,7 +1154,7 @@
   var db = loadDb();
 
   var state = {
-    stats: { ATK: 0, DEX: 0, WIS: 0, VIT: 0, DEF: 0, SPD: 0, HP: 0, MANA: 0 },
+    stats: { ATK: 0, DEX: 0, WIS: 0, VIT: 0, DEF: 0, SPD: 0, HP: 0, MANA: 0, VLR: 0 },
     weaponId: db.weapons.length ? db.weapons[0].id : null,
     secondaryId: "",
     armorId: "",
