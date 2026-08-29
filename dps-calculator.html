@@ -1,6 +1,8 @@
 <title>Pixel Quest DPS Calculator</title>
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
   :root {
     --bg: #ffffff;
     --surface: #ffffff;
@@ -257,105 +259,78 @@
 
   .note { font-size: 0.75rem; color: var(--text-dim); margin-top: 8px; }
 
-  /* ---- Character Panel ---- */
-  .char-panel {
+  /* ---- Game Panel ---- */
+  .game-panel {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: #1a1a2e;
-    border: 2px solid #333;
-    padding: 10px 14px;
+    gap: 10px;
+    background: #28283a;
+    border: 2px solid #555564;
+    padding: 8px 12px;
     margin-bottom: 16px;
+    font-family: 'VT323', 'Courier New', monospace;
     flex-wrap: wrap;
   }
-  .char-bars {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 160px;
+  .gp-bars { display: flex; flex-direction: column; gap: 5px; }
+  .gp-bar {
+    width: 200px; height: 28px;
+    border-radius: 3px; border: 1px solid #111;
+    display: flex; align-items: center;
+    position: relative; overflow: hidden;
   }
-  .char-bar {
-    position: relative;
-    height: 22px;
-    border-radius: 3px;
-    overflow: hidden;
-    background: #111;
-    border: 1px solid #444;
-  }
-  .char-bar-fill {
-    position: absolute; inset: 0;
-    border-radius: 3px;
-  }
-  .char-bar-fill.hp  { background: #c0392b; }
-  .char-bar-fill.mp  { background: #2980b9; }
-  .char-bar-label {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #fff;
+  .gp-hp { background: #9b1c1c; }
+  .gp-mp { background: #1a4c8a; }
+  .gp-bar-text {
+    position: relative; z-index: 1;
+    color: #fff; font-size: 17px; letter-spacing: 0.5px;
     text-shadow: 1px 1px 0 #000;
-    font-family: ui-monospace, monospace;
+    padding: 0 8px;
+    display: flex; align-items: center; gap: 2px;
     white-space: nowrap;
   }
-  .char-equip-slots {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  .char-slot {
-    width: 52px; height: 52px;
-    background: #2a2a3a;
-    border: 2px solid #555;
-    border-radius: 3px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .char-slot img {
-    width: 44px; height: 44px;
-    object-fit: contain;
-    image-rendering: pixelated;
-  }
-  .char-slot-empty {
-    width: 32px; height: 32px;
-    background: #333;
-    border-radius: 2px;
-  }
-  .char-stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px 16px;
-    margin-left: auto;
-  }
-  .char-stat {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.82rem;
-    font-family: ui-monospace, monospace;
-    color: #eee;
-  }
-  .char-stat-icon {
-    width: 18px; height: 18px;
-    border-radius: 2px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.55rem;
-    font-weight: 900;
-    color: #fff;
+  .gp-stat-input {
+    background: transparent; border: none; outline: none;
+    color: #fff; font: inherit; font-size: 17px;
     text-shadow: 1px 1px 0 #000;
-    flex-shrink: 0;
-    image-rendering: pixelated;
+    width: 52px; padding: 0; margin: 0;
+    -moz-appearance: textfield;
   }
-  .char-stat-icon.vit { background: #2d7a3a; border: 1px solid #3da04a; }
-  .char-stat-icon.wis { background: #6a3d9a; border: 1px solid #9b59b6; }
-  .char-stat-icon.def { background: #1a5fa0; border: 1px solid #2980b9; }
-  .char-stat-icon.dex { background: #b03020; border: 1px solid #e74c3c; }
-  .char-stat-icon.atk { background: #c0601a; border: 1px solid #e67e22; }
-  .char-stat-icon.spd { background: #9a7a00; border: 1px solid #f1c40f; }
-  .char-stat-name { color: #aaa; font-size: 0.75rem; }
-  .char-stat-val { color: #fff; font-weight: 700; }
-  .char-stat-bonus { color: #4caf50; font-size: 0.72rem; }
+  .gp-stat-input::-webkit-inner-spin-button,
+  .gp-stat-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .gp-bar-bonus { color: #5dde5d; font-size: 15px; margin-left: 3px; }
+  .gp-mode-row { display: flex; gap: 10px; margin-top: 3px; }
+  .gp-mode-label { color: #aaa; font-size: 13px; font-family: system-ui, sans-serif; cursor: pointer; }
+
+  .gp-slots { display: flex; gap: 5px; }
+  .gp-slot {
+    width: 58px; height: 58px;
+    background: #38384e; border: 2px solid #5a5a72;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+  }
+  .gp-slot img { width: 50px; height: 50px; object-fit: contain; image-rendering: pixelated; }
+  .gp-slot-empty { width: 36px; height: 36px; background: #2a2a3e; border-radius: 2px; }
+
+  .gp-stats { display: flex; flex-direction: column; gap: 4px; margin-left: auto; }
+  .gp-stat-row { display: flex; gap: 16px; }
+  .gp-stat {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 18px; color: #fff;
+    text-shadow: 1px 1px 0 #000;
+    min-width: 120px;
+  }
+  .gp-icon {
+    width: 22px; height: 22px; border-radius: 2px; flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .gp-vit { background: #2d7a3a; }
+  .gp-wis { background: #6a3d9a; }
+  .gp-def { background: #1a5fa0; }
+  .gp-dex { background: #b03020; }
+  .gp-atk { background: #c0601a; }
+  .gp-spd { background: #9a7a00; }
+  .gp-sname { color: #ccc; }
+  .gp-bonus { color: #5dde5d; font-size: 15px; }
 
   /* Custom weapon picker */
   .wpk { position: relative; }
@@ -435,46 +410,48 @@
   <h1>Pixel Quest DPS Calculator</h1>
   <p class="tagline">Enter your stats with no gear equipped, pick a weapon and equipment, see your average DPS from a simulated 30-second fight against a dummy — mana, cooldowns, and flag/buff downtime all tracked tick by tick.</p>
 
-  <div class="char-panel" id="charPanel">
-    <div class="char-bars">
-      <div class="char-bar" style="width:180px">
-        <div class="char-bar-fill hp" id="cpHpFill" style="width:100%"></div>
-        <div class="char-bar-label" id="cpHpLabel">HP: — / —</div>
+  <div class="game-panel">
+    <!-- LEFT: HP + MP bars (editable) -->
+    <div class="gp-bars">
+      <div class="gp-bar gp-hp">
+        <div class="gp-bar-text">HP:&nbsp;<input id="gpStatHP" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="HP">&nbsp;/&nbsp;<span id="gpHpMax">0</span><span class="gp-bar-bonus" id="gpHpBonus"></span></div>
       </div>
-      <div class="char-bar" style="width:180px">
-        <div class="char-bar-fill mp" id="cpMpFill" style="width:100%"></div>
-        <div class="char-bar-label" id="cpMpLabel">MP: — / —</div>
+      <div class="gp-bar gp-mp">
+        <div class="gp-bar-text">MP:&nbsp;<input id="gpStatMANA" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="MANA">&nbsp;/&nbsp;<span id="gpMpMax">0</span><span class="gp-bar-bonus" id="gpMpBonus"></span></div>
+      </div>
+      <div class="gp-mode-row">
+        <label class="gp-mode-label"><input type="radio" name="statMode" value="base" checked> base stats</label>
+        <label class="gp-mode-label"><input type="radio" name="statMode" value="final"> with gear</label>
       </div>
     </div>
-    <div class="char-equip-slots">
-      <div class="char-slot" id="cpSlotWeapon"   title="Weapon"><div class="char-slot-empty"></div></div>
-      <div class="char-slot" id="cpSlotSecondary" title="Secondary"><div class="char-slot-empty"></div></div>
-      <div class="char-slot" id="cpSlotArmor"    title="Armor"><div class="char-slot-empty"></div></div>
-      <div class="char-slot" id="cpSlotAccessory" title="Accessory"><div class="char-slot-empty"></div></div>
+
+    <!-- MIDDLE: 4 equipment slots -->
+    <div class="gp-slots">
+      <div class="gp-slot" id="cpSlotWeapon"    title="Weapon"></div>
+      <div class="gp-slot" id="cpSlotSecondary"  title="Secondary"></div>
+      <div class="gp-slot" id="cpSlotArmor"      title="Armor"></div>
+      <div class="gp-slot" id="cpSlotAccessory"  title="Accessory"></div>
     </div>
-    <div class="char-stats-grid">
-      <div class="char-stat"><div class="char-stat-icon vit">VIT</div><span class="char-stat-name">VIT:</span><span class="char-stat-val" id="cpVit">—</span><span class="char-stat-bonus" id="cpVitB"></span></div>
-      <div class="char-stat"><div class="char-stat-icon dex">DEX</div><span class="char-stat-name">DEX:</span><span class="char-stat-val" id="cpDex">—</span><span class="char-stat-bonus" id="cpDexB"></span></div>
-      <div class="char-stat"><div class="char-stat-icon wis">WIS</div><span class="char-stat-name">WIS:</span><span class="char-stat-val" id="cpWis">—</span><span class="char-stat-bonus" id="cpWisB"></span></div>
-      <div class="char-stat"><div class="char-stat-icon atk">ATK</div><span class="char-stat-name">ATK:</span><span class="char-stat-val" id="cpAtk">—</span><span class="char-stat-bonus" id="cpAtkB"></span></div>
-      <div class="char-stat"><div class="char-stat-icon def">DEF</div><span class="char-stat-name">DEF:</span><span class="char-stat-val" id="cpDef">—</span><span class="char-stat-bonus" id="cpDefB"></span></div>
-      <div class="char-stat"><div class="char-stat-icon spd">SPD</div><span class="char-stat-name">SPD:</span><span class="char-stat-val" id="cpSpd">—</span><span class="char-stat-bonus" id="cpSpdB"></span></div>
+
+    <!-- RIGHT: 6 stats grid (VIT/WIS/DEF | DEX/ATK/SPD) -->
+    <div class="gp-stats">
+      <div class="gp-stat-row">
+        <div class="gp-stat"><div class="gp-icon gp-vit"></div><span class="gp-sname">VIT:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="VIT"><span class="gp-bonus" id="gpBonusVIT"></span></div>
+        <div class="gp-stat"><div class="gp-icon gp-dex"></div><span class="gp-sname">DEX:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="DEX"><span class="gp-bonus" id="gpBonusDEX"></span></div>
+      </div>
+      <div class="gp-stat-row">
+        <div class="gp-stat"><div class="gp-icon gp-wis"></div><span class="gp-sname">WIS:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="WIS"><span class="gp-bonus" id="gpBonusWIS"></span></div>
+        <div class="gp-stat"><div class="gp-icon gp-atk"></div><span class="gp-sname">ATK:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="ATK"><span class="gp-bonus" id="gpBonusATK"></span></div>
+      </div>
+      <div class="gp-stat-row">
+        <div class="gp-stat"><div class="gp-icon gp-def"></div><span class="gp-sname">DEF:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="DEF"><span class="gp-bonus" id="gpBonusDEF"></span></div>
+        <div class="gp-stat"><div class="gp-icon gp-spd"></div><span class="gp-sname">SPD:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="SPD"><span class="gp-bonus" id="gpBonusSPD"></span></div>
+      </div>
     </div>
   </div>
 
   <div class="layout">
     <div>
-      <div class="card">
-        <h2>Character Stats</h2>
-        <div class="sub" style="display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline;">
-          <span>Input mode:</span>
-          <label><input type="radio" name="statMode" value="base" checked> unequipped (calc adds gear + weapon bonuses)</label>
-          <label><input type="radio" name="statMode" value="final"> fully equipped (use my numbers as-is)</label>
-        </div>
-        <p class="sub" id="statModeHint">Enter what you'd have with nothing equipped. The <b>bold number</b> under each field is your actual stat after armour / accessory / weapon bonuses — that's what the simulation uses.</p>
-        <div class="stat-grid" id="statGrid"></div>
-      </div>
-
       <div class="card">
         <h2>Weapon</h2>
         <p class="sub">Base damage &amp; fire rate from the wiki — each weapon scales off its own stat.</p>
@@ -1183,61 +1160,27 @@
     { key: "MANA", desc: function () { return "flat Mana pool"; } }
   ];
 
-  var statGrid = document.getElementById("statGrid");
-  statMeta.forEach(function (m) {
-    var field = document.createElement("div");
-    field.className = "stat-field";
-    field.innerHTML =
-      '<label>' + STAT_LABELS[m.key] + '</label>' +
-      '<input type="number" min="0" step="1" data-stat="' + m.key + '" value="' + state.stats[m.key] + '">' +
-      '<div class="derived" data-derived="' + m.key + '"></div>';
-    statGrid.appendChild(field);
-  });
-
-  statGrid.addEventListener("input", function (e) {
-    var key = e.target.getAttribute("data-stat");
-    if (!key) return;
-    var val = parseFloat(e.target.value);
-    state.stats[key] = isNaN(val) ? 0 : val;
-    renderDerived();
-    compute();
-  });
-
-  var statModeHint = document.getElementById("statModeHint");
-  Array.prototype.forEach.call(document.querySelectorAll('input[name="statMode"]'), function (r) {
-    r.addEventListener("change", function () {
-      if (!r.checked) return;
-      state.statMode = r.value;
-      statModeHint.innerHTML = r.value === "final"
-        ? "Enter your stats <b>with everything equipped</b> (straight off your in-game stat screen). The calculator uses them exactly as typed and does <b>not</b> add item bonuses on top."
-        : "Enter what you'd have with nothing equipped. The <b>bold number</b> under each field is your actual stat after armour / accessory / weapon bonuses — that's what the simulation uses.";
+  // Wire up the inline stat inputs in the game panel
+  document.querySelectorAll(".gp-stat-input").forEach(function (inp) {
+    inp.value = state.stats[inp.dataset.stat] || 0;
+    inp.addEventListener("input", function () {
+      var val = parseFloat(this.value);
+      state.stats[this.dataset.stat] = isNaN(val) ? 0 : val;
       renderDerived();
       compute();
     });
   });
 
-  function renderDerived() {
-    var eff = effectiveStats();
-    // How much more a flag-type secondary would add on top (only while its buff is up).
-    var flagAdd = {};
-    var flagSec = equippedGearList().find(function (g) { return g.isFlagBuff && g.statMods; });
-    if (flagSec) Object.keys(flagSec.statMods).forEach(function (k) { flagAdd[k] = flagSec.statMods[k]; });
-    // "would gain" hint for the current weapon's conditional passive when it's toggled off.
-    var condW = getWeapon(), condAdd = {};
-    if (condW && condW.condMods && !state.applyCond) Object.keys(condW.condMods).forEach(function (k) { condAdd[k] = condW.condMods[k]; });
-
-    statMeta.forEach(function (m) {
-      var el = statGrid.querySelector('[data-derived="' + m.key + '"]');
-      if (!el) return;
-      var b = state.stats[m.key] || 0, e = Math.round(eff[m.key] || 0), d = e - b;
-      var head = d !== 0
-        ? '<b>' + e + '</b> <span style="color:var(--text-dim)">(' + b + (d >= 0 ? ' +' + d : ' ' + d) + ' weapon/gear)</span>'
-        : '<b>' + e + '</b>';
-      if (flagAdd[m.key]) head += ' <span style="color:var(--text-dim)">→ ' + (e + flagAdd[m.key]) + ' while flag up</span>';
-      if (condAdd[m.key]) head += ' <span style="color:var(--text-dim)">→ ' + (e + condAdd[m.key]) + ' with ' + (condW.condLabel || "passive") + '</span>';
-      el.innerHTML = head + ' &nbsp;·&nbsp; ' + m.desc(e);
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="statMode"]'), function (r) {
+    r.addEventListener("change", function () {
+      if (!r.checked) return;
+      state.statMode = r.value;
+      renderDerived();
+      compute();
     });
-  }
+  });
+
+  function renderDerived() {}
 
   function equippedGearList() {
     return [state.secondaryId, state.armorId, state.accessoryId]
@@ -2575,47 +2518,39 @@
     var base = state.stats;
 
     // HP / MP bars
-    var hp = Math.round(eff.HP || 0);
-    var mp = Math.round(eff.MANA || 0);
-    var hpBase = base.HP || 0;
-    var mpBase = base.MANA || 0;
-    var hpBonus = hp - hpBase;
-    var mpBonus = mp - mpBase;
-    document.getElementById("cpHpLabel").textContent = "HP: " + hp + " / " + hp + (hpBonus > 0 ? " (+" + hpBonus + ")" : "");
-    document.getElementById("cpMpLabel").textContent = "MP: " + mp + " / " + mp + (mpBonus > 0 ? " (+" + mpBonus + ")" : "");
+    var effHP = Math.round(eff.HP || 0);
+    var effMP = Math.round(eff.MANA || 0);
+    var hpBonus = effHP - (base.HP || 0);
+    var mpBonus = effMP - (base.MANA || 0);
+    document.getElementById("gpHpMax").textContent = effHP;
+    document.getElementById("gpMpMax").textContent = effMP;
+    document.getElementById("gpHpBonus").textContent = hpBonus > 0 ? "(+" + hpBonus + ")" : "";
+    document.getElementById("gpMpBonus").textContent = mpBonus > 0 ? "(+" + mpBonus + ")" : "";
 
     // Equipment slot icons
-    function setSlotImg(elId, imgUrl) {
+    function setSlot(elId, imgUrl) {
       var el = document.getElementById(elId);
       if (imgUrl) {
-        el.innerHTML = '<img src="' + imgUrl + '" alt="" onerror="this.style.display=\'none\'">';
+        el.innerHTML = '<img src="' + imgUrl + '" alt="">';
       } else {
-        el.innerHTML = '<div class="char-slot-empty"></div>';
+        el.innerHTML = '<div class="gp-slot-empty"></div>';
       }
     }
     var w = getWeapon();
-    setSlotImg("cpSlotWeapon",    w ? (WEAPON_IMG[w.id] ? "img/" + WEAPON_IMG[w.id] : null) : null);
-    var secG = state.secondaryId  ? db.gear.find(function(g){return g.id===state.secondaryId;})  : null;
-    var armG = state.armorId      ? db.gear.find(function(g){return g.id===state.armorId;})      : null;
-    var accG = state.accessoryId  ? db.gear.find(function(g){return g.id===state.accessoryId;})  : null;
-    setSlotImg("cpSlotSecondary", secG && GEAR_IMG[secG.id] ? "img/" + GEAR_IMG[secG.id] : null);
-    setSlotImg("cpSlotArmor",     armG && GEAR_IMG[armG.id] ? "img/" + GEAR_IMG[armG.id] : null);
-    setSlotImg("cpSlotAccessory", accG && GEAR_IMG[accG.id] ? "img/" + GEAR_IMG[accG.id] : null);
+    setSlot("cpSlotWeapon",    w && WEAPON_IMG[w.id] ? "img/" + WEAPON_IMG[w.id] : null);
+    var secG = state.secondaryId ? db.gear.find(function(g){return g.id===state.secondaryId;}) : null;
+    var armG = state.armorId     ? db.gear.find(function(g){return g.id===state.armorId;})     : null;
+    var accG = state.accessoryId ? db.gear.find(function(g){return g.id===state.accessoryId;}) : null;
+    setSlot("cpSlotSecondary", secG && GEAR_IMG[secG.id] ? "img/" + GEAR_IMG[secG.id] : null);
+    setSlot("cpSlotArmor",     armG && GEAR_IMG[armG.id] ? "img/" + GEAR_IMG[armG.id] : null);
+    setSlot("cpSlotAccessory", accG && GEAR_IMG[accG.id] ? "img/" + GEAR_IMG[accG.id] : null);
 
-    // Stats
-    function setStat(key, valId, bonusId) {
-      var effVal = Math.round(eff[key] || 0);
-      var baseVal = Math.round(base[key] || 0);
-      var bonus = effVal - baseVal;
-      document.getElementById(valId).textContent = effVal;
-      document.getElementById(bonusId).textContent = bonus > 0 ? "(+" + bonus + ")" : bonus < 0 ? "(" + bonus + ")" : "";
-    }
-    setStat("VIT",  "cpVit",  "cpVitB");
-    setStat("DEX",  "cpDex",  "cpDexB");
-    setStat("WIS",  "cpWis",  "cpWisB");
-    setStat("ATK",  "cpAtk",  "cpAtkB");
-    setStat("DEF",  "cpDef",  "cpDefB");
-    setStat("SPD",  "cpSpd",  "cpSpdB");
+    // Stat bonuses
+    ["VIT","DEX","WIS","ATK","DEF","SPD"].forEach(function(k) {
+      var bonus = Math.round((eff[k] || 0) - (base[k] || 0));
+      var el = document.getElementById("gpBonus" + k);
+      if (el) el.textContent = bonus > 0 ? "(+" + bonus + ")" : bonus < 0 ? "(" + bonus + ")" : "";
+    });
   }
 
   // ---------- DB TABLES ----------
