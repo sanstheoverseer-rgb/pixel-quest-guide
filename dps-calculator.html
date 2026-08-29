@@ -261,82 +261,85 @@
 
   /* ---- Game Panel ---- */
   .game-panel {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #1e1e2c;
-    border: 2px solid #3a3a52;
-    padding: 8px 10px;
-    margin-bottom: 16px;
+    position: relative;
+    width: 831px;
+    height: 142px;
+    background: url('img/game-panel-bg.png') no-repeat 0 0 / 100% 100%;
+    margin-bottom: 4px;
     font-family: 'VT323', monospace;
+    overflow: hidden;
+    max-width: 100%;
   }
-  .gp-bars { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+
+  /* Bars: cover and replace the screenshot's bar area */
+  .gp-bars {
+    position: absolute;
+    left: 5px; top: 5px;
+    display: flex; flex-direction: column; gap: 3px;
+  }
   .gp-bar {
-    width: 236px; height: 26px;
-    border: 2px solid #000;
+    width: 237px; height: 35px;
+    border: 2px solid #111;
     display: flex; align-items: center;
+    overflow: hidden;
   }
   .gp-hp  { background: #7a1212; }
   .gp-mp  { background: #12267a; }
   .gp-vlr { background: #7a5800; }
   .gp-bar-text {
-    color: #fff; font-size: 20px; letter-spacing: 0.3px;
+    color: #fff; font-size: 20px;
     text-shadow: 1px 1px 0 #000;
     padding: 0 6px;
     display: flex; align-items: center; gap: 2px;
-    white-space: nowrap; width: 100%;
+    white-space: nowrap;
   }
   .gp-stat-input {
     background: transparent; border: none; outline: none;
     color: #fff; font: inherit; font-size: 20px;
     text-shadow: 1px 1px 0 #000;
-    width: 50px; padding: 0; margin: 0;
+    width: 44px; padding: 0; margin: 0;
     -moz-appearance: textfield;
   }
   .gp-stat-input::-webkit-inner-spin-button,
   .gp-stat-input::-webkit-outer-spin-button { -webkit-appearance: none; }
   .gp-bar-bonus { color: #6dff6d; font-size: 18px; }
-  .gp-mode-row { display: flex; gap: 8px; margin-top: 2px; }
-  .gp-mode-label { color: #999; font-size: 12px; font-family: system-ui, sans-serif; cursor: pointer; }
 
-  .gp-center { display: flex; flex-direction: column; gap: 4px; align-items: center; }
-  .gp-slots { display: flex; gap: 3px; }
+  /* Slots: transparent so screenshot's empty-slot graphics show through */
   .gp-slot {
-    width: 54px; height: 54px;
-    background: #2a2a3e; border: 2px solid #4a4a64;
+    position: absolute;
+    top: 4px; width: 56px; height: 68px;
+    background: transparent;
     display: flex; align-items: center; justify-content: center;
   }
-  .gp-slot img { width: 46px; height: 46px; object-fit: contain; image-rendering: pixelated; }
-  .gp-slot-empty { width: 32px; height: 32px; background: #1e1e30; }
-  .gp-nav-btns { display: flex; gap: 3px; }
-  .gp-nav-btn {
-    width: 28px; height: 24px;
-    background: #2a2a3e; border: 2px solid #4a4a64;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; color: #bbb; cursor: default; user-select: none;
+  #cpSlotWeapon    { left: 247px; }
+  #cpSlotSecondary { left: 304px; }
+  #cpSlotArmor     { left: 362px; }
+  #cpSlotAccessory { left: 420px; }
+  .gp-slot img { width: 50px; height: 50px; object-fit: contain; image-rendering: pixelated; }
+
+  /* Stat number inputs: dark bg covers baked-in screenshot numbers */
+  .gp-stat-num {
+    position: absolute;
+    background: #1c1c2b; border: none; outline: none;
+    color: #fff; font-family: 'VT323', monospace; font-size: 20px;
+    text-shadow: 1px 1px 0 #000;
+    width: 44px; height: 26px; padding: 0; margin: 0;
+    -moz-appearance: textfield;
+  }
+  .gp-stat-num::-webkit-inner-spin-button,
+  .gp-stat-num::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  /* Bonus spans ("+13" etc) */
+  .gp-bonus {
+    position: absolute;
+    color: #6dff6d; font-family: 'VT323', monospace; font-size: 18px;
+    text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
+    pointer-events: none;
   }
 
-  .gp-stats { display: flex; flex-direction: column; gap: 3px; margin-left: auto; }
-  .gp-stat-row { display: flex; gap: 10px; }
-  .gp-stat {
-    display: flex; align-items: center; gap: 4px;
-    font-size: 20px; color: #fff;
-    text-shadow: 1px 1px 0 #000;
-    min-width: 118px;
-  }
-  .gp-icon {
-    width: 22px; height: 22px; flex-shrink: 0;
-    border: 1px solid rgba(0,0,0,0.6);
-    image-rendering: pixelated;
-  }
-  .gp-vit { background: #2e7d32; }
-  .gp-wis { background: #6a1b9a; }
-  .gp-def { background: #1565c0; }
-  .gp-dex { background: #b71c1c; }
-  .gp-atk { background: #e65100; }
-  .gp-spd { background: #f57f17; }
-  .gp-sname { color: #ddd; }
-  .gp-bonus { color: #6dff6d; font-size: 18px; }
+  .gp-mode-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .gp-mode-label { color: #999; font-size: 12px; font-family: system-ui, sans-serif; cursor: pointer; }
 
   /* Custom weapon picker */
   .wpk { position: relative; }
@@ -417,7 +420,7 @@
   <p class="tagline">Enter your stats with no gear equipped, pick a weapon and equipment, see your average DPS from a simulated 30-second fight against a dummy — mana, cooldowns, and flag/buff downtime all tracked tick by tick.</p>
 
   <div class="game-panel">
-    <!-- LEFT: HP / MP / VLR bars -->
+    <!-- Bars: cover the screenshot bars with real colored bars containing editable inputs -->
     <div class="gp-bars">
       <div class="gp-bar gp-hp">
         <div class="gp-bar-text">HP:&nbsp;<input id="gpStatHP" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="HP">&nbsp;/&nbsp;<span id="gpHpMax">0</span><span class="gp-bar-bonus" id="gpHpBonus"></span></div>
@@ -426,46 +429,39 @@
         <div class="gp-bar-text">MP:&nbsp;<input id="gpStatMANA" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="MANA">&nbsp;/&nbsp;<span id="gpMpMax">0</span><span class="gp-bar-bonus" id="gpMpBonus"></span></div>
       </div>
       <div class="gp-bar gp-vlr">
-        <div class="gp-bar-text">BASE VLR:&nbsp;<input id="gpStatVLR" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="VLR" style="width:68px"></div>
-      </div>
-      <div class="gp-mode-row">
-        <label class="gp-mode-label"><input type="radio" name="statMode" value="base" checked> base</label>
-        <label class="gp-mode-label"><input type="radio" name="statMode" value="final"> with gear</label>
+        <div class="gp-bar-text">BASE VLR:&nbsp;<input id="gpStatVLR" class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="VLR" style="width:66px"></div>
       </div>
     </div>
 
-    <!-- MIDDLE: 4 equipment slots + 5 nav buttons -->
-    <div class="gp-center">
-      <div class="gp-slots">
-        <div class="gp-slot" id="cpSlotWeapon"    title="Weapon"></div>
-        <div class="gp-slot" id="cpSlotSecondary"  title="Secondary"></div>
-        <div class="gp-slot" id="cpSlotArmor"      title="Armor"></div>
-        <div class="gp-slot" id="cpSlotAccessory"  title="Accessory"></div>
-      </div>
-      <div class="gp-nav-btns">
-        <div class="gp-nav-btn">&#128100;</div>
-        <div class="gp-nav-btn">&#127890;</div>
-        <div class="gp-nav-btn">&#128202;</div>
-        <div class="gp-nav-btn">&#128274;</div>
-        <div class="gp-nav-btn">&#128101;</div>
-      </div>
-    </div>
+    <!-- Equipment slots: transparent so screenshot slot graphics show through when empty -->
+    <div class="gp-slot" id="cpSlotWeapon"    title="Weapon"></div>
+    <div class="gp-slot" id="cpSlotSecondary"  title="Secondary"></div>
+    <div class="gp-slot" id="cpSlotArmor"      title="Armor"></div>
+    <div class="gp-slot" id="cpSlotAccessory"  title="Accessory"></div>
 
-    <!-- RIGHT: stats grid (VIT/DEX | WIS/ATK | DEF/SPD) -->
-    <div class="gp-stats">
-      <div class="gp-stat-row">
-        <div class="gp-stat"><div class="gp-icon gp-vit"></div><span class="gp-sname">VIT:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="VIT"><span class="gp-bonus" id="gpBonusVIT"></span></div>
-        <div class="gp-stat"><div class="gp-icon gp-dex"></div><span class="gp-sname">DEX:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="DEX"><span class="gp-bonus" id="gpBonusDEX"></span></div>
-      </div>
-      <div class="gp-stat-row">
-        <div class="gp-stat"><div class="gp-icon gp-wis"></div><span class="gp-sname">WIS:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="WIS"><span class="gp-bonus" id="gpBonusWIS"></span></div>
-        <div class="gp-stat"><div class="gp-icon gp-atk"></div><span class="gp-sname">ATK:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="ATK"><span class="gp-bonus" id="gpBonusATK"></span></div>
-      </div>
-      <div class="gp-stat-row">
-        <div class="gp-stat"><div class="gp-icon gp-def"></div><span class="gp-sname">DEF:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="DEF"><span class="gp-bonus" id="gpBonusDEF"></span></div>
-        <div class="gp-stat"><div class="gp-icon gp-spd"></div><span class="gp-sname">SPD:</span><input class="gp-stat-input" type="number" min="0" step="1" value="0" data-stat="SPD"><span class="gp-bonus" id="gpBonusSPD"></span></div>
-      </div>
-    </div>
+    <!-- Stat numbers: inputs positioned over the screenshot's stat numbers -->
+    <!-- VIT row (top) -->
+    <input class="gp-stat-num gp-stat-input" type="number" min="0" step="1" value="0" data-stat="VIT" style="left:552px;top:9px">
+    <span  class="gp-bonus" id="gpBonusVIT" style="left:598px;top:9px"></span>
+    <!-- DEX row (top right) -->
+    <input class="gp-stat-num gp-stat-input" type="number" min="0" step="1" value="0" data-stat="DEX" style="left:724px;top:9px">
+    <span  class="gp-bonus" id="gpBonusDEX" style="left:770px;top:9px"></span>
+    <!-- WIS row (mid) -->
+    <input class="gp-stat-num gp-stat-input" type="number" min="0" step="1" value="0" data-stat="WIS" style="left:552px;top:48px">
+    <span  class="gp-bonus" id="gpBonusWIS" style="left:598px;top:48px"></span>
+    <!-- ATK row (mid right) -->
+    <input class="gp-stat-num gp-stat-input" type="number" min="0" step="1" value="0" data-stat="ATK" style="left:724px;top:48px">
+    <span  class="gp-bonus" id="gpBonusATK" style="left:770px;top:48px"></span>
+    <!-- DEF row (bot) -->
+    <input class="gp-stat-num gp-stat-input" type="number" min="0" step="1" value="0" data-stat="DEF" style="left:552px;top:87px">
+    <span  class="gp-bonus" id="gpBonusDEF" style="left:598px;top:87px"></span>
+    <!-- SPD row (bot right) -->
+    <input class="gp-stat-num gp-stat-input" type="number" min="0" step="1" value="0" data-stat="SPD" style="left:724px;top:87px">
+    <span  class="gp-bonus" id="gpBonusSPD" style="left:770px;top:87px"></span>
+  </div>
+  <div class="gp-mode-row">
+    <label class="gp-mode-label"><input type="radio" name="statMode" value="base" checked> base stats</label>
+    <label class="gp-mode-label"><input type="radio" name="statMode" value="final"> with gear</label>
   </div>
 
   <div class="layout">
