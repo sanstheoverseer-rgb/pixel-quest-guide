@@ -678,7 +678,7 @@
     { id: "elementary_staff", name: "Elementary Staff", type: "Staff", dmgMin: 25, dmgMax: 35, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj, 40% def pen" },
     { id: "elementary_staff_of_doom", name: "Elementary Staff OF DOOM", type: "Staff", dmgMin: 50, dmgMax: 70, shots: 6, fireRate: 3.5, range: 9, verified: true, notes: "6 simultaneous projectiles per attack" },
     { id: "ember_staff", name: "Ember Staff", type: "Staff", dmgMin: 40, dmgMax: 55, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "40% def pen, 2 proj, sine pattern" },
-    { id: "emerald_ouroboros", name: "Emerald Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, shots: 2, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDecay: 40, dotDuration: 2, dotPerShot: true, statMods: { WIS: 8, ATK: 8 }, secHitDmgFlat: 60, verified: true, notes: "WIS+8/ATK+8 on equip. 2 shots, 60% def pen. On Hit: 70 DPS poison 2s (per shot). Serpent: every 4 hits fires 3 proj @40 each (120 total; 2 hits/swing → 60/swing EV, true dmg) + 110 DPS poison 3s (serpent poison not yet modeled). Corrupted" },
+    { id: "emerald_ouroboros", name: "Emerald Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, shots: 2, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDecay: 40, dotDuration: 2, dotPerShot: true, statMods: { WIS: 8, ATK: 8 }, secHitDmgFlat: 60, serpentDotDps: 110, serpentDotDuration: 3, serpentDotDecay: 0, serpentDotHits: 1.5, verified: true, notes: "WIS+8/ATK+8 on equip. 2 shots, 60% def pen. On Hit: 70 DPS poison 2s (per shot). Serpent: every 4 hits fires 3 proj @40 each (120 total; 2 hits/swing → 60/swing EV, true dmg) + each proj applies 110 DPS poison 3s (1.5 applications/swing modeled)" },
     { id: "emerald_sword", name: "Emerald Sword", type: "Sword", dmgMin: 240, dmgMax: 280, fireRate: 1.6, range: 4, statMods: { DEF: 5, VIT: 14 }, verified: true, notes: "DEF+5/VIT+14 on equip. Pierces" },
     { id: "eternal_winter", name: "Eternal Winter", type: "Bow", shots: 2, dmgMin: 94, dmgMax: 102, fireRate: 4, range: 8.75, statMods: { DEF: -10, HP: -25 }, secHitDmgFlat: 75, coldStreak: { maxDex: 50, duration: 2, multiShotChance: 0.25, multiShotHits: 2 }, verified: true, notes: "⚠️ DPS figure currently under review — in-game numbers don't match calc, likely base damage range or dummy DEF interaction needs more testing. Corrupted. OVERRIDE_PROJECTILE_COUNT:2 (shots:2). DEF-10/HP-25 on equip. Multi-Shot: 25% chance per swing to fire +2 proj @100-200 true dmg (~150 avg, 75/swing EV, no ATK scaling). Cold Streak: +1 DEX per hit landed for 2s, cap +50 DEX — sim tracks each stack, base shots + multi-shot hits contribute, DEX feeds back into fire rate. 80% def pen, pierces. Drop: Corrupted Arctic Deer" },
     { id: "executioners_staff", name: "Executioner's Staff", type: "Staff", dmgMin: 45, dmgMax: 60, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "40% def pen, 2 proj sine" },
@@ -2424,6 +2424,11 @@
       dotSources.push({ label: (w.dotType === "poison" ? "Poison" : "Extra") + " — " + w.name,
         dps: w.dotDps, type: w.dotType || "flat", duration: w.dotDuration, decay: w.dotDecay, effectCd: w.dotEffectCd, maxStacks: w.dotMaxStacks,
         hits: w.dotPerShot ? (w.shots || 1) : 1 });
+    }
+    if (w.serpentDotDps) {
+      dotSources.push({ label: "Serpent Poison — " + w.name,
+        dps: w.serpentDotDps, type: "poison", duration: w.serpentDotDuration || 2, decay: w.serpentDotDecay || 0,
+        hits: w.serpentDotHits || 1 });
     }
     var apxFireRate = w.fireRate * (1 + (baseEff.DEX || 0) / 100);
     function applyRate(src) { return src.effectCd ? Math.min(apxFireRate, 1 / src.effectCd) : apxFireRate; }
