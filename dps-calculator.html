@@ -597,7 +597,7 @@
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "pq_dps_calc_db_v3";
+  var STORAGE_KEY = "pq_dps_calc_db_v4";
 
   var DEFAULT_WEAPONS = [
     { id: "cutlass", name: "Cutlass", type: "Sword", dmgMin: 230, dmgMax: 260, fireRate: 1.6, range: 4, scaleStat: "SPD", scaleCost: 2, verified: true, notes: "" },
@@ -614,7 +614,7 @@
     { id: "cerberus_bow", name: "Cerberus Bow", type: "Bow", dmgMin: 210, dmgMax: 230, fireRate: 2.5, range: 8.75, statMods: { DEX: 3, ATK: 3, SPD: 3 }, secHitDmg: 160, verified: true, notes: "+3 DEX/ATK/SPD on equip. Every shot also fires 2 arrows @70-90 dmg (~160/hit, -10 DEF 3s)" },
     { id: "drako_axe", name: "Drako Axe", type: "Axe", dmgMin: 400, dmgMax: 460, fireRate: 1.5, range: 6.71, secHitDmg: 300, verified: true, notes: "On enemy damaged: 2-tile AOE, 300 dmg, 100% def pen every hit" },
     { id: "shardbreaker", name: "Shardbreaker", type: "Sword", dmgMin: 350, dmgMax: 400, fireRate: 2, range: 4.16, statMods: { DEF: 10, VIT: 25 }, secHitDmg: 180, verified: true, notes: "Sword (was wrongly Hammer). DEF+10/VIT+25 on equip. Sword Barrage: 40% chance for 5 projectiles @90 dmg (~180/hit expected value; if that's true damage it should NOT be ATK-scaled — unconfirmed). Stat-twin of Easterblade" },
-    { id: "crystalline_fan", name: "Crystalline Fan", type: "Fan", dmgMin: 160, dmgMax: 170, fireRate: 1, range: 6.495, shots: 1, statMods: { DEF: 10 }, projScaleStat: "DEF", projScaleCost: 15, projMax: 4, secHitDmg: 30, flourishMods: { DEX: 10 }, verified: true, notes: "DEF+10 on equip. Flourish: healing others grants +10 DEX 7s (assumed active when Totem equipped). Sire of Shards: 10% chance 300 true dmg + Exposed (~30/hit EV, ATK-scaled in sim)" },
+    { id: "crystalline_fan", name: "Crystalline Fan", type: "Fan", dmgMin: 160, dmgMax: 170, fireRate: 1, range: 6.495, shots: 1, statMods: { DEF: 10 }, projScaleStat: "DEF", projScaleCost: 15, projMax: 4, secHitDmgFlat: 30, flourishMods: { DEX: 10 }, verified: true, notes: "DEF+10 on equip. Flourish: healing others grants +10 DEX 7s (assumed active when Totem equipped). Sire of Shards: 10% chance 300 true dmg + Exposed (~30/hit EV, no ATK scaling)" },
     { id: "coldflame_sword", name: "Coldflame Sword", type: "Sword", dmgMin: 380, dmgMax: 440, fireRate: 1.6, range: 4, statMods: { DEF: 9, VIT: 24 }, secHitDmg: 175, verified: true, notes: "+9 DEF/+24 VIT on equip. If Heavy Armor: guaranteed extra Burn+Slow projectile @150-200 dmg (~175/hit). Base hit only without Heavy Armor" },
     { id: "coldflame_sword_of_doom", name: "Coldflame Sword OF DOOM", type: "Sword", dmgMin: 360, dmgMax: 420, fireRate: 1.6, range: 4, statMods: { DEF: 12, VIT: 28 }, secHitDmg: 219, verified: true, notes: "DEF+12/VIT+28 on equip. If Heavy Armor: 75% chance 5 additional Burning+Slow projectiles @75-100 dmg (~87.5 avg, 5×87.5×0.75=328 EV, modeled as secHitDmg 219 = 75%×5×(75+100)/2). Assume active if Heavy Armor equipped" },
     { id: "searing_penlight", name: "Searing Penlight", type: "Staff", dmgMin: 135, dmgMax: 145, shots: 2, fireRate: 2.5, range: 10, verified: true, notes: "Ashen Pulse: fires 1-3 shots randomly (avg 2), 40% def pen, no pierce. Rough vs. small bosses" },
@@ -633,9 +633,9 @@
 
     // --- full wiki catalog pull below ---
     { id: "0y0s_omnipotent_staff", name: "0y0's Omnipotent Staff", type: "Staff", dmgMin: 130, dmgMax: 155, shots: 2, fireRate: 2.5, range: 6, secHitDmg: 150, verified: true, notes: "Content creator twin of Omnipotent Staff. Same stats" },
-    { id: "adventurers_dirk", name: "Adventurer's Dirk", type: "Dagger", dmgMin: 130, dmgMax: 150, fireRate: 2.7, range: 6, secHitDmg: 50, verified: true, notes: "Multi-Shot: +1 additional projectile @40-60 true dmg (~50 avg, ATK-scaled). Requires 70 SPD" },
-    { id: "ahis_candy_cane", name: "Ahi's Candy Cane", type: "Staff", dmgMin: 55, dmgMax: 65, shots: 2, fireRate: 2.5, range: 12.5, statMods: { SPD: 8 }, secHitDmg: 30, verified: true, notes: "SPD+8 on equip. 2 base projectiles + 1 additional @25-35 true dmg (~30/hit, ATK-scaled). Holiday variant of Ahi's Reaper" },
-    { id: "ahis_reaper", name: "Ahi's Reaper", type: "Staff", dmgMin: 55, dmgMax: 65, shots: 2, fireRate: 2.5, range: 12.5, statMods: { SPD: 8 }, secHitDmg: 22.5, verified: true, notes: "2 base simultaneous projectiles, + a 3rd always-on 20-25 true-dmg projectile (~22.5/hit). SPD+8 on equip. Drop: Ahi the Wyrmm" },
+    { id: "adventurers_dirk", name: "Adventurer's Dirk", type: "Dagger", dmgMin: 130, dmgMax: 150, fireRate: 2.7, range: 6, secHitDmgFlat: 50, verified: true, notes: "Multi-Shot: +1 additional projectile @40-60 true dmg (~50 avg, no ATK scaling). Requires 70 SPD" },
+    { id: "ahis_candy_cane", name: "Ahi's Candy Cane", type: "Staff", dmgMin: 55, dmgMax: 65, shots: 2, fireRate: 2.5, range: 12.5, statMods: { SPD: 8 }, secHitDmgFlat: 30, verified: true, notes: "SPD+8 on equip. 2 base projectiles + 1 additional @25-35 true dmg (~30/hit, no ATK scaling). Holiday variant of Ahi's Reaper" },
+    { id: "ahis_reaper", name: "Ahi's Reaper", type: "Staff", dmgMin: 55, dmgMax: 65, shots: 2, fireRate: 2.5, range: 12.5, statMods: { SPD: 8 }, secHitDmgFlat: 22.5, verified: true, notes: "2 base simultaneous projectiles, + a 3rd always-on 20-25 true-dmg projectile (~22.5/hit, no ATK scaling). SPD+8 on equip. Drop: Ahi the Wyrmm" },
     { id: "amethyst_fan", name: "Amethyst Fan", type: "Fan", dmgMin: 45, dmgMax: 50, fireRate: 1.5, range: 6.495, shots: 1, projScaleStat: "VIT", projScaleCost: 10, projMax: 5, verified: true, notes: "Auto-targets nearby enemies, 70% def pen" },
     { id: "aqua_claymore", name: "Aqua Claymore", type: "Sword", dmgMin: 145, dmgMax: 165, fireRate: 1.6, range: 4, scaleStat: "HP", scaleCost: 7, statMods: { ATK: 8, VIT: 8, DEX: 3 }, secHitDmg: 175, verified: true, notes: "Sword. +5 ATK / +8 VIT on equip, plus Summer Shine! (+3 ATK / +3 DEX). Fireball: if Heavy Armor, +7 proj @20-30 dmg (~175/hit = 7×25avg, ATK-scaled). Base hit only without Heavy Armor" },
     { id: "armageddon", name: "Armageddon", type: "Bow", dmgMin: 350, dmgMax: 400, fireRate: 1.5, range: 8.007, dotDps: 200, secHitDmg: 282.5, statMods: { DEF: 5, VIT: 6 }, condMods: { ATK: 20, DEX: 20, DEF: 13 }, condLabel: "Focus (standing still 1s+)", verified: true, notes: "Corrupted. DEF+5/VIT+6 on equip. Secondary explosion projectiles ~282.5/hit (265-300, 100% def pen) + Burning 200 DPS/5s. Focus: standing still 1s+ grants +20 ATK / +20 DEX / +13 DEF (toggle above the weapon list). Drop: Corrupted Ezebel" },
@@ -664,7 +664,7 @@
     { id: "copperhead", name: "Copperhead", type: "Dagger", dmgMin: 325, dmgMax: 360, fireRate: 2.5, range: 7, verified: true, notes: "Corrupted. Lethal Venom: gain 1 venom charge/sec (max 10); On Hit: consume all stacks for poison (3s duration, +200 DPS per stack). Complex ramp — not fully modeled" },
     { id: "coral_bow", name: "Coral Bow", type: "Bow", dmgMin: 1222, dmgMax: 1666, fireRate: 0.5, range: 8.125, statMods: { ATK: 3, DEX: 3 }, verified: true, notes: "ATK+3/DEX+3 on equip. Pierces" },
     { id: "coral_staff", name: "Coral Staff", type: "Staff", dmgMin: 55, dmgMax: 65, fireRate: 2.5, range: 10.4, statMods: { WIS: 10 }, secHitDmg: 47.5, verified: true, notes: "WIS+10 on equip. 50% chance +2 proj @45-50 dmg (~47.5/hit expected value)" },
-    { id: "coral_staff_of_doom", name: "Coral Staff OF DOOM", type: "Staff", dmgMin: 80, dmgMax: 100, fireRate: 2.5, range: 10.4, statMods: { WIS: 25 }, secHitDmg: 190, verified: true, notes: "WIS+25 on equip. 50% chance to fire 8 additional projectiles @45-50 true dmg (~47.5 avg, secHitDmg=190 EV = 0.5×8×47.5)" },
+    { id: "coral_staff_of_doom", name: "Coral Staff OF DOOM", type: "Staff", dmgMin: 80, dmgMax: 100, fireRate: 2.5, range: 10.4, statMods: { WIS: 25 }, secHitDmgFlat: 190, verified: true, notes: "WIS+25 on equip. 50% chance to fire 8 additional projectiles @45-50 true dmg (~47.5 avg, EV=190 = 0.5×8×47.5, no ATK scaling)" },
     { id: "corsair_dagger", name: "Corsair Dagger", type: "Dagger", dmgMin: 160, dmgMax: 220, fireRate: 2.7, range: 6.65, verified: true, notes: "No passive" },
     { id: "daybreak", name: "Daybreak", type: "Sword", dmgMin: 440, dmgMax: 515, fireRate: 1.6, range: 4, critChance: 0.25, critMult: 1.33, statMods: { DEF: 9, VIT: 24 }, verified: true, notes: "DEF+9/VIT+24 on equip. Critical Strike: 25% chance for 1.33x damage (folded in as its average multiplier, scales correctly with ATK now). Pierces" },
     { id: "deck_of_cards", name: "Deck of Cards", type: "Dagger", dmgMin: 210, dmgMax: 230, fireRate: 3, range: 6, secHitDmg: 37.5, verified: true, notes: "Ace: 3% chance to fire projectile dealing 1250 dmg + Armor Break (~37.5/shot EV, ATK-scaled)" },
@@ -680,7 +680,7 @@
     { id: "ember_staff", name: "Ember Staff", type: "Staff", dmgMin: 40, dmgMax: 55, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "40% def pen, 2 proj, sine pattern" },
     { id: "emerald_ouroboros", name: "Emerald Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDecay: 40, dotDuration: 2, statMods: { DEX: 8, SPD: 8 }, verified: true, notes: "DEX+8/SPD+8 on equip. On Hit: 70 DPS poison 2s; Serpent: every 4 hits, 40 dmg + 110 DPS poison 3s; 60% def pen. Corrupted" },
     { id: "emerald_sword", name: "Emerald Sword", type: "Sword", dmgMin: 240, dmgMax: 280, fireRate: 1.6, range: 4, statMods: { DEF: 5, VIT: 14 }, verified: true, notes: "DEF+5/VIT+14 on equip. Pierces" },
-    { id: "eternal_winter", name: "Eternal Winter", type: "Bow", shots: 2, dmgMin: 94, dmgMax: 102, fireRate: 4, range: 8.75, statMods: { DEF: -10, HP: -25 }, secHitDmg: 75, coldStreak: { maxDex: 50, duration: 2, multiShotChance: 0.25, multiShotHits: 2 }, verified: true, notes: "Corrupted. OVERRIDE_PROJECTILE_COUNT:2 (shots:2). DEF-10/HP-25 on equip. Multi-Shot: 25% chance +2 proj @100-200 true dmg (~150 avg, ATK-scaled, modeled as secHitDmg 75/attack EV). Cold Streak: +1 DEX per hit landed for 2s, cap +50 DEX — sim tracks each stack, base shots + multi-shot hits contribute, DEX feeds back into fire rate. 80% def pen, pierces. Drop: Corrupted Arctic Deer" },
+    { id: "eternal_winter", name: "Eternal Winter", type: "Bow", shots: 2, dmgMin: 94, dmgMax: 102, fireRate: 4, range: 8.75, statMods: { DEF: -10, HP: -25 }, secHitDmgFlat: 75, coldStreak: { maxDex: 50, duration: 2, multiShotChance: 0.25, multiShotHits: 2 }, verified: true, notes: "Corrupted. OVERRIDE_PROJECTILE_COUNT:2 (shots:2). DEF-10/HP-25 on equip. Multi-Shot: 25% chance +2 proj @100-200 true dmg (~150 avg, 75/attack EV, no ATK scaling). Cold Streak: +1 DEX per hit landed for 2s, cap +50 DEX — sim tracks each stack, base shots + multi-shot hits contribute, DEX feeds back into fire rate. 80% def pen, pierces. Drop: Corrupted Arctic Deer" },
     { id: "executioners_staff", name: "Executioner's Staff", type: "Staff", dmgMin: 45, dmgMax: 60, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "40% def pen, 2 proj sine" },
     { id: "felling_axe", name: "Felling Axe", type: "Axe", dmgMin: 1, dmgMax: 10, fireRate: 1, range: 8.5, verified: true, notes: "Joke/weak item, pierces, not tradable. Drop: Talking Tree" },
     { id: "festive_axe", name: "Festive Axe", type: "Axe", dmgMin: 110, dmgMax: 135, shots: 2, fireRate: 1, range: 5, scaleStat: "HP", scaleCost: 5, verified: true, notes: "Orbit pattern, 2 proj, seasonal. Drop: Horrific Tree" },
@@ -732,7 +732,7 @@
     { id: "mistleaf_bow", name: "Mistleaf Bow", type: "Bow", dmgMin: 25, dmgMax: 35, shots: 3, fireRate: 2.4, range: 8.925, verified: true, notes: "Pierces, 60% def pen, 3 proj" },
     { id: "mistletoe_staff", name: "Mistletoe Staff", type: "Staff", dmgMin: 35, dmgMax: 50, shots: 8, fireRate: 2.5, range: 4, statMods: { WIS: 10 }, verified: true, notes: "WIS+10 on equip. 8 shots, close range. Holiday variant of Sylvan Staff" },
     { id: "musas_coral_staff", name: "Musa's Coral Staff", type: "Staff", dmgMin: 55, dmgMax: 65, fireRate: 2.5, range: 10.4, statMods: { WIS: 10 }, secHitDmg: 47.5, verified: true, notes: "WIS+10 on equip. 50% chance +2 proj @45-50 dmg (~47.5/hit EV). Stat-twin of Coral Staff. 40% def pen" },
-    { id: "mushroom_bow", name: "Mushroom Bow", type: "Bow", dmgMin: 55, dmgMax: 60, shots: 2, fireRate: 2.4, range: 8, secHitDmg: 42, verified: true, notes: "2 base shots, 60% def pen. Fires 3 additional projectiles @24-32 true dmg (~28 avg, 84 total, modeled as secHitDmg 42 at 50% expected - requires 45 WIS, assume active). Requires 45 WIS" },
+    { id: "mushroom_bow", name: "Mushroom Bow", type: "Bow", dmgMin: 55, dmgMax: 60, shots: 2, fireRate: 2.4, range: 8, secHitDmgFlat: 42, verified: true, notes: "2 base shots, 60% def pen. Fires 3 additional projectiles @24-32 true dmg (~28 avg, 84 total, EV=42 at 50% proc, no ATK scaling). Requires 45 WIS" },
     { id: "mushroom_bow_of_doom", name: "Mushroom Bow OF DOOM", type: "Bow", dmgMin: 60, dmgMax: 80, shots: 4, fireRate: 2.4, range: 8, scaleStat: "WIS", scaleCost: 1, secHitDmg: 840, verified: true, notes: "4 base shots, 60% def pen. +1 dmg/WIS. Fires 6 additional projectiles @130-150 dmg (~140 avg, 840 total, ATK-scaled). Requires 50 WIS" },
     { id: "mystical_longbow", name: "Mystical Longbow", type: "Bow", dmgMin: 50, dmgMax: 65, shots: 3, fireRate: 2.4, range: 8.925, verified: true, notes: "Pierces, 60% def pen, 3 proj" },
     { id: "mythril_sabre", name: "Mythril Sabre", type: "Sword", dmgMin: 280, dmgMax: 320, fireRate: 1.6, range: 4, statMods: { DEF: 6, VIT: 16 }, verified: true, notes: "DEF+6/VIT+16 on equip. Pierces" },
@@ -751,8 +751,8 @@
     { id: "carrot_staff", name: "Carrot Staff", type: "Staff", dmgMin: 70, dmgMax: 90, shots: 2, fireRate: 2, range: 10.4, secHitDmg: 150, verified: true, notes: "2 shots, 40% def pen. Secondary: 1 extra projectile @140-160 dmg (~150/hit, ATK-scaled) + Slow. Twin of Prism Scepter" },
     { id: "prism_scepter", name: "Prism Scepter", type: "Staff", dmgMin: 70, dmgMax: 90, shots: 2, fireRate: 2, range: 10.4, secHitDmg: 150, verified: true, notes: "2 base projectiles + a secondary 140-160 dmg projectile per attack (~150/hit). 40% def pen" },
     { id: "purification_staff", name: "Purification Staff", type: "Staff", dmgMin: 60, dmgMax: 80, shots: 2, fireRate: 2.5, range: 10.4, verified: true, notes: "2 proj sine, 40% def pen" },
-    { id: "putrid_knife", name: "Putrid Knife", type: "Dagger", dmgMin: 94, dmgMax: 112, fireRate: 3.75, range: 6, secHitDmg: 180, verified: true, notes: "Multi-Shot: bomb throws fire 4 additional projectiles @40-50 true dmg (~45 avg, 180 total, ATK-scaled). Inflicts Slow" },
-    { id: "rattling_bow", name: "Rattling Bow", type: "Bow", dmgMin: 55, dmgMax: 65, shots: 2, fireRate: 2.4, range: 8, secHitDmg: 41.25, verified: true, notes: "2 base shots, 60% def pen. Fires 3 additional projectiles @25-30 true dmg (~27.5 avg, 82.5 total, modeled as secHitDmg 41.25). Requires 45 WIS" },
+    { id: "putrid_knife", name: "Putrid Knife", type: "Dagger", dmgMin: 94, dmgMax: 112, fireRate: 3.75, range: 6, secHitDmgFlat: 180, verified: true, notes: "Multi-Shot: bomb throws fire 4 additional projectiles @40-50 true dmg (~45 avg, 180 total, no ATK scaling). Inflicts Slow" },
+    { id: "rattling_bow", name: "Rattling Bow", type: "Bow", dmgMin: 55, dmgMax: 65, shots: 2, fireRate: 2.4, range: 8, secHitDmgFlat: 41.25, verified: true, notes: "2 base shots, 60% def pen. Fires 3 additional projectiles @25-30 true dmg (~27.5 avg, 82.5 total, EV=41.25, no ATK scaling). Requires 45 WIS" },
     { id: "rolling_pin", name: "Rolling Pin", type: "Axe", dmgMin: 310, dmgMax: 350, shots: 2, fireRate: 1, range: 6.6, verified: true, notes: "Boomerang, pierces, multi-hit 2" },
     { id: "royale_fan", name: "Royale Fan", type: "Fan", dmgMin: 50, dmgMax: 55, fireRate: 1.5, range: 6.495, shots: 1, projScaleStat: "VIT", projScaleCost: 10, projMax: 5, verified: true, notes: "Auto-target, 70% def pen" },
     { id: "ruby_fan", name: "Ruby Fan", type: "Fan", dmgMin: 40, dmgMax: 45, fireRate: 1.5, range: 6.495, shots: 1, projScaleStat: "VIT", projScaleCost: 10, projMax: 4, verified: true, notes: "Auto-target, 70% def pen" },
@@ -791,7 +791,7 @@
     { id: "travelers_sword", name: "Traveler's Sword", type: "Sword", dmgMin: 160, dmgMax: 200, fireRate: 1.6, range: 4, statMods: { DEF: 3, VIT: 10 }, verified: true, notes: "DEF+3/VIT+10 on equip. Pierces" },
     { id: "twinsplitter", name: "Twinsplitter", type: "Dagger", dmgMin: 120, dmgMax: 180, fireRate: 2.7, range: 6.65, verified: true, notes: "No passive" },
     { id: "unsealed_sensu", name: "Unsealed Sensu", type: "Fan", dmgMin: 99, dmgMax: 132, fireRate: 6, range: 6.495, shots: 1, dotDps: 45, dotType: "poison", dotDecay: 40, dotDuration: 2, flourishMods: { DEX: 15 }, verified: true, notes: "Auto-target. Flourish: healing others grants +15 DEX 7s (assumed active when Totem equipped). Party Buff: +12DEX+6DEF 10s, 15s CD (party-only, not modeled). Poisoned for 2s (45 DPS)" },
-    { id: "venomfang", name: "Venomfang", type: "Dagger", dmgMin: 40, dmgMax: 50, fireRate: 5, range: 6.4, secHitDmg: 30, verified: true, notes: "Fire 2 additional projectiles dealing 10-20 true dmg (2 × 15 avg = 30 EV, ATK-scaled). Drop: Swamp Trap" },
+    { id: "venomfang", name: "Venomfang", type: "Dagger", dmgMin: 40, dmgMax: 50, fireRate: 5, range: 6.4, secHitDmgFlat: 30, verified: true, notes: "Fire 2 additional projectiles dealing 10-20 true dmg (2 × 15 avg = 30 EV, no ATK scaling). Drop: Swamp Trap" },
     { id: "verdant_axe", name: "Verdant Axe", type: "Axe", dmgMin: 205, dmgMax: 215, shots: 2, fireRate: 1, range: 7, verified: true, notes: "Pierces, multi-hit 2" },
     { id: "verdent_fan", name: "Verdent Fan", type: "Fan", dmgMin: 30, dmgMax: 40, fireRate: 1.5, range: 6.495, shots: 1, projScaleStat: "VIT", projScaleCost: 10, projMax: 4, verified: true, notes: "Auto-target, 70% def pen" },
     { id: "warped_axe", name: "Warped Axe", type: "Axe", dmgMin: 160, dmgMax: 180, shots: 2, fireRate: 1.25, range: 5.5, verified: true, notes: "Pierces, hits the same target twice per throw Combo Starter: +2 DEF/kill, cap +20 (not DPS-relevant)" },
@@ -2159,6 +2159,7 @@
     // attack rate, NOT multiplied by `shots`. critChance/critMult: an intrinsic crit on the
     // main hit (Daybreak), folded in as its average multiplier.
     var secHitDmg = w.secHitDmg || 0;
+    var secHitDmgFlat = w.secHitDmgFlat || 0; // true damage — fires at weapon rate, no ATK% scaling
     var critMult = w.critChance ? (1 + w.critChance * ((w.critMult || 1) - 1)) : 1;
     var secProjDamage = 0;
 
@@ -2214,6 +2215,7 @@
     var secGated = !!(sec && sec.procRequiresStat && Object.keys(sec.procRequiresStat).some(function (k) { return (baseEff[k] || 0) < sec.procRequiresStat[k]; }));
 
     var weaponDamage = 0;
+    var trueProjDamage = 0;
     var dotDamage = 0;
     var weaponShotAcc = 0;
     var swingAcc = 0;
@@ -2296,6 +2298,7 @@
             mana += (w.manaStealPerShot || 0);
             weaponDamage += mainHit * atkMult;
             secProjDamage += secHitDmg * atkMult;
+            trueProjDamage += secHitDmgFlat;
             onSwing();
             weaponFiredShots++;
           } else {
@@ -2305,6 +2308,7 @@
       } else {
         weaponDamage += mainHit * atkMult * effFireRate * SIM_DT;
         secProjDamage += secHitDmg * atkMult * effFireRate * SIM_DT;
+        trueProjDamage += secHitDmgFlat * effFireRate * SIM_DT;
         swingAcc += effFireRate * SIM_DT;
         while (swingAcc >= 1) {
           swingAcc -= 1;
@@ -2360,9 +2364,9 @@
       if (mana < minManaSeen) minManaSeen = mana;
     }
 
-    var grandTotal = weaponDamage + secProjDamage + dotDamage + secDamage + summonDamage + orbitDamage;
+    var grandTotal = weaponDamage + secProjDamage + trueProjDamage + dotDamage + secDamage + summonDamage + orbitDamage;
     return {
-      weaponDamage: weaponDamage, secProjDamage: secProjDamage, dotDamage: dotDamage, secDamage: secDamage, summonDamage: summonDamage, orbitDamage: orbitDamage,
+      weaponDamage: weaponDamage, secProjDamage: secProjDamage, trueProjDamage: trueProjDamage, dotDamage: dotDamage, secDamage: secDamage, summonDamage: summonDamage, orbitDamage: orbitDamage,
       totalDamage: grandTotal, avgDps: grandTotal / SIM_DURATION,
       summonBreakdown: summons.map(function (u) { return { label: u.label, total: u.acc, max: u.max, each: u.each, regenSec: u.regenSec }; }),
       endMana: mana, minMana: minManaSeen, manaRegenPerSec: manaRegenPerSec,
@@ -2494,6 +2498,9 @@
     if (sim.secProjDamage) {
       var atkM = (1 + (baseEff.ATK || 0) / 100) * gearMult;
       rows.push({ k: "Secondary projectiles — " + w.name + " (" + w.secHitDmg + " base/swing pre-ATK → ~" + fmt(w.secHitDmg * atkM, 0) + "/swing at your ATK)", v: fmt(sim.secProjDamage, 0) });
+    }
+    if (sim.trueProjDamage) {
+      rows.push({ k: "True-dmg projectiles — " + w.name + " (" + w.secHitDmgFlat + "/swing flat, no ATK scaling)", v: fmt(sim.trueProjDamage, 0) });
     }
     (sim.dotBreakdown || []).forEach(function (d) {
       if (!d.total) return;
@@ -2680,7 +2687,7 @@
     if (!w) return;
     var f = e.target.getAttribute("data-f");
     var val = e.target.value;
-    if (["dmgMin", "dmgMax", "shots", "fireRate", "range", "scaleCost", "dotDps", "secHitDmg", "critChance", "critMult", "dotDuration", "dotEffectCd", "dotDecay", "dotFlatDps", "orbitDps"].indexOf(f) > -1) val = parseFloat(val) || 0;
+    if (["dmgMin", "dmgMax", "shots", "fireRate", "range", "scaleCost", "dotDps", "secHitDmg", "secHitDmgFlat", "critChance", "critMult", "dotDuration", "dotEffectCd", "dotDecay", "dotFlatDps", "orbitDps"].indexOf(f) > -1) val = parseFloat(val) || 0;
     w[f] = val;
     w.verified = false;
     saveDb();
