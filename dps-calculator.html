@@ -273,42 +273,41 @@
   /* Slots: transparent — screenshot's empty-slot graphic shows through; item image appears when equipped */
   .gp-slot {
     position: absolute;
-    top: 5px; width: 55px; height: 66px;
+    top: 8px; width: 6.6%; height: 66px;
     background: transparent;
     display: flex; align-items: center; justify-content: center;
   }
-  #cpSlotWeapon    { left: 330px; }
-  #cpSlotSecondary { left: 387px; }
-  #cpSlotArmor     { left: 444px; }
-  #cpSlotAccessory { left: 501px; }
-  .gp-slot img { width: 48px; height: 48px; object-fit: contain; image-rendering: pixelated; }
+  #cpSlotWeapon    { left: 39.7%; }
+  #cpSlotSecondary { left: 46.6%; }
+  #cpSlotArmor     { left: 53.4%; }
+  #cpSlotAccessory { left: 60.3%; }
+  .gp-slot img { width: 90%; height: 90%; object-fit: contain; image-rendering: pixelated; }
 
-  /* Number inputs — positioned exactly over the screenshot's number areas */
+  /* Number inputs — % left so they scale with the panel when max-width kicks in */
   .gp-stat-input {
     position: absolute;
     border: none; outline: none; padding: 0; margin: 0;
     font-family: 'VT323', monospace; font-size: 20px;
     color: #fff; text-shadow: 1px 1px 0 #000;
-    width: 44px; height: 24px;
+    width: 5.3%; height: 24px;
     -moz-appearance: textfield;
   }
   .gp-stat-input::-webkit-inner-spin-button,
   .gp-stat-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-  /* Bar number inputs — background matches bar color to cover baked-in screenshot number */
-  .gp-n-hp   { background: #da1f42; width: 40px; }
-  .gp-n-mp   { background: #229fe6; width: 40px; }
-  .gp-n-vlr  { background: #c78816; width: 58px; }
+  /* Bar number inputs */
+  .gp-n-hp   { background: #da1f42; width: 4.8%; }
+  .gp-n-mp   { background: #229fe6; width: 4.8%; }
   /* Max HP/MP spans */
   .gp-n-max {
     position: absolute;
     font-family: 'VT323', monospace; font-size: 20px;
     color: #fff; text-shadow: 1px 1px 0 #000;
-    pointer-events: none; min-width: 36px;
+    pointer-events: none; min-width: 4%;
   }
   .gp-n-max-hp { background: #da1f42; }
   .gp-n-max-mp { background: #229fe6; }
-  /* Stat number inputs — dark bg matches screenshot panel bg */
-  .gp-n-stat { background: #212121; width: 44px; }
+  /* Stat number inputs */
+  .gp-n-stat { background: #212121; }
   /* Bonus spans */
   .gp-bonus {
     position: absolute;
@@ -405,30 +404,30 @@
     <div class="gp-slot" id="cpSlotArmor"      title="Armor"></div>
     <div class="gp-slot" id="cpSlotAccessory"  title="Accessory"></div>
 
-    <!-- HP bar: current HP input + max HP span -->
-    <input id="gpStatHP"   class="gp-stat-input gp-n-hp"  type="number" min="0" step="1" value="0" data-stat="HP"   style="left:69px;top:23px">
-    <span  id="gpHpMax"    class="gp-n-max gp-n-max-hp"   style="left:109px;top:23px">0</span>
-    <span  id="gpHpBonus"  class="gp-bonus"                style="left:151px;top:23px"></span>
+    <!-- HP bar: current HP input + max HP span (left% = px/831) -->
+    <input id="gpStatHP"   class="gp-stat-input gp-n-hp"  type="number" min="0" step="1" value="0" data-stat="HP"   style="left:8.3%;top:23px">
+    <span  id="gpHpMax"    class="gp-n-max gp-n-max-hp"   style="left:13.1%;top:23px">0</span>
+    <span  id="gpHpBonus"  class="gp-bonus"                style="left:18.2%;top:23px"></span>
     <!-- MP bar -->
-    <input id="gpStatMANA" class="gp-stat-input gp-n-mp"  type="number" min="0" step="1" value="0" data-stat="MANA" style="left:70px;top:61px">
-    <span  id="gpMpMax"    class="gp-n-max gp-n-max-mp"   style="left:110px;top:61px">0</span>
-    <span  id="gpMpBonus"  class="gp-bonus"                style="left:152px;top:61px"></span>
+    <input id="gpStatMANA" class="gp-stat-input gp-n-mp"  type="number" min="0" step="1" value="0" data-stat="MANA" style="left:8.4%;top:61px">
+    <span  id="gpMpMax"    class="gp-n-max gp-n-max-mp"   style="left:13.2%;top:61px">0</span>
+    <span  id="gpMpBonus"  class="gp-bonus"                style="left:18.3%;top:61px"></span>
 
-    <!-- Stat inputs positioned over screenshot numbers (pixel-sampled) -->
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="VIT" style="left:627px;top:17px">
-    <span  class="gp-bonus" id="gpBonusVIT" style="left:673px;top:17px"></span>
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEX" style="left:740px;top:17px">
-    <span  class="gp-bonus" id="gpBonusDEX" style="left:786px;top:17px"></span>
+    <!-- Stats: left% = px/831, top in px from pixel scan -->
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="VIT" style="left:75.5%;top:17px">
+    <span  class="gp-bonus" id="gpBonusVIT" style="left:81.0%;top:17px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEX" style="left:89.1%;top:17px">
+    <span  class="gp-bonus" id="gpBonusDEX" style="left:94.6%;top:17px"></span>
 
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="WIS" style="left:627px;top:55px">
-    <span  class="gp-bonus" id="gpBonusWIS" style="left:673px;top:55px"></span>
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="ATK" style="left:744px;top:55px">
-    <span  class="gp-bonus" id="gpBonusATK" style="left:790px;top:55px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="WIS" style="left:75.5%;top:55px">
+    <span  class="gp-bonus" id="gpBonusWIS" style="left:81.0%;top:55px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="ATK" style="left:89.5%;top:55px">
+    <span  class="gp-bonus" id="gpBonusATK" style="left:95.1%;top:55px"></span>
 
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEF" style="left:627px;top:73px">
-    <span  class="gp-bonus" id="gpBonusDEF" style="left:673px;top:73px"></span>
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="SPD" style="left:741px;top:73px">
-    <span  class="gp-bonus" id="gpBonusSPD" style="left:787px;top:73px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEF" style="left:75.5%;top:73px">
+    <span  class="gp-bonus" id="gpBonusDEF" style="left:81.0%;top:73px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="SPD" style="left:89.2%;top:73px">
+    <span  class="gp-bonus" id="gpBonusSPD" style="left:94.7%;top:73px"></span>
   </div>
   <div class="gp-mode-row">
     <label class="gp-mode-label"><input type="radio" name="statMode" value="base" checked> base stats</label>
