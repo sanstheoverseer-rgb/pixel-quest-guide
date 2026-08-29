@@ -1069,7 +1069,7 @@
     { id: "flag_of_the_vale", name: "Flag of the Vale", slot: "secondary", verified: true, statMods: {}, equipMods: { HP: 20 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 10, castManaCost: 60, castBurstDamage: 0, buffDuration: 4, isFlagBuff: true, notes: "HP+20 on equip. Flag buff: Tanky+7DEF, Regen, Rallied for 4s (no ATK/DEX)" },
     { id: "frozen_heart", name: "Frozen Heart", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 5, castManaCost: 90, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, isTotem: true, notes: "Spawns ice heart healing 50 HP/s for 5s — pure heal, 0 DPS" },
     { id: "gravestone_totem", name: "Gravestone Totem", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 2, castManaCost: 40, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, isTotem: true, notes: "Heal 40, Regeneration (+8 HP/s, 3s) — pure heal, 0 DPS" },
-    { id: "ink_bomb", isBomb: true, name: "Ink Bomb", slot: "secondary", verified: true, statMods: { ATK: 8, SPD: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 3, castManaCost: 100, castBurstDamage: 2700, buffDuration: 0, isFlagBuff: false, notes: "ATK+8/SPD+10 always-on. 1500 burst + 8x150 Ink Nova (2700 total), scales off Speed cost 0.5, 3s CD" },
+    { id: "ink_bomb", isBomb: true, name: "Ink Bomb", slot: "secondary", verified: true, statMods: { ATK: 8, SPD: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 3, castManaCost: 100, castBurstDamage: 1500, castNovaBase: 1200, castScaleStat: "SPD", castScaleCost: 0.5, buffDuration: 0, isFlagBuff: false, notes: "ATK+8/SPD+10 always-on. Main bomb: 1500 + 2/SPD (castScaleStat SPD, cost 0.5). Ink Nova: 8x150=1200 fixed. 3s CD, 100 mana" },
     { id: "kindred_idol", name: "Kindred Idol", slot: "secondary", verified: true, statMods: {}, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 3, castManaCost: 60, castBurstDamage: 0, buffDuration: 0, isFlagBuff: false, isTotem: true, notes: "Heal 55, Regeneration (+13 HP/s, 4s) — pure heal, 0 DPS" },
     { id: "liber_ignis", name: "Liber Ignis", slot: "secondary", verified: true, statMods: { MANA: 40, WIS: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 1, castManaCost: 50, castBurstDamage: 50, buffDuration: 0, isFlagBuff: false, notes: "Reclassified from weapon — wiki confirms this is a Secondary Spell, base tier of Infernal Liber Ignis. Scales off Mana cost 10. Continuous-fire spell approximated as a 1s-cadence burst here. 1% lifesteal from own Burn (not modeled), Burn 360/5s, 10 projectiles" },
     { id: "infernal_liber_ignis", name: "Infernal Liber Ignis", slot: "secondary", verified: true, statMods: { MANA: 40, WIS: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, castCooldown: 1, castManaCost: 66.667, castBurstDamage: 65, buffDuration: 0, isFlagBuff: false, notes: "Reclassified from weapon — Ashen Altar-tier upgrade of Liber Ignis, same Spell mechanic. Scales off Mana cost 6.6667. 1% lifesteal from own Burn (cap 7HP/tick, not modeled), Burn 360/5s" },
@@ -2006,7 +2006,14 @@
       if (g.flatDmgPct) bits.push("+" + g.flatDmgPct + "% dmg");
       if (g.procChance === "mana") bits.push("crit scales with Mana, up to 15%, x" + g.procMult);
       else if (g.procChance) bits.push(Math.round(g.procChance * 100) + "% chance x" + g.procMult);
-      if (g.castBurstDamage) bits.push(fmt(g.castBurstDamage, 0) + " dmg per cast, " + g.castCooldown + "s cooldown, " + g.castManaCost + " mana");
+      if (g.castBurstDamage || g.castNovaBase) {
+        var eff2 = effectiveStats();
+        var effBurst = (g.castBurstDamage || 0) + (g.castNovaBase || 0)
+          + (g.castScaleStat ? (eff2[g.castScaleStat] || 0) / (g.castScaleCost || 1) : 0);
+        var burstLabel = fmt(effBurst, 0) + " dmg per cast";
+        if (g.castScaleStat) burstLabel += " (+" + fmt((eff2[g.castScaleStat] || 0) / (g.castScaleCost || 1), 0) + " from " + g.castScaleStat + " scaling)";
+        bits.push(burstLabel + ", " + g.castCooldown + "s cooldown, " + g.castManaCost + " mana");
+      }
 
       // Conditional-passive status chips.
       var chips = "";
@@ -2189,6 +2196,15 @@
       };
     });
 
+    // Pre-compute effective burst damage for the secondary (includes stat scaling).
+    // castBurstDamage = scalable portion (e.g. Ink Bomb main bomb, scales with SPD).
+    // castNovaBase    = fixed portion that does NOT scale (e.g. Ink Nova projectiles).
+    var secBurstDmg = sec
+      ? (sec.castBurstDamage || 0)
+        + (sec.castNovaBase || 0)
+        + (sec.castScaleStat ? (baseEff[sec.castScaleStat] || 0) / (sec.castScaleCost || 1) : 0)
+      : 0;
+
     var secCooldown = 0;
     var secBuffRemaining = 0;
     var secCastCount = 0;
@@ -2235,7 +2251,7 @@
             mana -= sec.castManaCost;
             secCooldown = sec.castCooldown;
             secCastCount++;
-            if (sec.castBurstDamage) secDamage += sec.castBurstDamage;
+            if (secBurstDmg) secDamage += secBurstDmg;
             if (sec.buffDuration) secBuffRemaining = sec.buffDuration;
           } else if (sec.castManaCost > 0) {
             secSkippedCount++;
@@ -2570,11 +2586,22 @@
     setSlot("cpSlotArmor",     armG && GEAR_IMG[armG.id] ? "img/" + GEAR_IMG[armG.id] : null);
     setSlot("cpSlotAccessory", accG && GEAR_IMG[accG.id] ? "img/" + GEAR_IMG[accG.id] : null);
 
-    // Stat bonuses
+    // Stat effective totals — show "= X" next to the input when gear modifies the stat.
+    // In "final" mode the user already typed the effective value so nothing extra is shown.
     ["VIT","DEX","WIS","ATK","DEF","SPD"].forEach(function(k) {
-      var bonus = Math.round((eff[k] || 0) - (base[k] || 0));
+      var effVal = Math.round(eff[k] || 0);
+      var baseVal = Math.round(base[k] || 0);
+      var bonus = effVal - baseVal;
       var el = document.getElementById("gpBonus" + k);
-      if (el) el.textContent = bonus > 0 ? "(+" + bonus + ")" : bonus < 0 ? "(" + bonus + ")" : "";
+      if (el) {
+        if (state.statMode !== "final" && bonus !== 0) {
+          el.textContent = "= " + effVal;
+          el.style.color = bonus > 0 ? "#6dff6d" : "#ff8080";
+        } else {
+          el.textContent = "";
+          el.style.color = "#6dff6d";
+        }
+      }
     });
   }
 
