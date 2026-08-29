@@ -742,7 +742,7 @@
     { id: "octosword", name: "Octosword", type: "Sword", dmgMin: 1844, dmgMax: 1888, fireRate: 0.33, range: 4, secHitDmg: 1300, statMods: { DEF: 8, HP: 88 }, verified: true, notes: "DEF+8/HP+88 on equip. Base damage ~1844-1888. Octostrike: 8 projectiles fire on each swing at 150-175 dmg each (avg 162.5 × 8 = 1300 total per swing), ATK-scaled, pierce. Tier LG" },
     { id: "omnipotent_staff", name: "Omnipotent Staff", type: "Staff", dmgMin: 130, dmgMax: 155, shots: 2, fireRate: 2.5, range: 6, secHitDmg: 150, verified: true, notes: "2 shots, 40% def pen. Secondary Projectiles: 3 extra shots @45-55 dmg (avg 50, 150 total per attack, 100% def pen, ATK-scaled)" },
     { id: "ouroboros", name: "Ouroboros", type: "Staff", dmgMin: 145, dmgMax: 155, shots: 2, fireRate: 2, range: 12, dotDps: 70, dotType: "poison", dotDecay: 40, dotDuration: 2, dotPerShot: true, secHitDmgFlat: 75, verified: true, notes: "Corrupted. 2 shots, 60% def pen. On-hit: 70 DPS poison 2s (applies per shot). Serpent: every 10 hits fires 3 projectiles @125 each (375 total; 2 hits/swing → 75/swing EV, true dmg). Drop: Corrupted Ahi" },
-    { id: "pantheons_spear", name: "Pantheon's Spear", type: "Dagger", dmgMin: 100, dmgMax: 200, fireRate: 2, range: 6.875, verified: true, notes: "If Helmet equipped: 20% chance +3 proj, 300-400 true dmg. Dungeon Rush exclusive" },
+    { id: "pantheons_spear", name: "Pantheon's Spear", type: "Dagger", dmgMin: 100, dmgMax: 200, fireRate: 2, range: 6.875, helmetProc: { chance: 0.20, shots: 3, dmgMin: 300, dmgMax: 400 }, verified: true, notes: "Trident: 20% chance per swing to fire +3 projectiles @ 300-400 true dmg each (EV = 210/swing when Helmet equipped, auto-applied). Dungeon Rush exclusive" },
     { id: "peacock_fan", name: "Peacock Fan", type: "Fan", dmgMin: 50, dmgMax: 55, fireRate: 1.5, range: 6.495, shots: 1, projScaleStat: "VIT", projScaleCost: 10, projMax: 6, verified: true, notes: "Auto-targets nearby enemies. 70% def pen, no pierce" },
     { id: "pharaohs_reaper", name: "Pharaoh's Reaper", type: "Staff", dmgMin: 80, dmgMax: 105, shots: 2, fireRate: 4.22, range: 9.625, verified: true, notes: "2 simultaneous projectiles, sine pattern, no pierce" },
     { id: "piercers_bow_of_doom", name: "Piercer's Bow OF DOOM", type: "Bow", dmgMin: 0, dmgMax: 1, fireRate: 2.4, range: 8.925, scaleStat: "DEX", scaleCost: 0.25, statMods: { DEF: -25, SPD: 25 }, verified: true, notes: "DEF-25/SPD+25 on equip. Pierces, 60% def pen. Near-zero base dmg, extreme Dex scaling. Dungeon Rush exclusive" },
@@ -822,10 +822,10 @@
     { id: "adept_crown", name: "Adept Crown", slot: "accessory", verified: true, statMods: { ATK: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "adept_gauntlet", name: "Adept Gauntlet", slot: "accessory", verified: true, statMods: { DEX: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "adept_hat", name: "Adept Hat", slot: "accessory", verified: true, statMods: { WIS: 18 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
-    { id: "adept_helmet", name: "Adept Helmet", slot: "accessory", verified: true, statMods: { DEF: 9 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
+    { id: "adept_helmet", name: "Adept Helmet", slot: "accessory", isHelmet: true, verified: true, statMods: { DEF: 9 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "adept_pendant", name: "Adept Pendant", slot: "accessory", verified: true, statMods: { HP: 60 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "ballers_necklace", name: "Baller's Necklace", slot: "accessory", verified: true, statMods: { HP: 120, VIT: 10 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Healer: healing others grants +15 DEX for 7s (not auto-applied). Drop: Baller" },
-    { id: "bike_helmet", name: "Bike Helmet", slot: "accessory", verified: true, statMods: { DEF: 6, VIT: 8, HP: 30, MANA: 30, SPD: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine: +30 HP/+30 MP/+6 SPD. Dex Booster: on Rallied, +15 DEX 5s" },
+    { id: "bike_helmet", name: "Bike Helmet", slot: "accessory", isHelmet: true, verified: true, statMods: { DEF: 6, VIT: 8, HP: 30, MANA: 30, SPD: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Summer Shine: +30 HP/+30 MP/+6 SPD. Dex Booster: on Rallied, +15 DEX 5s" },
     { id: "black_top_hat", name: "Black Top Hat", slot: "accessory", verified: true, statMods: { ATK: 2, DEF: 2, DEX: 2, HP: 2, MANA: 2, VIT: 2, WIS: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "+2% Valor Bonus. Tier 6 chest/bag. Part of a matched Top Hat color-variant family (all identical stats)" },
     { id: "blue_top_hat", name: "Blue Top Hat", slot: "accessory", verified: true, statMods: { ATK: 2, DEF: 2, DEX: 2, HP: 2, MANA: 2, VIT: 2, WIS: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "+2% Valor Bonus. Tier 6 chest/bag" },
     { id: "chocolate_top_hat", name: "Chocolate Top Hat", slot: "accessory", verified: true, statMods: { ATK: 2, DEF: 2, DEX: 2, HP: 2, MANA: 2, VIT: 2, WIS: 2 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "+2% Valor Bonus. Tier 6 chest/bag" },
@@ -868,7 +868,7 @@
     { id: "expert_boots", name: "Expert Boots", slot: "accessory", verified: true, statMods: { SPD: 20 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive" },
     { id: "expert_gauntlet", name: "Expert Gauntlet", slot: "accessory", verified: true, statMods: { DEX: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive" },
     { id: "expert_hat", name: "Expert Hat", slot: "accessory", verified: true, statMods: { WIS: 24 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive" },
-    { id: "expert_helmet", name: "Expert Helmet", slot: "accessory", verified: true, statMods: { DEF: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive" },
+    { id: "expert_helmet", name: "Expert Helmet", slot: "accessory", isHelmet: true, verified: true, statMods: { DEF: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive" },
     { id: "expert_pendant", name: "Expert Pendant", slot: "accessory", verified: true, statMods: { HP: 80 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive" },
     { id: "experts_bracelet", name: "Expert's Bracelet", slot: "accessory", verified: true, statMods: { MANA: 80 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive" },
     { id: "experts_crown", name: "Expert's Crown", slot: "accessory", verified: true, statMods: { ATK: 16 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive" },
@@ -908,9 +908,9 @@
     { id: "novice_crown", name: "Novice Crown", slot: "accessory", verified: true, statMods: { ATK: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "novice_gauntlet", name: "Novice Gauntlet", slot: "accessory", verified: true, statMods: { DEX: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "novice_hat", name: "Novice Hat", slot: "accessory", verified: true, statMods: { WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
-    { id: "novice_helmet", name: "Novice Helmet", slot: "accessory", verified: true, statMods: { DEF: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
+    { id: "novice_helmet", name: "Novice Helmet", slot: "accessory", isHelmet: true, verified: true, statMods: { DEF: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "novice_pendant", name: "Novice Pendant", slot: "accessory", verified: true, statMods: { HP: 40 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
-    { id: "pantheons_helm", name: "Pantheon's Helm", slot: "accessory", verified: true, statMods: { DEF: 8, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Defense Booster: On Rallied, +12 DEF 5s. Dungeon Rush Gamemode" },
+    { id: "pantheons_helm", name: "Pantheon's Helm", slot: "accessory", isHelmet: true, verified: true, statMods: { DEF: 8, VIT: 15 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Defense Booster: On Rallied, +12 DEF 5s. Dungeon Rush Gamemode" },
     { id: "penguin_signet", name: "Penguin Signet", slot: "accessory", verified: true, statMods: { ATK: 10, DEF: 5, HP: 50 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "Valor+4%, Loot+5%. 2025 Pixelmas, non-tradable" },
     { id: "pirate_bandana", name: "Pirate Bandana", slot: "accessory", verified: true, statMods: { DEF: 4, DEX: 6, SPD: 8 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: "Sword", condMods: { DEF: 6 }, condReqType: "Sword", notes: "+8 SPD / +4 DEF / +8 DEX on equip. Defense Booster: +6 DEF while a Sword is equipped. Drop: Cannoneer" },
     { id: "pixelween_hat", name: "Pixelween Hat", slot: "accessory", verified: true, statMods: { ATK: 12, WIS: 12 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, condMods: { WIS: 20 }, condReqGearName: "Robe", condProcChance: 0.25, condProcDuration: 3, notes: "On equip: +12 ATK / +12 WIS. Wisdom Booster: while a Robe is equipped, 25% chance per shot to gain +20 WIS for 3s -> applied at its expected uptime (near-100% on fast weapons). Halloween special, drop Witch" },
@@ -951,7 +951,7 @@
     { id: "worn_crown", name: "Worn Crown", slot: "accessory", verified: true, statMods: { ATK: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "worn_gauntlet", name: "Worn Gauntlet", slot: "accessory", verified: true, statMods: { DEX: 4 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "worn_hat", name: "Worn Hat", slot: "accessory", verified: true, statMods: { WIS: 6 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
-    { id: "worn_helmet", name: "Worn Helmet", slot: "accessory", verified: true, statMods: { DEF: 3 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
+    { id: "worn_helmet", name: "Worn Helmet", slot: "accessory", isHelmet: true, verified: true, statMods: { DEF: 3 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
     { id: "worn_pendant", name: "Worn Pendant", slot: "accessory", verified: true, statMods: { HP: 20 }, flatDmgPct: 0, procChance: 0, procMult: 1, requiresType: null, notes: "No passive set" },
 
     // armor
@@ -2171,6 +2171,12 @@
     // main hit (Daybreak), folded in as its average multiplier.
     var secHitDmg = w.secHitDmg || 0;
     var secHitDmgFlat = w.secHitDmgFlat || 0; // true damage — fires at weapon rate, no ATK% scaling
+    var helmetProcFlat = 0;
+    if (w.helmetProc && equippedGearList().some(function (g) { return g.isHelmet; })) {
+      var _hp = w.helmetProc;
+      helmetProcFlat = _hp.chance * _hp.shots * (_hp.dmgMin + _hp.dmgMax) / 2;
+    }
+    var helmetProcDamage = 0;
     var critMult = w.critChance ? (1 + w.critChance * ((w.critMult || 1) - 1)) : 1;
     var secProjDamage = 0;
 
@@ -2324,6 +2330,7 @@
             weaponDamage += mainHit * atkMult;
             secProjDamage += secHitDmg * atkMult;
             trueProjDamage += secHitDmgFlat;
+            helmetProcDamage += helmetProcFlat;
             onSwing();
             weaponFiredShots++;
             if (highScore) { hsQueue.push(elapsed + highScore.duration); hsBonus++; }
@@ -2335,6 +2342,7 @@
         weaponDamage += mainHit * atkMult * effFireRate * SIM_DT;
         secProjDamage += secHitDmg * atkMult * effFireRate * SIM_DT;
         trueProjDamage += secHitDmgFlat * effFireRate * SIM_DT;
+        helmetProcDamage += helmetProcFlat * effFireRate * SIM_DT;
         swingAcc += effFireRate * SIM_DT;
         while (swingAcc >= 1) {
           swingAcc -= 1;
@@ -2390,9 +2398,9 @@
       if (mana < minManaSeen) minManaSeen = mana;
     }
 
-    var grandTotal = weaponDamage + secProjDamage + trueProjDamage + dotDamage + secDamage + summonDamage + orbitDamage;
+    var grandTotal = weaponDamage + secProjDamage + trueProjDamage + helmetProcDamage + dotDamage + secDamage + summonDamage + orbitDamage;
     return {
-      weaponDamage: weaponDamage, secProjDamage: secProjDamage, trueProjDamage: trueProjDamage, dotDamage: dotDamage, secDamage: secDamage, summonDamage: summonDamage, orbitDamage: orbitDamage,
+      weaponDamage: weaponDamage, secProjDamage: secProjDamage, trueProjDamage: trueProjDamage, helmetProcDamage: helmetProcDamage, helmetProcFlat: helmetProcFlat, dotDamage: dotDamage, secDamage: secDamage, summonDamage: summonDamage, orbitDamage: orbitDamage,
       totalDamage: grandTotal, avgDps: grandTotal / SIM_DURATION,
       summonBreakdown: summons.map(function (u) { return { label: u.label, total: u.acc, max: u.max, each: u.each, regenSec: u.regenSec }; }),
       endMana: mana, minMana: minManaSeen, manaRegenPerSec: manaRegenPerSec,
@@ -2534,6 +2542,9 @@
     }
     if (sim.trueProjDamage) {
       rows.push({ k: "True-dmg projectiles — " + w.name + " (" + w.secHitDmgFlat + "/swing flat, no ATK scaling)", v: fmt(sim.trueProjDamage, 0) });
+    }
+    if (sim.helmetProcDamage) {
+      rows.push({ k: "Trident proc — " + w.name + " (Helmet equipped: 20% chance × 3 proj × 350 avg = " + fmt(sim.helmetProcFlat, 0) + "/swing EV, true dmg)", v: fmt(sim.helmetProcDamage, 0) });
     }
     (sim.dotBreakdown || []).forEach(function (d) {
       if (!d.total) return;
