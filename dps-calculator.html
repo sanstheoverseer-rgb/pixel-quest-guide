@@ -277,10 +277,10 @@
     background: transparent;
     display: flex; align-items: center; justify-content: center;
   }
-  #cpSlotWeapon    { left: 247px; }
-  #cpSlotSecondary { left: 305px; }
-  #cpSlotArmor     { left: 362px; }
-  #cpSlotAccessory { left: 420px; }
+  #cpSlotWeapon    { left: 330px; }
+  #cpSlotSecondary { left: 387px; }
+  #cpSlotArmor     { left: 444px; }
+  #cpSlotAccessory { left: 501px; }
   .gp-slot img { width: 48px; height: 48px; object-fit: contain; image-rendering: pixelated; }
 
   /* Number inputs — positioned exactly over the screenshot's number areas */
@@ -405,18 +405,16 @@
     <div class="gp-slot" id="cpSlotArmor"      title="Armor"></div>
     <div class="gp-slot" id="cpSlotAccessory"  title="Accessory"></div>
 
-    <!-- HP bar numbers (sampled: text starts x=69, y=25) -->
-    <input id="gpStatHP"   class="gp-stat-input gp-n-hp"  type="number" min="0" step="1" value="0" data-stat="HP"   style="left:69px;top:25px">
-    <span  id="gpHpMax"    class="gp-n-max gp-n-max-hp"   style="left:109px;top:25px">0</span>
-    <span  id="gpHpBonus"  class="gp-bonus"                style="left:149px;top:25px"></span>
-    <!-- MP bar numbers (y=62) -->
-    <input id="gpStatMANA" class="gp-stat-input gp-n-mp"  type="number" min="0" step="1" value="0" data-stat="MANA" style="left:70px;top:62px">
-    <span  id="gpMpMax"    class="gp-n-max gp-n-max-mp"   style="left:110px;top:62px">0</span>
-    <span  id="gpMpBonus"  class="gp-bonus"                style="left:150px;top:62px"></span>
-    <!-- VLR bar number (sampled: x=190, y=95) -->
-    <input id="gpStatVLR"  class="gp-stat-input gp-n-vlr" type="number" min="0" step="1" value="0" data-stat="VLR"  style="left:190px;top:95px">
+    <!-- HP bar: current HP input + max HP span -->
+    <input id="gpStatHP"   class="gp-stat-input gp-n-hp"  type="number" min="0" step="1" value="0" data-stat="HP"   style="left:69px;top:23px">
+    <span  id="gpHpMax"    class="gp-n-max gp-n-max-hp"   style="left:109px;top:23px">0</span>
+    <span  id="gpHpBonus"  class="gp-bonus"                style="left:151px;top:23px"></span>
+    <!-- MP bar -->
+    <input id="gpStatMANA" class="gp-stat-input gp-n-mp"  type="number" min="0" step="1" value="0" data-stat="MANA" style="left:70px;top:61px">
+    <span  id="gpMpMax"    class="gp-n-max gp-n-max-mp"   style="left:110px;top:61px">0</span>
+    <span  id="gpMpBonus"  class="gp-bonus"                style="left:152px;top:61px"></span>
 
-    <!-- Stat inputs (sampled from white pixel positions in screenshot) -->
+    <!-- Stat inputs positioned over screenshot numbers (pixel-sampled) -->
     <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="VIT" style="left:627px;top:17px">
     <span  class="gp-bonus" id="gpBonusVIT" style="left:673px;top:17px"></span>
     <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEX" style="left:740px;top:17px">
@@ -427,10 +425,10 @@
     <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="ATK" style="left:744px;top:55px">
     <span  class="gp-bonus" id="gpBonusATK" style="left:790px;top:55px"></span>
 
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEF" style="left:627px;top:74px">
-    <span  class="gp-bonus" id="gpBonusDEF" style="left:673px;top:74px"></span>
-    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="SPD" style="left:741px;top:74px">
-    <span  class="gp-bonus" id="gpBonusSPD" style="left:787px;top:74px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="DEF" style="left:627px;top:73px">
+    <span  class="gp-bonus" id="gpBonusDEF" style="left:673px;top:73px"></span>
+    <input class="gp-stat-input gp-n-stat" type="number" min="0" step="1" value="0" data-stat="SPD" style="left:741px;top:73px">
+    <span  class="gp-bonus" id="gpBonusSPD" style="left:787px;top:73px"></span>
   </div>
   <div class="gp-mode-row">
     <label class="gp-mode-label"><input type="radio" name="statMode" value="base" checked> base stats</label>
